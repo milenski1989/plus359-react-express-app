@@ -1,0 +1,29 @@
+.warehouseSection {
+    width: 80vw;
+    margin: auto;
+    margin-top: 3rem;
+    text-align: center;
+}
+
+.entryContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.warehouseFlexContainer {
+    width: 100%;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.entriesInfo {
+    margin-right: 3rem;
+}
+
+.textField {
+    margin-right: 2rem;
+}

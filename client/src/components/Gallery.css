@@ -1,0 +1,34 @@
+.storageSection {
+    width: 100vw;
+}
+
+.storageFlexContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.singleItem {
+    margin-bottom: 3rem;
+}
+
+.imageContainer {
+    width: 287px;
+    
+    
+}
+
+.artImage {
+    width: 100%;
+    height: auto;
+}
+.btnFlexOuterContainer {
+    display: flex;
+    flex-direction: row;
+}
+
+.btnFlexInnerContainer {
+display: flex;
+flex-direction: row;
+}

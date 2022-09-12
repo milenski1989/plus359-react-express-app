@@ -1,0 +1,17 @@
+.flexContainer {
+    margin:auto;
+    margin-top: 10rem;
+    max-width: 70vw;
+    display: flex;
+    flex-direction: column;
+}
+
+.uploadSection {
+    width: 100vw;
+}
+
+.buttonsFlexContainer {
+    display: flex;
+    flex-direction: row;
+    
+}
