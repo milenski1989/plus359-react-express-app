@@ -9,11 +9,12 @@ const functions = require('./functions')
 const multer = require("multer")
 const session = require('express-session');
 const connection = require("./database")
-//const { s3UploadV2 } = require('../s3Service');
+const { s3UploadV2 } = require('./s3Service');
 
 const app = express()
 
 app.use(express.static(path.join(__dirname + "/public")))
+//app.use(express.static('build'))
 
 app.use(cors({origin: 'http://localhost:3000'}))
 app.use(bodyParser.json());
@@ -26,18 +27,25 @@ app.use(session({
 	saveUninitialized: true
 }));
 
-//const storage = multer.memoryStorage()
+const storage = multer.memoryStorage()
 const upload = multer({
-        dest: 'uploads/'
+        storage
     })
 
+
     app.post("/upload", upload.single("file"), async (req, res) => {
-        const {filename, path} = req.file
+       const {originalname, path} = req.file
         const title = req.body.title
         const author = req.body.author
         const width = req.body.width
         const height = req.body.height
-        const image_url = `/uploads/${filename}`
+
+        const result = await s3UploadV2(req.file)
+       res.json({status: "success", result})
+       console.log('REEEEEES',result)
+
+        const image_url = `/uploads/${originalname}`
+
         functions.uploadArt(title, author, width, height, image_url, (error, insertId) => {
             if (error) {
                 res.send({error: error.message})
@@ -54,6 +62,7 @@ const upload = multer({
             }
         })
     })
+  
     
     app.post('/login', (req, res) => {
     

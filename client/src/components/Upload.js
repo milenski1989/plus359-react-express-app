@@ -60,7 +60,7 @@ const Upload = () => {
                 <div className="flexContainer">
                     <Button variant="outlined" component="label">
                          Upload
-                        <input hidden accept="image/*" multiple type="file"  onChange={(e) => setFile(e.target.files[0])}/>
+                        <input hidden accept="image/*" multiple type="file"  onChange={(e) => {setFile(e.target.files[0]); console.log(e.target.files[0])}}/>
                     </Button>
                     <IconButton color="primary" aria-label="upload picture" component="label">
                         <input hidden accept="image/*" type="file" />
