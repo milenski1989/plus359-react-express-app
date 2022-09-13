@@ -16,30 +16,25 @@ const Upload = () => {
         author: "",
         height: 0,
         width: 0,
-        image: null
-    
     })
 
     const [file, setFile] = useState();
-    const [fileName, setFileName] = useState("");
     const [uploading, setUploading] = useState(false)
     const [uploadSuccessful, setUploadSuccessful] = useState(false)
     const [uploadingError, setUploadingError] = useState({error: false, message: ""})
 
-    const saveFile = (e) => {
-        setFile(e.target.files[0]);
-        setFileName(e.target.files[0].name);
-    };
-
     const uploadFile = async () => {
         setUploading(true)
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("fileName", fileName);
-      
+        const data = new FormData()
+        data.append("file", file)
+        data.append("title", artFormData.title)
+        data.append("author", artFormData.author)
+        data.append("width", artFormData.width)
+        data.append("height", artFormData.height)
+        
         const res = await axios.post(
-            "http://localhost:5000/api/upload",
-            formData
+            "http://localhost:5000/upload",
+            data
         );
         console.log('RES',res);
 
@@ -65,7 +60,7 @@ const Upload = () => {
                 <div className="flexContainer">
                     <Button variant="outlined" component="label">
                          Upload
-                        <input hidden accept="image/*" multiple type="file"  onChange={saveFile}/>
+                        <input hidden accept="image/*" multiple type="file"  onChange={(e) => setFile(e.target.files[0])}/>
                     </Button>
                     <IconButton color="primary" aria-label="upload picture" component="label">
                         <input hidden accept="image/*" type="file" />

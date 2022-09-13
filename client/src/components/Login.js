@@ -16,29 +16,26 @@ const Login = () => {
     let myStorage = window.localStorage
     const location = useLocation()
     let { from } = location.state || { from: { pathname: '/' } }
-    console.log(from)
 
     const handleLogin = async () => {
-        const response = await fetch("http://localhost:5000/api/login", {
+        const response = await fetch("http://localhost:5000/login", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
+            headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
-                email,
-                password
+                email: email,
+                password: password,
             })
         })
-        const data = await response.json();
-        
-        if (response.status === 200 || response.status === 201) {
-            console.log(data)
-            myStorage.setItem('username',data.username)
+        const data = await response.json()
+        console.log(data)
+    
+        if (response.status === 200) {
+            myStorage.setItem('username', data.username)
             setLoading(false)
             setLoginError(null)
             history.replace(from)
         } else {
-            setLoginError({error: true, message: data.error})
+            setLoginError({error: true, message: data.message})
             setLoading(false)
         }
     }
