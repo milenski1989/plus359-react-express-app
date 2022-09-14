@@ -45,7 +45,7 @@ const IconsNavbar = () => {
                         Upload
                 </Button>
             }</Link>
-            <Link to='/gallery' style={linkStyle}>{
+            <Link to='/artworks' style={linkStyle}>{
                 <Button 
                     variant="outlined"
                     sx={{ width: 100, padding: 0.5, marginTop: 0.75 }} 

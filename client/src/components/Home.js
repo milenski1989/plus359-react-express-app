@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 import { Button } from '@mui/material'
 import Upload from './Upload'
 import Search from './Search'
-import Gallery from './Gallery'
+import Artworks from './Artworks'
 
 const buttonStyle = {
     position: "absolute",
@@ -39,7 +39,7 @@ const Home = () => {
                 break
             case "/upload" : setActiveTab(<Upload/>)
                 break;
-            case "/gallery" : setActiveTab(<Gallery/>)
+            case "/artworks" : setActiveTab(<Artworks/>)
                 break;
             }
         }

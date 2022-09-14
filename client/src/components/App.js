@@ -5,7 +5,7 @@ import PrivateRoute from './PrivateRoute'
 import Home from './Home'
 import Upload from './Upload'
 import Search from './Search'
-import Gallery from './Gallery'
+import Artworks from './Artworks'
 import Signup from './Signup'
 
 const App = () => {
@@ -18,7 +18,7 @@ const App = () => {
                 <PrivateRoute exact path="/" component={Home} />
                 <PrivateRoute exact path="/search" component={Search} />
                 <PrivateRoute exact path="/upload" component={Upload} />
-                <PrivateRoute exact path="/gallery" component={Gallery} />
+                <PrivateRoute exact path="/artworks" component={Artworks} />
                 <Redirect exact path="/" to="/" />
                 <Redirect exact path="/logout" to="/login" />
             </Switch>

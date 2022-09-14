@@ -27,7 +27,7 @@ const SecondaryNavbar = () => {
             <Link to='/' style={linkStyle}>Home</Link>
             <Link to='/search' style={linkStyle}>Search</Link>
             <Link to='/upload' style={linkStyle}>Upload</Link>
-            <Link to='/gallery' style={linkStyle}>Gallery</Link>
+            <Link to='/artworks' style={linkStyle}>Gallery</Link>
         </NavUnlisted>
     </>
 }

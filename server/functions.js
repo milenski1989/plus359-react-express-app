@@ -17,3 +17,18 @@ const uploadArt = (title, author, width, height, image_url, callback) => {
     }
 
     exports.uploadArt = uploadArt
+
+    const getArts = (callback) => {
+        const query = `
+        SELECT * FROM artworks
+        `
+      database.query(query, (error, results) => {
+        if (error) {
+            callback(error)
+            return
+        }
+        callback(null, results)
+      })
+    }
+
+    exports.getArts = getArts
