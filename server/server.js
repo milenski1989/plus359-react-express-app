@@ -9,15 +9,14 @@ const functions = require("./functions");
 const session = require("express-session");
 const connection = require("./database");
 
-const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
+const { S3Client, PutObjectCommand, DeleteObjectCommand  } = require("@aws-sdk/client-s3");
 const uuid = require("uuid").v4;
 const multerS3 = require("multer-S3");
 const multer = require("multer");
 
 const app = express();
 
-app.use(express.static(path.join(__dirname + "/public")));
-//app.use(express.static('build'))
+app.use(express.static('build'))
 
 app.use(cors({ origin: "http://localhost:3000" }));
 app.use(bodyParser.json());
@@ -42,6 +41,7 @@ const upload = multer({
   storage: multerS3({
     s3,
     bucket: process.env.AWS_BUCKET_NAME,
+    acl: 'bucket-owner-full-control',
     metadata: (req, file, cb) => {
       cb(null, { fieldName: file.fieldname });
     },
@@ -52,7 +52,7 @@ const upload = multer({
   }),
 });
 
-const s3UploadV2 = async (file) => {
+const uploadImageToS3 = async (file) => {
 
   const param = {
     Bucket: process.env.AWS_BUCKET_NAME,
@@ -70,9 +70,11 @@ app.post("/upload", upload.single("file"), async (req, res) => {
   const width = req.body.width;
   const height = req.body.height;
   const uploaded = req.file.location;
+ 
 
-  const result = await s3UploadV2(req.file);
+  const result = await uploadImageToS3(req.file);
   const image_url = uploaded;
+  const image_key = `artworks/${req.file.originalname}`
 
   functions.uploadArt(
     title,
@@ -80,6 +82,7 @@ app.post("/upload", upload.single("file"), async (req, res) => {
     width,
     height,
     image_url,
+    image_key,
     (error, insertId) => {
       if (error) {
         res.send({ error: error.message });
@@ -92,6 +95,7 @@ app.post("/upload", upload.single("file"), async (req, res) => {
           width,
           height,
           image_url,
+          image_key
         });
       }
     }
@@ -107,6 +111,39 @@ app.get("/artworks", async (req, res) => {
     res.status(200).send({ artworks });
   });
 });
+
+app.delete("/artworks/:id", async (req, res) => {
+ 
+  console.log('REQ PARAMS', req.params)
+  const {id} = req.params
+
+  const query = `DELETE FROM artworks WHERE id = ?`
+
+  database.query(query, id, (error, result) => {
+       
+    if (error) {
+      console.log('ERR',error)
+      return
+  }
+  console.log('RES',result)
+ 
+  res.status(200).send({"deleted entry" : result.affectedRows})
+  })
+});
+
+// app.delete("/artworks/:filename", async (req, res) => {
+  
+//   s3.DeleteObjectCommand({Bucket: process.env.AWS_BUCKET_NAME, Key: req.body.filename})
+//   console.log('REQUEST', request)
+//   console.log('RESPONSE', response)
+// })
+
+app.put("/artworks/:id", async (req, res) => {
+  const {author, title, width, height, id} = req.body
+  const result = functions.updateArt(author, title, width, height, id)
+  res.status(200).send({"updated entry": title, "by author": author})
+  
+})
 
 app.post("/login", (req, res) => {
   let email = req.body.email;
