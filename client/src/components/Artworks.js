@@ -126,7 +126,7 @@ const Artworks = () => {
           </div>
         ) : (
           arts.map((art, id) => (
-            <div key={id}>
+            <div className="entryContainer" key={id}>
               <div className="imageContainer">
                 <img
                   src={art.image_url}
@@ -159,7 +159,7 @@ const Artworks = () => {
                   {editing && art.id === updatedArt.id && (
                     <>
                       <IconButton
-                        onClick={() => handleSave(updatedArt.id)}
+                        onClick={() =>handleSave(updatedArt.id)}
                         sx={{ marginTop: 0.75 }}
                       >
                         <SaveIcon />
@@ -176,7 +176,7 @@ const Artworks = () => {
                 </div>
               </div>
 
-              <div className="infoContainer storageFlexContainer">
+              <div className="infoContainer">
                 <TextField
                   value={
                     editing && art.id === updatedArt.id

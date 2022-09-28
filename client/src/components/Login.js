@@ -27,8 +27,7 @@ const Login = () => {
             })
         })
         const data = await response.json()
-        console.log(data)
-    
+
         if (response.status === 200) {
             myStorage.setItem('username', data.username)
             setLoading(false)
