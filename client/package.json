@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "proxy": "http://localhost:5000",
+  "homepage": "https://storage.app.plus359gallery.com",
   "dependencies": {
     "@babel/runtime": "^7.18.9",
     "@emotion/react": "^11.10.0",

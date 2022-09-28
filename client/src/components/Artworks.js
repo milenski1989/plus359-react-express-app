@@ -20,10 +20,7 @@ const Artworks = () => {
   const [loading, setLoading] = useState(false);
   const [deleting, setDeleting] = useState(false)
   const [editing, setEditing] = useState(false);
-
   const [editError, setEditError] = useState({ error: false, message: "" });
-
-  console.log("arts", arts);
 
   const getArts = async () => {
     setLoading(true);
@@ -64,7 +61,6 @@ const Artworks = () => {
     const response = await axios.put(`http://localhost:5000/artworks/${id}`, updatedArt )
     
     const data = await response.data
-    console.log(data)
     if (response.status === 200) {
     setEditing(false);
       setUpdatedArt({});

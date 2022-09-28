@@ -41,8 +41,6 @@ const Upload = () => {
         });
 
         if (res.status === 200 || res.status === 201) {
-            console.log("RESPONSE", res);
-
             setUploading(false);
             setUploadSuccessful(true)
         } else {
@@ -105,7 +103,7 @@ const Upload = () => {
                             <PhotoCamera />
                         </IconButton>
                         <TextField
-                            value={artFormData.title}
+                            value={artFormData.title || ""}
                             multiline={true}
                             label="Artwork Name"
                             variant="outlined"
@@ -120,7 +118,7 @@ const Upload = () => {
                         />
 
                         <TextField
-                            value={artFormData.author}
+                            value={artFormData.author || ""}
                             label="Author Name"
                             variant="outlined"
                             margin="normal"
@@ -134,7 +132,7 @@ const Upload = () => {
                             }
                         />
                         <TextField
-                            value={artFormData.height}
+                            value={artFormData.height || 0}
                             label="Height(cm)"
                             variant="outlined"
                             margin="normal"
@@ -149,7 +147,7 @@ const Upload = () => {
                             }
                         />
                         <TextField
-                            value={artFormData.width}
+                            value={artFormData.width || 0}
                             label="Width(cm)"
                             variant="outlined"
                             margin="normal"
