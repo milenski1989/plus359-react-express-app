@@ -13,6 +13,7 @@ const NavUnlisted = styled.ul`
   justify-content: space-around;
   margin-top: 0;
   margin-bottom: 3rem;
+  width: 100vw;
 `;
 
 const linkStyle = {

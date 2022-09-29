@@ -1,36 +1,63 @@
 .storageSection {
-    width: 100vw;
+    width: 90vw;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-.entryContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 1rem;
-    margin-bottom: 3rem;
+.gridContainer {
+    display: grid;
+}
+
+@media screen and (max-width: 600px) {
+    .gridContainer {
+        grid-template-columns: repeat(2, 45%);
+        column-gap: 10%;
+    }
+  }
+
+@media screen and (min-width: 601px) {
+    .gridContainer {
+        grid-template-columns: repeat(3, 30%);
+        column-gap: 5%;
+    }
+  }
+
+@media screen and (min-width: 901px) {
+    .gridContainer {
+        grid-template-columns: repeat(4, 22%);
+        column-gap: 4%;
+    }
+  }
+
+@media screen and (min-width: 1200px) {
+    .gridContainer {
+        grid-template-columns: repeat(5, 15%);
+        column-gap: 6%;
+    }
+  }
+
+.gridItem {
+   margin-bottom: 0.5rem;
 }
 
 .infoContainer {
     display: flex;
     flex-direction: column;
-    width: 300px;
+    align-items: center;
+    padding: 0.75rem;
 }
 
 .imageContainer {
-    width: 300px;   
+    width: 100%; 
 }
 
 .artImage {
     width: 100%;
     height: auto;
 }
-.btnFlexOuterContainer {
+
+.buttonsContainer {
     display: flex;
     flex-direction: row;
-    margin-top: -2rem;
-}
-
-.btnFlexInnerContainer {
-display: flex;
-flex-direction: row;
+    justify-content: space-between;
 }
