@@ -141,163 +141,152 @@ const Artworks = () => {
             />
           </div>
         ) : (
-          <div className="gridContainer">
-            {arts.map((art, id) => (
-              <>
-                <Dialog
-                  open={confirmDelete}
-                  onClose={() => setConfirmDelete(false)}
-                  aria-labelledby="alert-dialog-title"
-                  aria-describedby="alert-dialog-description"
-                >
-                  <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                      Are you sure you want to delete the entry? This is
-                      irreversible!
-                    </DialogContentText>
-                  </DialogContent>
-                  <DialogActions>
-                    <Button onClick={() => setConfirmDelete(false)}>
-                      Cancel
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        setDeleting(true),
-                          deleteSingleArt(art.id, setConfirmDelete(false));
-                      }}
-                      autoFocus
+
+            <div className="gridContainer">
+                {arts.map((art, id) => (
+                  <>
+                    <Dialog
+                      key={id}
+                      open={confirmDelete}
+                      onClose={() => setConfirmDelete(false)}
+                      aria-labelledby="alert-dialog-title"
+                      aria-describedby="alert-dialog-description"
                     >
-                      Delete
-                    </Button>
-                  </DialogActions>
-                </Dialog>
+                      <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                          Are you sure you want to delete the entry? This is
+                          irreversible!
+                        </DialogContentText>
+                      </DialogContent>
+                      <DialogActions>
+                        <Button onClick={() => setConfirmDelete(false)}>
+                          Cancel
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            setDeleting(true),
+                              deleteSingleArt(art.id, setConfirmDelete(false))
+                          } }
+                          autoFocus
+                        >
+                          Delete
+                        </Button>
+                      </DialogActions>
+                    </Dialog>
 
-                <div className="gridItem" key={id}>
-                  <div className="imageContainer">
-                    <img
-                      src={art.image_url}
-                      alt="No Preview"
-                      className="artImage"
-                    />
-                  </div>
+                    <div className="gridItem">
+                      <div className="imageContainer">
+                        <img
+                          src={art.image_url}
+                          alt="No Preview"
+                          className="artImage" />
+                      </div>
 
-                  <div className="buttonsContainer">
-                    <IconButton
-                      variant="outlined"
-                      onClick={hadleDelete}
-                      sx={{ marginTop: 0.75}}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
+                      <div className="buttonsContainer">
+                        <IconButton
+                          variant="outlined"
+                          onClick={hadleDelete}
+                          sx={{ marginTop: 0.75 }}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
 
-                      <IconButton
-                        variant="outlined"
-                        onClick={() => handleEdit(art.id)}
-                        sx={{ marginTop: 0.75 }}
-                      >
-                        <ModeEditIcon />
-                      </IconButton>
+                        <IconButton
+                          variant="outlined"
+                          onClick={() => handleEdit(art.id)}
+                          sx={{ marginTop: 0.75 }}
+                        >
+                          <ModeEditIcon />
+                        </IconButton>
 
-                      {editing && art.id === updatedArt.id && (
-                        <>
-                          <IconButton
-                            onClick={() => handleSave(updatedArt.id)}
-                            sx={{ marginTop: 0.75 }}
-                          >
-                            <SaveIcon />
-                          </IconButton>
+                        {editing && art.id === updatedArt.id && (
+                          <>
+                            <IconButton
+                              onClick={() => handleSave(updatedArt.id)}
+                              sx={{ marginTop: 0.75 }}
+                            >
+                              <SaveIcon />
+                            </IconButton>
 
-                          <IconButton
-                            onClick={handleCancel}
-                            sx={{ marginTop: 0.75 }}
-                          >
-                            <CancelIcon />
-                          </IconButton>
-                        </>
-                      )}
-                    <IconButton
-                      variant="standard"
-                      onClick={() => {
-                        //setViewDetails((prev) => (prev = !prev)),
-                          setEditing(false);
-                      }}
-                      sx={{ marginTop: 0.75 }}
-                    >
-                      <VisibilityIcon />
-                    </IconButton>
-                  </div>
-                
-                    <div className="infoContainer">
-                      <TextField
-                        value={
-                          editing && art.id === updatedArt.id
+                            <IconButton
+                              onClick={handleCancel}
+                              sx={{ marginTop: 0.75 }}
+                            >
+                              <CancelIcon />
+                            </IconButton>
+                          </>
+                        )}
+                        <IconButton
+                          variant="standard"
+                          onClick={() => {
+                            //setViewDetails((prev) => (prev = !prev)),
+                            setEditing(false);
+                          } }
+                          sx={{ marginTop: 0.75 }}
+                        >
+                          <VisibilityIcon />
+                        </IconButton>
+                      </div>
+
+                      <div className="infoContainer">
+                        <TextField
+                          value={editing && art.id === updatedArt.id
                             ? updatedArt.author
-                            : art.author
-                        }
-                        label="Author"
-                        variant={editing ? "outlined" : "standard"}
-                        margin="normal"
-                        type="text"
-                        required={editing}
-                        name="author"
-                        disabled={art.id !== updatedArt.id || !editing}
-                        onChange={(event) => onChangeEditableField(event)}
-                      />
+                            : art.author}
+                          label="Author"
+                          variant={editing ? "outlined" : "standard"}
+                          margin="normal"
+                          type="text"
+                          required={editing}
+                          name="author"
+                          disabled={art.id !== updatedArt.id || !editing}
+                          onChange={(event) => onChangeEditableField(event)} />
 
-                      <TextField
-                        value={
-                          editing && art.id === updatedArt.id
+                        <TextField
+                          value={editing && art.id === updatedArt.id
                             ? updatedArt.title
-                            : art.title
-                        }
-                        label="Title"
-                        variant={editing ? "outlined" : "standard"}
-                        margin="normal"
-                        type="text"
-                        name="title"
-                        disabled={art.id !== updatedArt.id || !editing}
-                        onChange={(event) => onChangeEditableField(event)}
-                      />
+                            : art.title}
+                          label="Title"
+                          variant={editing ? "outlined" : "standard"}
+                          margin="normal"
+                          type="text"
+                          name="title"
+                          disabled={art.id !== updatedArt.id || !editing}
+                          onChange={(event) => onChangeEditableField(event)} />
 
-                      <TextField
-                        value={
-                          editing && art.id === updatedArt.id
+                        <TextField
+                          value={editing && art.id === updatedArt.id
                             ? updatedArt.height
-                            : art.height
-                        }
-                        label="Height"
-                        variant={editing ? "outlined" : "standard"}
-                        margin="normal"
-                        type="number"
-                        required={editing}
-                        pattern="[0-9]*"
-                        name="height"
-                        disabled={art.id !== updatedArt.id || !editing}
-                        onChange={(event) => onChangeEditableField(event)}
-                      />
+                            : art.height}
+                          label="Height"
+                          variant={editing ? "outlined" : "standard"}
+                          margin="normal"
+                          type="number"
+                          required={editing}
+                          pattern="[0-9]*"
+                          name="height"
+                          disabled={art.id !== updatedArt.id || !editing}
+                          onChange={(event) => onChangeEditableField(event)} />
 
-                      <TextField
-                        value={
-                          editing && art.id === updatedArt.id
+                        <TextField
+                          value={editing && art.id === updatedArt.id
                             ? updatedArt.width
-                            : art.width
-                        }
-                        label="Width"
-                        variant={editing ? "outlined" : "standard"}
-                        margin="normal"
-                        type="number"
-                        required={editing}
-                        pattern="[0-9]*"
-                        name="width"
-                        disabled={art.id !== updatedArt.id || !editing}
-                        onChange={(event) => onChangeEditableField(event)}
-                      />
+                            : art.width}
+                          label="Width"
+                          variant={editing ? "outlined" : "standard"}
+                          margin="normal"
+                          type="number"
+                          required={editing}
+                          pattern="[0-9]*"
+                          name="width"
+                          disabled={art.id !== updatedArt.id || !editing}
+                          onChange={(event) => onChangeEditableField(event)} />
+                      </div>
+
                     </div>
-                  
-                </div>
-              </>
-            ))}
-          </div>
+                  </>
+                ))}
+              </div>
         )}
       </section>
     </>

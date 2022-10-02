@@ -2,14 +2,15 @@ const express = require("express");
 
 const router = express.Router();
 const path = require("path");
-const connection = require("../database");
 const adminServices = require("../services/adminServices");
 const dotenv = require("dotenv").config();
+
 const {
   S3Client,
   PutObjectCommand,
   DeleteObjectCommand,
 } = require("@aws-sdk/client-s3");
+
 const multerS3 = require("multer-s3");
 const multer = require("multer");
 
@@ -110,6 +111,19 @@ adminServices.deleteArt(id, (error, result) => {
     });
 })
 
+//delete all
+router.delete("/artworks", async (req, res) => {
+  const { id } = req.params;
+adminServices.deleteAll((error, result) => {
+    if (error) {
+        res.send({ error: error.message });
+        return;
+      }
+      res.status(200).send({ "deleted entries": result.affectedRows })
+    });
+})
+
+
 //update single entry in database
 //TO DO: update photo in S3 Bucket too
 router.put("/artworks/:id", async (req, res) => {
@@ -117,5 +131,18 @@ router.put("/artworks/:id", async (req, res) => {
   adminServices.updateArt(author, title, width, height, id);
   res.status(200).send({ "updated entry": title, "by author": author });
 });
+
+//search
+router.get("/search", async (req, res) => {
+  const {author} = req.query
+  console.log(req.query)
+  adminServices.search(author, (error, results) => {
+    if (error) {
+      res.send({error: error.message})
+      return
+    } else  res.status(200).send({'results': results}) 
+  })
+ 
+})
 
 module.exports = router;

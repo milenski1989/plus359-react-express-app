@@ -55,9 +55,27 @@ const getArts = (callback) => {
   });
 };
 
-//delete from database
+//search for an entry by author name
+
+const search = (param, callback) => {
+  const query = `
+  SELECT *
+FROM artworks
+WHERE author LIKE '%${param}%';
+        `
+
+  connection.query(query, (error, results) => {
+    if (error) {
+      callback(error)
+      return
+    }
+    callback(null, results)
+  });
+};
+
+//delete one from database
 const deleteArt = (id, callback) => {
-  const query = `DELETE FROM artworks WHERE id = ?`;
+  const query = `DELETE FROM artworks WHERE id = ?;`
 
   connection.query(query, id, (error, result) => {
     if (error) {
@@ -67,6 +85,19 @@ const deleteArt = (id, callback) => {
  callback(null, result)
   });
 };
+
+//delete all
+const deleteAll = (callback) => {
+  const query = `DELETE FROM artworks;`
+
+  connection.query(query, (error, result) => {
+    if (error) {
+     callback(error)
+      return;
+    }
+ callback(null, result)
+  });
+}
 
 //update in database
 const updateArt = (author, title, width, height, id) => {
@@ -89,4 +120,6 @@ module.exports = {
   getArts,
   deleteArt,
   updateArt,
+  search,
+  deleteAll
 };
