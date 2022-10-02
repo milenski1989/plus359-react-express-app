@@ -1,7 +1,8 @@
-.storageSection {
-    width: 90vw;
+.mainSection {
+    width: 100vw;
     margin-left: auto;
     margin-right: auto;
+    margin-top: 3rem;
 }
 
 .gridContainer {
@@ -10,7 +11,7 @@
 
 @media screen and (max-width: 600px) {
     .gridContainer {
-        grid-template-columns: repeat(2, 45%);
+        grid-template-columns: repeat(2, 30%);
         column-gap: 10%;
     }
   }

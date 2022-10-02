@@ -24,7 +24,6 @@ app.use(
 )
 
 app.use(adminRoutes)
+const PORT = process.env.PORT
 
-const PORT = process.env.PORT || 5000
-
-app.listen(PORT, () => console.log(`Server is connected on ${PORT}`))
+app.listen(PORT, () => console.log(`Server is connected on 5000`))

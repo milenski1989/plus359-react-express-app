@@ -7,13 +7,12 @@ import styled from "styled-components";
 
 const NavUnlisted = styled.ul`
   display: flex;
-  padding: 1.5rem;
   text-decoration: none;
   background: rgb(29, 28, 28);
   justify-content: space-around;
-  margin-top: 0;
-  margin-bottom: 3rem;
   width: 100vw;
+  padding: 1rem;
+  margin: 0;
 `;
 
 const linkStyle = {

@@ -30,7 +30,7 @@ const Artworks = () => {
   const [deleting, setDeleting] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editError, setEditError] = useState({ error: false, message: "" });
-  const [viewDetails, setViewDetails] = useState(false);
+//const [viewDetails, setViewDetails] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   const getArts = async () => {
@@ -83,11 +83,11 @@ const Artworks = () => {
       setUpdatedArt({});
       setEditError({ error: true, message: data.error.message.slice(0, 62) });
     }
-    setViewDetails(false);
+    //setViewDetails(false);
   };
 
   const handleEdit = (id) => {
-    setViewDetails(true);
+    //setViewDetails(true);
     setEditing(true);
     let copyOfArtDetails = arts.find((art) => art.id === id);
     setUpdatedArt({
@@ -105,7 +105,7 @@ const Artworks = () => {
 
   const handleCancel = () => {
     setEditing(false);
-    setViewDetails(false);
+    //setViewDetails(false);
   };
 
   const onChangeEditableField = (e) => {
@@ -128,7 +128,7 @@ const Artworks = () => {
       }
 
       <SecondaryNavbar />
-      <section className="storageSection mainSection">
+      <section className="mainSection">
         {loading || deleting ? (
           <div className="loader">
             <ThreeDots
@@ -218,7 +218,7 @@ const Artworks = () => {
                     <IconButton
                       variant="standard"
                       onClick={() => {
-                        setViewDetails((prev) => (prev = !prev)),
+                        //setViewDetails((prev) => (prev = !prev)),
                           setEditing(false);
                       }}
                       sx={{ marginTop: 0.75 }}
@@ -227,7 +227,6 @@ const Artworks = () => {
                     </IconButton>
                   </div>
                 
-                  {viewDetails && (
                     <div className="infoContainer">
                       <TextField
                         value={
@@ -294,7 +293,7 @@ const Artworks = () => {
                         onChange={(event) => onChangeEditableField(event)}
                       />
                     </div>
-                  )}
+                  
                 </div>
               </>
             ))}
