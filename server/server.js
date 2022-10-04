@@ -5,6 +5,7 @@ const cors = require("cors")
 const bodyParser = require("body-parser")
 const session = require("express-session")
 const adminRoutes = require('./routes/adminRoutes')
+const path = require('path')
 
 const app = express()
 
@@ -24,6 +25,7 @@ app.use(
 )
 
 app.use(adminRoutes)
+
 const PORT = process.env.PORT
 
 app.listen(PORT, () => console.log(`Server is connected on 5000`))

@@ -10,7 +10,6 @@ const NavUnlisted = styled.ul`
   text-decoration: none;
   background: rgb(29, 28, 28);
   justify-content: space-around;
-  width: 100vw;
   padding: 1rem;
   margin: 0;
 `;
@@ -25,7 +24,6 @@ const SecondaryNavbar = () => {
     return  <>
         <NavUnlisted>
             <Link to='/' style={linkStyle}>Home</Link>
-            <Link to='/search' style={linkStyle}>Search</Link>
             <Link to='/upload' style={linkStyle}>Upload</Link>
             <Link to='/artworks' style={linkStyle}>Gallery</Link>
         </NavUnlisted>

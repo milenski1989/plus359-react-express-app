@@ -3,7 +3,6 @@ import { Link } from "react-router-dom"
 import './NavBar.css'
 import styled from "styled-components";
 import { Button } from "@mui/material"
-import ImageSearchRoundedIcon from '@mui/icons-material/ImageSearchRounded'
 import UploadIcon from '@mui/icons-material/Upload';
 import CollectionsIcon from '@mui/icons-material/Collections';
 
@@ -29,14 +28,6 @@ const IconsNavbar = () => {
    
     return <>
         <NavUnlisted>
-            <Link to='/search' style={linkStyle}>{
-                <Button 
-                    variant="outlined"
-                    sx={{ width: 100, padding: 0.5, marginTop: 0.75 }} 
-                    startIcon={<ImageSearchRoundedIcon />}>
-                        Search
-                </Button>
-            }</Link>
             <Link to='/upload' style={linkStyle}>{
                 <Button 
                     variant="outlined"
