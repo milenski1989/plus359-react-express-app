@@ -13,7 +13,7 @@ const Signup = () => {
     const [loginError, setLoginError] = useState({error: false, message: ''})
 
     const handleSignup = async () => {
-        const response = await fetch("http://app.plus359gallery.eu/signup", {
+        const response = await fetch("https://app.plus359gallery.eu/api/signup", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

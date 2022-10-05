@@ -34,7 +34,7 @@ const Upload = () => {
         data.append("width", artFormData.width);
         data.append("height", artFormData.height);
 
-        const res = await axios.post("http://localhost:5000/upload", data, {
+        const res = await axios.post("https://app.plus359gallery.eu/api/upload", data, {
             headers: {
                 "Content-Type": "multipart/form-data",
             },

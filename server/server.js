@@ -24,7 +24,7 @@ app.use(
   })
 )
 
-app.use(adminRoutes)
+app.use('/api',adminRoutes)
 
 const PORT = process.env.PORT
 

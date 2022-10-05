@@ -21,30 +21,121 @@ import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Cancel";
 import axios from "axios";
 import SearchIcon from "@mui/icons-material/Search";
-import CollectionsIcon from '@mui/icons-material/Collections';
 
+const MyDialog = ({isModalOpen, handleCloseModal, children, image, editMode, updatedEntry, handleChangeEditableField}) => {
+    if (image) {
+        return (
+            <Dialog open={isModalOpen}>
+                <DialogContent>
+                    {children}
+    
+                    <div className="infoContainer">
+                        <TextField
+                            value={
+                                editMode && image.id === updatedEntry.id
+                                    ? updatedEntry.author
+                                    : image.author
+                            }
+                            label="Author"
+                            variant={editMode ? "outlined" : "standard"}
+                            margin="normal"
+                            type="text"
+                            required={editMode}
+                            name="author"
+                            disabled={image.id !== updatedEntry.id || !editMode}
+                            onChange={(event) => handleChangeEditableField(event)}
+                        />
+    
+                        <TextField
+                            value={
+                                editMode && image.id === updatedEntry.id
+                                    ? updatedEntry.title
+                                    : image.title
+                            }
+                            label="Title"
+                            variant={editMode ? "outlined" : "standard"}
+                            margin="normal"
+                            type="text"
+                            name="title"
+                            disabled={image.id !== updatedEntry.id || !editMode}
+                            onChange={(event) => handleChangeEditableField(event)}
+                        />
+    
+                        <TextField
+                            value={
+                                editMode && image.id === updatedEntry.id
+                                    ? updatedEntry.height
+                                    : image.height
+                            }
+                            label="Height"
+                            variant={editMode ? "outlined" : "standard"}
+                            margin="normal"
+                            type="number"
+                            required={editMode}
+                            pattern="[0-9]*"
+                            name="height"
+                            disabled={image.id !== updatedEntry.id || !editMode}
+                            onChange={(event) => handleChangeEditableField(event)}
+                        />
+    
+                        <TextField
+                            value={
+                                editMode && image.id === updatedEntry.id
+                                    ? updatedEntry.width
+                                    : image.width
+                            }
+                            label="Width"
+                            variant={editMode ? "outlined" : "standard"}
+                            margin="normal"
+                            type="number"
+                            required={editMode}
+                            pattern="[0-9]*"
+                            name="width"
+                            disabled={image.id !== updatedEntry.id || !editMode}
+                            onChange={(event) => handleChangeEditableField(event)}
+                        />
+                    </div>
+                </DialogContent>
+                <Tooltip title="Close"  placement="top">
+                    <IconButton
+                        aria-label="close"
+                        onClick={handleCloseModal}
+                        sx={{
+                            position: "absolute",
+                            right: 8,
+                            top: 8,
+                            color: (theme) => theme.palette.grey[500],
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                </Tooltip>
+    
+            </Dialog>
+        )
+    }
+   
+}
 
 const Artworks = () => {
     const [arts, setArts] = useState([]);
-    const [updatedArt, setUpdatedArt] = useState({});
+    const [updatedEntry, setUpdatedEntry] = useState({});
     const [loading, setLoading] = useState(false);
     const [deleting, setDeleting] = useState(false);
-    const [editing, setEditing] = useState(false);
+    const [editMode, setEditMode] = useState(false);
     const [editError, setEditError] = useState({ error: false, message: "" });
-    const [infoShown, setInfoShown] = useState(false);
-    const [imageId, setImageId] = useState(null)
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [image, setImage] = useState(null)
     const [params, setParams] = useState('')
-    const [foundItems, setFoundItems] = useState(null)
-    const [viewAll, setViewAll] = useState(false)
 
-    const handleSearch = async (value) => {
+    const handleSearchItems = async (value) => {
         if (value === '') return
         setLoading(true)
-        const response = await fetch(`http://localhost:5000/search?author=${value}`);
+        const response = await fetch(`https://app.plus359gallery.eu/api/search?author=${value}`);
         const data = await response.json();
 
         if (response.status === 200) {
-            setFoundItems(data.results)
+            setArts(data.results)
             setLoading(false)
         } else {
             console.log('ERROR')
@@ -53,14 +144,12 @@ const Artworks = () => {
     }
 
     const search = (params) => {
-        handleSearch(params)
-        setParams('')
-        setViewAll(false)
+        handleSearchItems(params)
     }
 
     const getArts = async () => {
         setLoading(true);
-        const response = await fetch("http://localhost:5000/artworks");
+        const response = await fetch("https://app.plus359gallery.eu/api/artworks");
 
         const data = await response.json();
 
@@ -73,51 +162,50 @@ const Artworks = () => {
     };
 
     useEffect(() => {
-        getArts();
-    }, []);
+        if (params === '') getArts();
+        else  search(params)
+    }, [params]);
 
     const deleteSingleArt = async (id) => {
         const response = await axios.delete(
-            `http://localhost:5000/artworks/${id}`,
+            `https://app.plus359gallery.eu/api/artworks/${id}`,
             { id: id }
         );
 
         if (response.status === 200) {
-            if (foundItems) setFoundItems(foundItems.filter(art => art.id !== id))
-            else setArts(arts.filter((art) => art.id !== id));
-           
+            setArts(arts.filter((art) => art.id !== id));
             setDeleting(false);
         }
     };
 
     const hadleDelete = (id) => {
         deleteSingleArt(id)
+        setIsModalOpen(false)
     };
 
     const editArt = async (id) => {
         const response = await axios.put(
-            `http://localhost:5000/artworks/${id}`,
-            updatedArt
+            `https://app.plus359gallery.eu/api/artworks/${id}`,
+            updatedEntry
         );
 
         const data = await response.data;
         if (response.status === 200) {
-            setEditing(false);
-            setUpdatedArt({});
-            !foundItems && getArts();
+            setEditMode(false);
+            setUpdatedEntry({});
+            getArts();
         } else {
-            setEditing(false);
-            setUpdatedArt({});
+            setEditMode(false);
+            setUpdatedEntry({});
             setEditError({ error: true, message: data.error.message.slice(0, 62) });
         }
     };
 
     const handleEdit = (id) => {
-        setEditing(true);
+        setEditMode(true);
         let copyOfArtDetails;
-        if (foundItems) copyOfArtDetails = foundItems.find((art) => art.id === id);
-        else copyOfArtDetails = arts.find((art) => art.id === id);
-        setUpdatedArt({
+        copyOfArtDetails = arts.find((art) => art.id === id);
+        setUpdatedEntry({
             id: copyOfArtDetails.id,
             author: copyOfArtDetails.author,
             title: copyOfArtDetails.title,
@@ -128,37 +216,87 @@ const Artworks = () => {
 
     const handleSave = (id) => {
         editArt(id);
+        setIsModalOpen(false)
     };
 
     const handleCancel = () => {
-        setEditing(false);
+        setEditMode(false);
     };
 
-    const onChangeEditableField = (e) => {
+    const handleChangeEditableField = (e) => {
         const { name, value } = e.target;
-        setUpdatedArt((prevState) => ({
+        setUpdatedEntry((prevState) => ({
             ...prevState,
             [name]: value,
         }));
     };
 
-    const handleOpenInfo = (id) => {
-        setInfoShown(true)
-        setImageId(id)
+    const handleOpenModal = (art) => {
+        setIsModalOpen(true)
+        setImage(art)
     }
 
-    const handleCloseInfo = () => {
-        setInfoShown(false)
-        setImageId(null)
+    const handleCloseModal = () => {
+        setIsModalOpen(false)
+        setEditMode(false)
+        setImage(null)
     } 
-
-    const handleViewAll = () => {
-        setViewAll(true)
-        setFoundItems(null)
-    }
-
+ 
     return (
         <>
+
+            <MyDialog
+                isModalOpen={isModalOpen}
+                handleCloseModal={handleCloseModal}
+                image={image}
+                editMode={editMode}
+                updatedEntry={updatedEntry}
+                handleChangeEditableField={handleChangeEditableField}
+            >
+                <div className="buttonsContainer">
+                    <Tooltip title="Delete"  placement="top">
+                        <IconButton
+                            variant="outlined"
+                            onClick={() => hadleDelete(image.id)}
+                            sx={{ marginTop: 0.75 }}
+                        >
+                            <DeleteIcon />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Edit"  placement="top">
+                        <IconButton
+                            variant="outlined"
+                            onClick={() => handleEdit(image.id)}
+                            sx={{ marginTop: 0.75 }}
+                        >
+                            <ModeEditIcon />
+                        </IconButton>
+                    </Tooltip>
+
+                    {editMode && image.id === updatedEntry.id && (
+                        <>
+                            <Tooltip title="Save" placement="top">
+                                <IconButton
+                                    onClick={() => handleSave(updatedEntry.id)}
+                                    sx={{ marginTop: 0.75 }}
+                                >
+                                    <SaveIcon />
+                                </IconButton>
+                            </Tooltip>
+
+                            <Tooltip title="Cancel"  placement="top">
+                                <IconButton
+                                    onClick={handleCancel}
+                                    sx={{ marginTop: 0.75 }}
+                                >
+                                    <CancelIcon />
+                                </IconButton>
+                            </Tooltip>
+                        </>
+                    )}
+                </div>
+            </MyDialog>
+
             {
                 <Message
                     open={editError.error}
@@ -169,19 +307,6 @@ const Artworks = () => {
             }
 
             <SecondaryNavbar />
-            
-            <div>
-                <Tooltip title="Show all">
-                    <IconButton
-                        style={{marginLeft:'0.5rem'}}
-                        variant="outlined"
-                        onClick={handleViewAll}
-                        sx={{ marginTop: 0.75 }}
-                    >
-                        <CollectionsIcon/>
-                    </IconButton>
-                </Tooltip>
-            </div>
 
             <div className="searchBar">
                 <Paper
@@ -215,298 +340,21 @@ const Artworks = () => {
                 </div>
             ) : (
                 <div className="gallery">
-                    {foundItems && !viewAll ? foundItems.map((art, id) => (
+                    {arts.map((art, id) => ( 
               
                         <div key={id}>
                             <Tooltip title="Show more">
                                 <IconButton
                                     style={{marginBottom:'-3rem'}}
                                     variant="outlined"
-                                    onClick={() => handleOpenInfo(art.id)}
-                                    sx={{ marginTop: 0.75 }}
-                                >
-                                    <InfoIcon />
-                                </IconButton>
-                            </Tooltip>
-      
-                            <Dialog open={infoShown}>
-                                <DialogContent>
-                                    <div className="buttonsContainer">
-                                        <Tooltip title="Delete"  placement="top">
-                                            <IconButton
-                                                variant="outlined"
-                                                onClick={() => hadleDelete(imageId)}
-                                                sx={{ marginTop: 0.75 }}
-                                            >
-                                                <DeleteIcon />
-                                            </IconButton>
-                                        </Tooltip>
-                                        <Tooltip title="Edit"  placement="top">
-                                            <IconButton
-                                                variant="outlined"
-                                                onClick={() => handleEdit(imageId)}
-                                                sx={{ marginTop: 0.75 }}
-                                            >
-                                                <ModeEditIcon />
-                                            </IconButton>
-                                        </Tooltip>
-
-                                        {editing && imageId === updatedArt.id && (
-                                            <>
-                                                <Tooltip title="Save"  placement="top">
-                                                    <IconButton
-                                                        onClick={() => handleSave(updatedArt.id)}
-                                                        sx={{ marginTop: 0.75 }}
-                                                    >
-                                                        <SaveIcon />
-                                                    </IconButton>
-                                                </Tooltip>
-
-                                                <Tooltip title="Cancel"  placement="top">
-                                                    <IconButton
-                                                        onClick={handleCancel}
-                                                        sx={{ marginTop: 0.75 }}
-                                                    >
-                                                        <CancelIcon />
-                                                    </IconButton>
-                                                </Tooltip>
-                                            </>
-                                        )}
-                                    </div>
-
-                                    <div className="infoContainer">
-                                        <TextField
-                                            value={
-                                                editing && imageId === updatedArt.id
-                                                    ? updatedArt.author
-                                                    : art.author
-                                            }
-                                            label="Author"
-                                            variant={editing ? "outlined" : "standard"}
-                                            margin="normal"
-                                            type="text"
-                                            required={editing}
-                                            name="author"
-                                            disabled={imageId !== updatedArt.id || !editing}
-                                            onChange={(event) => onChangeEditableField(event)}
-                                        />
-
-                                        <TextField
-                                            value={
-                                                editing && imageId === updatedArt.id
-                                                    ? updatedArt.title
-                                                    : art.title
-                                            }
-                                            label="Title"
-                                            variant={editing ? "outlined" : "standard"}
-                                            margin="normal"
-                                            type="text"
-                                            name="title"
-                                            disabled={imageId !== updatedArt.id || !editing}
-                                            onChange={(event) => onChangeEditableField(event)}
-                                        />
-
-                                        <TextField
-                                            value={
-                                                editing && imageId === updatedArt.id
-                                                    ? updatedArt.height
-                                                    : art.height
-                                            }
-                                            label="Height"
-                                            variant={editing ? "outlined" : "standard"}
-                                            margin="normal"
-                                            type="number"
-                                            required={editing}
-                                            pattern="[0-9]*"
-                                            name="height"
-                                            disabled={imageId !== updatedArt.id || !editing}
-                                            onChange={(event) => onChangeEditableField(event)}
-                                        />
-
-                                        <TextField
-                                            value={
-                                                editing && imageId === updatedArt.id
-                                                    ? updatedArt.width
-                                                    : art.width
-                                            }
-                                            label="Width"
-                                            variant={editing ? "outlined" : "standard"}
-                                            margin="normal"
-                                            type="number"
-                                            required={editing}
-                                            pattern="[0-9]*"
-                                            name="width"
-                                            disabled={imageId !== updatedArt.id || !editing}
-                                            onChange={(event) => onChangeEditableField(event)}
-                                        />
-                                    </div>
-                                </DialogContent>
-                                <Tooltip title="Close"  placement="top">
-                                    <IconButton
-                                        aria-label="close"
-                                        onClick={handleCloseInfo}
-                                        sx={{
-                                            position: "absolute",
-                                            right: 8,
-                                            top: 8,
-                                            color: (theme) => theme.palette.grey[500],
-                                        }}
-                                    >
-                                        <CloseIcon />
-                                    </IconButton>
-                                </Tooltip>
-
-                            </Dialog>
-                            <img
-                                src={art.image_url}
-                                alt="No Preview"
-                                className="artImage"
-                                style={{ width: "100%" }}
-                            />
-                
-                        </div>
-                    )) : arts.map((art, id) => (
-              
-                        <div key={id}>
-                            <Tooltip title="Show more">
-                                <IconButton
-                                    style={{marginBottom:'-3rem'}}
-                                    variant="outlined"
-                                    onClick={() => handleOpenInfo(art.id)}
+                                    onClick={() => handleOpenModal(art)}
                                     sx={{ marginTop: 0.75 }}
                                 >
                                     <InfoIcon />
                                 </IconButton>
                             </Tooltip>
 
-                            <Dialog open={infoShown}>
-                                <DialogContent>
-                                    <div className="buttonsContainer">
-                                        <Tooltip title="Delete"  placement="top">
-                                            <IconButton
-                                                variant="outlined"
-                                                onClick={() => hadleDelete(imageId)}
-                                                sx={{ marginTop: 0.75 }}
-                                            >
-                                                <DeleteIcon />
-                                            </IconButton>
-                                        </Tooltip>
-                                        <Tooltip title="Edit"  placement="top">
-                                            <IconButton
-                                                variant="outlined"
-                                                onClick={() => handleEdit(imageId)}
-                                                sx={{ marginTop: 0.75 }}
-                                            >
-                                                <ModeEditIcon />
-                                            </IconButton>
-                                        </Tooltip>
-
-                                        {editing && imageId === updatedArt.id && (
-                                            <>
-                                                <Tooltip title="Save"  placement="top">
-                                                    <IconButton
-                                                        onClick={() => handleSave(updatedArt.id)}
-                                                        sx={{ marginTop: 0.75 }}
-                                                    >
-                                                        <SaveIcon />
-                                                    </IconButton>
-                                                </Tooltip>
-
-                                                <Tooltip title="Cancel"  placement="top">
-                                                    <IconButton
-                                                        onClick={handleCancel}
-                                                        sx={{ marginTop: 0.75 }}
-                                                    >
-                                                        <CancelIcon />
-                                                    </IconButton>
-                                                </Tooltip>
-                                            </>
-                                        )}
-                                    </div>
-
-                                    <div className="infoContainer">
-                                        <TextField
-                                            value={
-                                                editing && imageId === updatedArt.id
-                                                    ? updatedArt.author
-                                                    : art.author
-                                            }
-                                            label="Author"
-                                            variant={editing ? "outlined" : "standard"}
-                                            margin="normal"
-                                            type="text"
-                                            required={editing}
-                                            name="author"
-                                            disabled={imageId !== updatedArt.id || !editing}
-                                            onChange={(event) => onChangeEditableField(event)}
-                                        />
-
-                                        <TextField
-                                            value={
-                                                editing && imageId === updatedArt.id
-                                                    ? updatedArt.title
-                                                    : art.title
-                                            }
-                                            label="Title"
-                                            variant={editing ? "outlined" : "standard"}
-                                            margin="normal"
-                                            type="text"
-                                            name="title"
-                                            disabled={imageId !== updatedArt.id || !editing}
-                                            onChange={(event) => onChangeEditableField(event)}
-                                        />
-
-                                        <TextField
-                                            value={
-                                                editing && imageId === updatedArt.id
-                                                    ? updatedArt.height
-                                                    : art.height
-                                            }
-                                            label="Height"
-                                            variant={editing ? "outlined" : "standard"}
-                                            margin="normal"
-                                            type="number"
-                                            required={editing}
-                                            pattern="[0-9]*"
-                                            name="height"
-                                            disabled={imageId !== updatedArt.id || !editing}
-                                            onChange={(event) => onChangeEditableField(event)}
-                                        />
-
-                                        <TextField
-                                            value={
-                                                editing && imageId === updatedArt.id
-                                                    ? updatedArt.width
-                                                    : art.width
-                                            }
-                                            label="Width"
-                                            variant={editing ? "outlined" : "standard"}
-                                            margin="normal"
-                                            type="number"
-                                            required={editing}
-                                            pattern="[0-9]*"
-                                            name="width"
-                                            disabled={imageId !== updatedArt.id || !editing}
-                                            onChange={(event) => onChangeEditableField(event)}
-                                        />
-                                    </div>
-                                </DialogContent>
-                                <Tooltip title="Close"  placement="top">
-                                    <IconButton
-                                        aria-label="close"
-                                        onClick={handleCloseInfo}
-                                        sx={{
-                                            position: "absolute",
-                                            right: 8,
-                                            top: 8,
-                                            color: (theme) => theme.palette.grey[500],
-                                        }}
-                                    >
-                                        <CloseIcon />
-                                    </IconButton>
-                                </Tooltip>
-
-                            </Dialog>
+                            
 
                             <img
                                 src={art.image_url}
