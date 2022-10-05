@@ -2,8 +2,8 @@ import { Button, TextField } from "@mui/material"
 import { useState } from "react"
 import { useHistory, useLocation } from "react-router-dom"
 import './App.css'
-import { ThreeDots } from "react-loader-spinner"
 import Message from "./Message"
+import Loader from "./Loader"
 
 const Login = () => {
 
@@ -18,7 +18,7 @@ const Login = () => {
     let { from } = location.state || { from: { pathname: '/' } }
 
     const handleLogin = async () => {
-        const response = await fetch("https://app.plus359gallery.eu/api/login", {
+        const response = await fetch("http://localhost:5000/api/login", {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
@@ -50,7 +50,7 @@ const Login = () => {
         /> }
         <div className="parent">
             <form className="loginSection">
-                {!loading ?
+                { loading ? <Loader /> : 
                     <><div className="loginField">
                         <TextField
                             id="email"
@@ -77,18 +77,9 @@ const Login = () => {
                             children="Log in"
                             variant="outlined"
                             onClick={handleSubmit} />
-                    </div></> :
-                    <div className="loader">
-                        <ThreeDots
-                            height="80"
-                            width="80"
-                            radius="9"
-                            color="#78FECF"
-                            ariaLabel="three-dots-loading"
-                            visible={true}
-                        />
-                    </div>
-                } 
+                    </div></>
+                }
+
             </form>
         </div>
     </>

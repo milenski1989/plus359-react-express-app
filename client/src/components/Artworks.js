@@ -1,121 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { ThreeDots } from "react-loader-spinner";
 import SecondaryNavbar from "./SecondaryNavbar";
 import "./Artworks.css";
 import "./App.css";
 import Message from "./Message";
 import InfoIcon from "@mui/icons-material/Info";
-import {
-    Dialog,
-    DialogContent,
-    IconButton,
-    InputBase,
-    Paper,
-    TextField,
-    Tooltip,
-} from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import { IconButton, InputBase, Paper, Tooltip } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Cancel";
 import axios from "axios";
 import SearchIcon from "@mui/icons-material/Search";
-
-const MyDialog = ({isModalOpen, handleCloseModal, children, image, editMode, updatedEntry, handleChangeEditableField}) => {
-    if (image) {
-        return (
-            <Dialog open={isModalOpen}>
-                <DialogContent>
-                    {children}
-    
-                    <div className="infoContainer">
-                        <TextField
-                            value={
-                                editMode && image.id === updatedEntry.id
-                                    ? updatedEntry.author
-                                    : image.author
-                            }
-                            label="Author"
-                            variant={editMode ? "outlined" : "standard"}
-                            margin="normal"
-                            type="text"
-                            required={editMode}
-                            name="author"
-                            disabled={image.id !== updatedEntry.id || !editMode}
-                            onChange={(event) => handleChangeEditableField(event)}
-                        />
-    
-                        <TextField
-                            value={
-                                editMode && image.id === updatedEntry.id
-                                    ? updatedEntry.title
-                                    : image.title
-                            }
-                            label="Title"
-                            variant={editMode ? "outlined" : "standard"}
-                            margin="normal"
-                            type="text"
-                            name="title"
-                            disabled={image.id !== updatedEntry.id || !editMode}
-                            onChange={(event) => handleChangeEditableField(event)}
-                        />
-    
-                        <TextField
-                            value={
-                                editMode && image.id === updatedEntry.id
-                                    ? updatedEntry.height
-                                    : image.height
-                            }
-                            label="Height"
-                            variant={editMode ? "outlined" : "standard"}
-                            margin="normal"
-                            type="number"
-                            required={editMode}
-                            pattern="[0-9]*"
-                            name="height"
-                            disabled={image.id !== updatedEntry.id || !editMode}
-                            onChange={(event) => handleChangeEditableField(event)}
-                        />
-    
-                        <TextField
-                            value={
-                                editMode && image.id === updatedEntry.id
-                                    ? updatedEntry.width
-                                    : image.width
-                            }
-                            label="Width"
-                            variant={editMode ? "outlined" : "standard"}
-                            margin="normal"
-                            type="number"
-                            required={editMode}
-                            pattern="[0-9]*"
-                            name="width"
-                            disabled={image.id !== updatedEntry.id || !editMode}
-                            onChange={(event) => handleChangeEditableField(event)}
-                        />
-                    </div>
-                </DialogContent>
-                <Tooltip title="Close"  placement="top">
-                    <IconButton
-                        aria-label="close"
-                        onClick={handleCloseModal}
-                        sx={{
-                            position: "absolute",
-                            right: 8,
-                            top: 8,
-                            color: (theme) => theme.palette.grey[500],
-                        }}
-                    >
-                        <CloseIcon />
-                    </IconButton>
-                </Tooltip>
-    
-            </Dialog>
-        )
-    }
-   
-}
+import MyDialog from "./MyDialog";
+import Loader from "./Loader";
 
 const Artworks = () => {
     const [arts, setArts] = useState([]);
@@ -131,7 +28,7 @@ const Artworks = () => {
     const handleSearchItems = async (value) => {
         if (value === '') return
         setLoading(true)
-        const response = await fetch(`https://app.plus359gallery.eu/api/search?author=${value}`);
+        const response = await fetch(`http://localhost:5000/api/search?author=${value}`);
         const data = await response.json();
 
         if (response.status === 200) {
@@ -149,7 +46,7 @@ const Artworks = () => {
 
     const getArts = async () => {
         setLoading(true);
-        const response = await fetch("https://app.plus359gallery.eu/api/artworks");
+        const response = await fetch("http://localhost:5000/api/artworks");
 
         const data = await response.json();
 
@@ -163,12 +60,18 @@ const Artworks = () => {
 
     useEffect(() => {
         if (params === '') getArts();
-        else  search(params)
+        else  {
+            const searchDelay = setTimeout(() => {
+                search(params)
+            }, 2000)
+          
+            return () => clearTimeout(searchDelay)
+        }
     }, [params]);
 
     const deleteSingleArt = async (id) => {
         const response = await axios.delete(
-            `https://app.plus359gallery.eu/api/artworks/${id}`,
+            `http://localhost:5000/api/artworks/${id}`,
             { id: id }
         );
 
@@ -185,7 +88,7 @@ const Artworks = () => {
 
     const editArt = async (id) => {
         const response = await axios.put(
-            `https://app.plus359gallery.eu/api/artworks/${id}`,
+            `http://localhost:5000/api/artworks/${id}`,
             updatedEntry
         );
 
@@ -244,7 +147,6 @@ const Artworks = () => {
  
     return (
         <>
-
             <MyDialog
                 isModalOpen={isModalOpen}
                 handleCloseModal={handleCloseModal}
@@ -328,16 +230,7 @@ const Artworks = () => {
             </div>
 
             {loading || deleting ? (
-                <div className="loader">
-                    <ThreeDots
-                        height="80"
-                        width="80"
-                        radius="9"
-                        color="#78FECF"
-                        ariaLabel="three-dots-loading"
-                        visible={true}
-                    />
-                </div>
+                <Loader/>
             ) : (
                 <div className="gallery">
                     {arts.map((art, id) => ( 
@@ -353,9 +246,7 @@ const Artworks = () => {
                                     <InfoIcon />
                                 </IconButton>
                             </Tooltip>
-
                             
-
                             <img
                                 src={art.image_url}
                                 alt="No Preview"

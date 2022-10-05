@@ -1,8 +1,8 @@
 import { Button, TextField } from "@mui/material"
 import { useState } from "react"
 import './App.css'
-import { ThreeDots } from "react-loader-spinner"
 import Message from "./Message"
+import Loader from "./Loader"
 
 const Signup = () => {
 
@@ -13,7 +13,7 @@ const Signup = () => {
     const [loginError, setLoginError] = useState({error: false, message: ''})
 
     const handleSignup = async () => {
-        const response = await fetch("https://app.plus359gallery.eu/api/signup", {
+        const response = await fetch("http://localhost:5000/api/signup", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -83,16 +83,7 @@ const Signup = () => {
                             variant="outlined"
                             onClick={handleSubmit} />
                     </div></> :
-                    <div className="loader">
-                        <ThreeDots
-                            height="80"
-                            width="80"
-                            radius="9"
-                            color="#78FECF"
-                            ariaLabel="three-dots-loading"
-                            visible={true}
-                        />
-                    </div>
+                    <Loader/>
                 } 
             </form>
         </div>

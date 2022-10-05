@@ -5,9 +5,9 @@ import { Button, IconButton, TextField } from "@mui/material";
 import "./App.css";
 import Message from "./Message";
 import SecondaryNavbar from "./SecondaryNavbar";
-import { ThreeDots } from "react-loader-spinner";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import axios from "axios";
+import Loader from "./Loader";
 
 const Upload = () => {
     const [artFormData, setArtFormData] = useState({
@@ -34,7 +34,7 @@ const Upload = () => {
         data.append("width", artFormData.width);
         data.append("height", artFormData.height);
 
-        const res = await axios.post("https://app.plus359gallery.eu/api/upload", data, {
+        const res = await axios.post("http://localhost:5000/api/upload", data, {
             headers: {
                 "Content-Type": "multipart/form-data",
             },
@@ -72,16 +72,7 @@ const Upload = () => {
                     />
                 }
                 {uploading ? (
-                    <div className="loader">
-                        <ThreeDots
-                            height="80"
-                            width="80"
-                            radius="9"
-                            color="#78FECF"
-                            ariaLabel="three-dots-loading"
-                            visible={true}
-                        />
-                    </div>
+                    <Loader/>
                 ) : (
                     <div className="flexContainer">
                         <Button variant="outlined" component="label">
