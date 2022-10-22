@@ -9,7 +9,7 @@ const path = require('path')
 
 const app = express()
 
-app.use(express.static('build'))
+app.use(express.static(path.join(__dirname, '/build')));
 
 app.use(cors({ origin: "http://localhost:3000" }))
 app.use(bodyParser.json())
@@ -25,6 +25,10 @@ app.use(
 )
 
 app.use('/api',adminRoutes)
+
+app.get('*', (req,res) =>{
+    res.sendFile(path.join(__dirname+'/build/index.html'));
+    });
 
 const PORT = process.env.PORT
 

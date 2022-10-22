@@ -22,19 +22,21 @@ const uploadArt = (
   author,
   width,
   height,
+  technique,
+  storageLocation,
   image_url,
   image_key,
   callback
 ) => {
   const query = `
-    INSERT INTO artworks (title, author, width, height, image_url, image_key)
-    VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO artworks (title, author, width, height, technique, storageLocation, image_url, image_key)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `;
-  const params = [title, author, width, height, image_url, image_key];
+  const params = [title, author, width, height,technique, storageLocation, image_url, image_key];
 
   connection.query(query, params, (error, result) => {
     if (error) {
-      callback(err);
+      callback(error);
       return;
     }
     callback(null, result.insertId);
@@ -86,25 +88,12 @@ const deleteArt = (id, callback) => {
   });
 };
 
-//delete all
-const deleteAll = (callback) => {
-  const query = `DELETE FROM artworks;`
-
-  connection.query(query, (error, result) => {
-    if (error) {
-     callback(error)
-      return;
-    }
- callback(null, result)
-  });
-}
-
 //update in database
-const updateArt = (author, title, width, height, id) => {
+const updateArt = (author, title, technique, storageLocation, width, height, id) => {
   const query = `
-      UPDATE artworks SET author = ?, title = ?, width = ?, height = ? WHERE id = ?
+      UPDATE artworks SET author = ?, title = ?, technique = ?, storageLocation = ?, width = ?, height = ? WHERE id = ?
       `;
-  const params = [author, title, width, height, id];
+  const params = [author, title, technique, storageLocation, width, height, id];
   connection.query(query, params, (error, result) => {
     if (error) {
       console.log("ERR", error);
@@ -120,6 +109,5 @@ module.exports = {
   getArts,
   deleteArt,
   updateArt,
-  search,
-  deleteAll
+  search
 };

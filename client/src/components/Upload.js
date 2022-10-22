@@ -11,8 +11,10 @@ import Loader from "./Loader";
 
 const Upload = () => {
     const [artFormData, setArtFormData] = useState({
-        title: "",
         author: "",
+        title: "",
+        technique: "",
+        storageLocation: 1,
         height: 0,
         width: 0,
     });
@@ -29,8 +31,10 @@ const Upload = () => {
         setUploading(true);
         const data = new FormData();
         data.append("file", file);
+        data.append("author", artFormData.author)
         data.append("title", artFormData.title);
-        data.append("author", artFormData.author);
+        data.append("technique", artFormData.technique)
+        data.append("storageLocation", artFormData.storageLocation)
         data.append("width", artFormData.width);
         data.append("height", artFormData.height);
 
@@ -41,6 +45,7 @@ const Upload = () => {
         });
 
         if (res.status === 200 || res.status === 201) {
+            console.log(res)
             setUploading(false);
             setUploadSuccessful(true)
         } else {
@@ -94,9 +99,22 @@ const Upload = () => {
                             <PhotoCamera />
                         </IconButton>
                         <TextField
+                            value={artFormData.author || ""}
+                            label="Artist"
+                            variant="outlined"
+                            margin="normal"
+                            type="text"
+                            onChange={(event) =>
+                                setArtFormData((prevState) => ({
+                                    ...prevState,
+                                    author: event.target.value,
+                                }))
+                            }
+                        />
+                        <TextField
                             value={artFormData.title || ""}
                             multiline={true}
-                            label="Artwork Name"
+                            label="Title"
                             variant="outlined"
                             margin="normal"
                             type="text"
@@ -107,19 +125,31 @@ const Upload = () => {
                                 }))
                             }
                         />
-
                         <TextField
-                            value={artFormData.author || ""}
-                            label="Author Name"
+                            value={artFormData.technique || ""}
+                            multiline={true}
+                            label="Technique"
                             variant="outlined"
                             margin="normal"
                             type="text"
-                            required
                             onChange={(event) =>
                                 setArtFormData((prevState) => ({
                                     ...prevState,
-                                    author: event.target.value,
+                                    technique: event.target.value,
                                 }))
+                            }
+                        />
+                        <TextField
+                            value={artFormData.storageLocation || 1}
+                            label="Location"
+                            variant="outlined"
+                            margin="normal"
+                            type="number"
+                            onChange={(event) => {console.log(event.target.value); return setArtFormData((prevState) => ({
+                                ...prevState,
+                                storageLocation: event.target.value,
+                            }))}
+                            
                             }
                         />
                         <TextField
@@ -128,7 +158,6 @@ const Upload = () => {
                             variant="outlined"
                             margin="normal"
                             type="number"
-                            required
                             pattern="[0-9]*"
                             onChange={(event) =>
                                 setArtFormData((prevState) => ({
@@ -143,7 +172,6 @@ const Upload = () => {
                             variant="outlined"
                             margin="normal"
                             type="number"
-                            required
                             pattern="[0-9]*"
                             onChange={(event) =>
                                 setArtFormData((prevState) => ({

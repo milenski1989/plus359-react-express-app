@@ -63,19 +63,19 @@ router.post("/login", async (req, res) => {
 
 //upload a photo with details to S3 Bucket and MySQL Database
 router.post("/upload", upload.single("file"), async (req, res) => {
-  const {title, author, width, height} = req.body
+  const {title, author, width, height, technique, storageLocation} = req.body
   const {location, originalname} = req.file
   const image_url = location;
   const image_key = originalname
 
   adminServices.uploadArt(
-    title, author, width, height, image_url, image_key,
-    (error, insertId) => {
+    title, author, width, height, technique, storageLocation, image_url, image_key,
+    (error, result) => {
       if (error) {
         res.send({ error: error.message });
         return;
       } else {
-        res.send({title, author, width, height, image_url, image_key});
+        res.send({title, author, width, height, technique, storageLocation, image_url, image_key});
       }
     }
   );
@@ -92,44 +92,25 @@ router.get("/artworks", async (req, res) => {
   });
 });
 
-//delete single entry from database
-//TO DO: delete the object from S3 Bucket too
-// app.delete("/artworks/:filename", async (req, res) => {
+//delete single entry from s3, then from db
+router.delete("/artworks/:filename", async (req, res) => {
+  const filename = req.params.filename
 
-//   s3.DeleteObjectCommand({Bucket: process.env.AWS_BUCKET_NAME, Key: req.body.filename})
-//   console.log('REQUEST', request)
-//   console.log('RESPONSE', response)
-// })
-
-router.delete("/artworks/:id", async (req, res) => {
-  const { id } = req.params;
-adminServices.deleteArt(id, (error, result) => {
-    if (error) {
-        res.send({ error: error.message });
-        return;
-      }
-      res.status(200).send({ "deleted entry": result.affectedRows })
-    });
+  await s3.send(new DeleteObjectCommand({Bucket: process.env.AWS_BUCKET_NAME, Key: filename}));
+   
+      adminServices.deleteArt(filename, async (error, result) => {
+        if (error) {
+          res.send({ error: error.message });
+          return;
+        }
+        res.status(200).send({"deletedEntry": result.affectedRows})
+        });
 })
-
-//delete all
-router.delete("/artworks", async (req, res) => {
-  const { id } = req.params;
-adminServices.deleteAll((error, result) => {
-    if (error) {
-        res.send({ error: error.message });
-        return;
-      }
-      res.status(200).send({ "deleted entries": result.affectedRows })
-    });
-})
-
 
 //update single entry in database
-//TO DO: update photo in S3 Bucket too
 router.put("/artworks/:id", async (req, res) => {
-  const { author, title, width, height, id } = req.body;
-  adminServices.updateArt(author, title, width, height, id);
+  const { author, title, technique, storageLocation, width, height, id } = req.body;
+  adminServices.updateArt(author, title, technique, storageLocation, width, height, id);
   res.status(200).send({ "updated entry": title, "by author": author });
 });
 

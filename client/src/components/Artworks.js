@@ -46,11 +46,11 @@ const Artworks = () => {
 
     const getArts = async () => {
         setLoading(true);
-        const response = await fetch("http://localhost:5000/api/artworks");
+        const res = await fetch("http://localhost:5000/api/artworks");
 
-        const data = await response.json();
+        const data = await res.json();
 
-        if (response.status === 200) {
+        if (res.status === 200) {
             setArts(data.artworks);
             setLoading(false);
         } else {
@@ -69,20 +69,27 @@ const Artworks = () => {
         }
     }, [params]);
 
-    const deleteSingleArt = async (id) => {
+    const deleteSingleArt = async (filename, id) => {
+
+        await axios.delete( `http://localhost:5000/api/artworks/${filename}`,
+            {filename: filename})
+
+     
         const response = await axios.delete(
             `http://localhost:5000/api/artworks/${id}`,
             { id: id }
         );
-
+        
         if (response.status === 200) {
             setArts(arts.filter((art) => art.id !== id));
             setDeleting(false);
         }
+        
+
     };
 
-    const hadleDelete = (id) => {
-        deleteSingleArt(id)
+    const hadleDelete = (filename, id) => {
+        deleteSingleArt(filename, id)
         setIsModalOpen(false)
     };
 
@@ -112,6 +119,8 @@ const Artworks = () => {
             id: copyOfArtDetails.id,
             author: copyOfArtDetails.author,
             title: copyOfArtDetails.title,
+            technique: copyOfArtDetails.technique,
+            storageLocation: copyOfArtDetails.storageLocation,
             height: copyOfArtDetails.height,
             width: copyOfArtDetails.width,
         });
@@ -159,7 +168,7 @@ const Artworks = () => {
                     <Tooltip title="Delete"  placement="top">
                         <IconButton
                             variant="outlined"
-                            onClick={() => hadleDelete(image.id)}
+                            onClick={() => hadleDelete(image.image_key, image.id)}
                             sx={{ marginTop: 0.75 }}
                         >
                             <DeleteIcon />
@@ -246,7 +255,7 @@ const Artworks = () => {
                                     <InfoIcon />
                                 </IconButton>
                             </Tooltip>
-                            
+
                             <img
                                 src={art.image_url}
                                 alt="No Preview"
