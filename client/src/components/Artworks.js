@@ -4,7 +4,7 @@ import "./Artworks.css";
 import "./App.css";
 import Message from "./Message";
 import InfoIcon from "@mui/icons-material/Info";
-import { IconButton, InputBase, Paper, Tooltip } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, InputBase, Paper, Tooltip } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import SaveIcon from "@mui/icons-material/Save";
@@ -19,6 +19,7 @@ const Artworks = () => {
     const [updatedEntry, setUpdatedEntry] = useState({});
     const [loading, setLoading] = useState(false);
     const [deleting, setDeleting] = useState(false);
+    const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false)
     const [editMode, setEditMode] = useState(false);
     const [editError, setEditError] = useState({ error: false, message: "" });
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -84,12 +85,11 @@ const Artworks = () => {
             setArts(arts.filter((art) => art.id !== id));
             setDeleting(false);
         }
-        
-
     };
 
     const hadleDelete = (filename, id) => {
         deleteSingleArt(filename, id)
+        setOpenDeleteConfirmation(false)
         setIsModalOpen(false)
     };
 
@@ -168,7 +168,7 @@ const Artworks = () => {
                     <Tooltip title="Delete"  placement="top">
                         <IconButton
                             variant="outlined"
-                            onClick={() => hadleDelete(image.image_key, image.id)}
+                            onClick={() => setOpenDeleteConfirmation(true) }
                             sx={{ marginTop: 0.75 }}
                         >
                             <DeleteIcon />
@@ -215,6 +215,28 @@ const Artworks = () => {
                     message={editError.message}
                     severity="error"
                 />
+            }
+
+            {
+                <Dialog
+                    open={openDeleteConfirmation}
+                    onClose={() => setOpenDeleteConfirmation(false)}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">
+                        {"Are you sure you want to delete the entry ?"}
+                    </DialogTitle>
+                    <DialogContent>
+                        
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => hadleDelete(image.image_key, image.id)}>Yes</Button>
+                        <Button onClick={() => setOpenDeleteConfirmation(false)} autoFocus>
+                      Cancel
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             }
 
             <SecondaryNavbar />

@@ -16,6 +16,7 @@ const login = (email, password, callback) => {
   });
 };
 
+//upload to Artworks and Storage tables, after object is created in the S3 Bucket
 const uploadArt = (
   title,
   author,
@@ -25,48 +26,57 @@ const uploadArt = (
   image_url,
   image_key,
   storageLocation,
-  callback) => {
-
-          connection.beginTransaction(err => {
+  callback
+) => {
+  connection.beginTransaction((err) => {
+    if (err) {
+      throw err;
+    }
+    connection.query(
+      "INSERT INTO artworks (title, author, width, height, technique, image_url, image_key, storageLocation) VALUES (?,?,?,?,?,?,?,?)",
+      [
+        title,
+        author,
+        width,
+        height,
+        technique,
+        image_url,
+        image_key,
+        storageLocation,
+      ],
+      (err) => {
+        if (err) {
+          connection.rollback(() => {
+            callback(err);
+            return;
+          });
+        }
+        connection.query(
+          "INSERT INTO storage (storageLocation) VALUES (?)",
+          [storageLocation],
+          (err, result, fields) => {
+            if (err) {
+              connection.rollback(() => {
+                callback(err);
+                return;
+              });
+            }
+            connection.commit((err) => {
               if (err) {
-                  throw err
+                connection.rollback(() => {
+                  callback(err);
+                  return;
+                });
               }
-               connection.query(
-                'INSERT INTO artworks (title, author, width, height, technique, image_url, image_key, storageLocation) VALUES (?,?,?,?,?,?,?,?)', [title, author, width, height, technique, image_url, image_key, storageLocation],
-                (err) => {
-                      if (err) {
-                            connection.rollback(() => {
-                            callback(err);
-                            return
-                          });
-                      }
-                       connection.query(
-                        'INSERT INTO storage (storageLocation) VALUES (?)', [storageLocation],(err, result, fields) => {
-                              if (err) {
-                                    connection.rollback(() => {
-                                    callback(err);
-                                    return
-                                  });
-                              }
-                               connection.commit((err) => {
-                                  if (err) {
-                                        connection.rollback(() => {
-                                        callback(err);
-                                        return
-                                      });
-                                     
-                                  }
-                                  callback(null, result)
-                                  connection.end()
-                            });
-                            
-                          })
-
-                  })
-          })
-         
-  
-}
+              callback(null, result);
+             
+            });
+          }
+        );
+      }
+    );
+  });
+};
 
 //get all entries from database
 const getArts = (callback) => {
@@ -89,14 +99,14 @@ const search = (param, callback) => {
   SELECT *
 FROM artworks
 WHERE author LIKE '%${param}%';
-        `
+        `;
 
   connection.query(query, (error, results) => {
     if (error) {
-      callback(error)
-      return
+      callback(error);
+      return;
     }
-    callback(null, results)
+    callback(null, results);
   });
 };
 
@@ -106,11 +116,12 @@ const deleteArt = (id, callback) => {
 
   connection.query(query, id, (error, result) => {
     if (error) {
-     callback(error)
+      callback(error);
       return;
     }
- callback(null, result)
+    callback(null, result);
   });
+ 
 };
 
 //update in database
@@ -134,5 +145,5 @@ module.exports = {
   getArts,
   deleteArt,
   updateArt,
-  search
+  search,
 };

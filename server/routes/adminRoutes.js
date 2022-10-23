@@ -61,11 +61,10 @@ router.post("/login", async (req, res) => {
   });
 });
 
-//upload a photo with details to S3 Bucket and MySQL Database
+//upload a photo with details to S3 Bucket and MySQL Database tables Artworks and Storage
 router.post("/upload", upload.single("file"), async (req, res) => {
   const {title, author, width, height, technique, storageLocation} = req.body
   const {location, originalname} = req.file
-  console.log('REQ FILE', req.file)
   const image_url = location;
   const image_key = originalname
 

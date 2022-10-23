@@ -55,19 +55,21 @@ const MyDialog = ({isModalOpen, handleCloseModal, children, image, editMode, upd
                         />
 
                         <TextField
-                            value={
-                                editMode && image.id === updatedEntry.id
-                                    ? updatedEntry.storageLocation
-                                    : image.storageLocation
-                            }
+                            // value={
+                            //     editMode && image.id === updatedEntry.id
+                            //         ? updatedEntry.storageLocation
+                            //         : image.storageLocation
+                            // }
+                            value={image.storageLocation}
                             label="Location"
-                            variant={editMode ? "outlined" : "standard"}
+                            //variant={editMode ? "outlined" : "standard"}
+                            variant="standard"
                             margin="normal"
-                            type="number"
-                            pattern="[0-9]*"
+                            type="text"
                             name="storageLocation"
-                            disabled={image.id !== updatedEntry.id || !editMode}
-                            onChange={(event) => handleChangeEditableField(event)}
+                            // disabled={image.id !== updatedEntry.id || !editMode}
+                            disabled
+                            // onChange={(event) => handleChangeEditableField(event)}
                         />
                         <TextField
                             value={
