@@ -16,32 +16,57 @@ const login = (email, password, callback) => {
   });
 };
 
-//upload to database
 const uploadArt = (
   title,
   author,
   width,
   height,
   technique,
-  storageLocation,
   image_url,
   image_key,
-  callback
-) => {
-  const query = `
-    INSERT INTO artworks (title, author, width, height, technique, storageLocation, image_url, image_key)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-  const params = [title, author, width, height,technique, storageLocation, image_url, image_key];
+  storageLocation,
+  callback) => {
 
-  connection.query(query, params, (error, result) => {
-    if (error) {
-      callback(error);
-      return;
-    }
-    callback(null, result.insertId);
-  });
-};
+          connection.beginTransaction(err => {
+              if (err) {
+                  throw err
+              }
+               connection.query(
+                'INSERT INTO artworks (title, author, width, height, technique, image_url, image_key, storageLocation) VALUES (?,?,?,?,?,?,?,?)', [title, author, width, height, technique, image_url, image_key, storageLocation],
+                (err) => {
+                      if (err) {
+                            connection.rollback(() => {
+                            callback(err);
+                            return
+                          });
+                      }
+                       connection.query(
+                        'INSERT INTO storage (storageLocation) VALUES (?)', [storageLocation],(err, result, fields) => {
+                              if (err) {
+                                    connection.rollback(() => {
+                                    callback(err);
+                                    return
+                                  });
+                              }
+                               connection.commit((err) => {
+                                  if (err) {
+                                        connection.rollback(() => {
+                                        callback(err);
+                                        return
+                                      });
+                                     
+                                  }
+                                  callback(null, result)
+                                  connection.end()
+                            });
+                            
+                          })
+
+                  })
+          })
+         
+  
+}
 
 //get all entries from database
 const getArts = (callback) => {
@@ -89,11 +114,11 @@ const deleteArt = (id, callback) => {
 };
 
 //update in database
-const updateArt = (author, title, technique, storageLocation, width, height, id) => {
+const updateArt = (author, title, technique, width, height, id) => {
   const query = `
-      UPDATE artworks SET author = ?, title = ?, technique = ?, storageLocation = ?, width = ?, height = ? WHERE id = ?
+      UPDATE artworks SET author = ?, title = ?, technique = ?, width = ?, height = ? WHERE id = ?
       `;
-  const params = [author, title, technique, storageLocation, width, height, id];
+  const params = [author, title, technique, width, height, id];
   connection.query(query, params, (error, result) => {
     if (error) {
       console.log("ERR", error);

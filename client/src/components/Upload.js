@@ -144,7 +144,7 @@ const Upload = () => {
                             label="Location"
                             variant="outlined"
                             margin="normal"
-                            type="number"
+                            type="text"
                             onChange={(event) => {console.log(event.target.value); return setArtFormData((prevState) => ({
                                 ...prevState,
                                 storageLocation: event.target.value,

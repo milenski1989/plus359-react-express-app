@@ -65,14 +65,22 @@ router.post("/login", async (req, res) => {
 router.post("/upload", upload.single("file"), async (req, res) => {
   const {title, author, width, height, technique, storageLocation} = req.body
   const {location, originalname} = req.file
+  console.log('REQ FILE', req.file)
   const image_url = location;
   const image_key = originalname
 
   adminServices.uploadArt(
-    title, author, width, height, technique, storageLocation, image_url, image_key,
-    (error, result) => {
+  title,
+  author,
+  width,
+  height,
+  technique,
+  image_url,
+  image_key,
+  storageLocation,
+    (error) => {
       if (error) {
-        res.send({ error: error.message });
+        res.send({error: error.message})
         return;
       } else {
         res.send({title, author, width, height, technique, storageLocation, image_url, image_key});
@@ -109,8 +117,8 @@ router.delete("/artworks/:filename", async (req, res) => {
 
 //update single entry in database
 router.put("/artworks/:id", async (req, res) => {
-  const { author, title, technique, storageLocation, width, height, id } = req.body;
-  adminServices.updateArt(author, title, technique, storageLocation, width, height, id);
+  const { author, title, technique, width, height, id } = req.body;
+  adminServices.updateArt(author, title, technique, width, height, id);
   res.status(200).send({ "updated entry": title, "by author": author });
 });
 
