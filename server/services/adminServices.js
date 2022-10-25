@@ -94,11 +94,17 @@ const getArts = (callback) => {
 
 //search for an entry by author name
 
-const search = (param, callback) => {
+const search = (key, callback) => {
   const query = `
   SELECT *
-FROM artworks
-WHERE author LIKE '%${param}%';
+  FROM artworks
+  WHERE
+  author LIKE '%${key}%' 
+  OR title LIKE '%${key}%'
+  OR technique LIKE '%${key}%'
+  OR width LIKE '%${key}%'
+  OR height LIKE '%${key}%'
+  OR storageLocation LIKE '%${key}%';
         `;
 
   connection.query(query, (error, results) => {

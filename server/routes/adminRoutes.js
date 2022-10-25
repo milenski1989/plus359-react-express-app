@@ -122,10 +122,10 @@ router.put("/artworks/:id", async (req, res) => {
 });
 
 //search
-router.get("/search", async (req, res) => {
-  const {author} = req.query
-  console.log(req.query)
-  adminServices.search(author, (error, results) => {
+router.get("/search/:key", async (req, res) => {
+ const {key} = req.params
+ 
+  adminServices.search(key, (error, results) => {
     if (error) {
       res.send({error: error.message})
       return

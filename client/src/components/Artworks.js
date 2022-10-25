@@ -24,12 +24,12 @@ const Artworks = () => {
     const [editError, setEditError] = useState({ error: false, message: "" });
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [image, setImage] = useState(null)
-    const [params, setParams] = useState('')
+    const [searchTerm, setSearchTerm] = useState('')
 
     const handleSearchItems = async (value) => {
         if (value === '') return
         setLoading(true)
-        const response = await fetch(`http://localhost:5000/api/search?author=${value}`);
+        const response = await fetch(`http://localhost:5000/api/search/${value}`);
         const data = await response.json();
 
         if (response.status === 200) {
@@ -41,8 +41,8 @@ const Artworks = () => {
         }
     }
 
-    const search = (params) => {
-        handleSearchItems(params)
+    const search = (searchTerm) => {
+        handleSearchItems(searchTerm)
     }
 
     const getArts = async () => {
@@ -60,15 +60,15 @@ const Artworks = () => {
     };
 
     useEffect(() => {
-        if (params === '') getArts();
+        if (searchTerm === '') getArts();
         else  {
             const searchDelay = setTimeout(() => {
-                search(params)
-            }, 2000)
+                search(searchTerm)
+            }, 800)
           
             return () => clearTimeout(searchDelay)
         }
-    }, [params]);
+    }, [searchTerm]);
 
     const deleteSingleArt = async (filename, id) => {
 
@@ -250,11 +250,11 @@ const Artworks = () => {
                         sx={{ ml: 1, flex: 1 }}
                         placeholder="Search..."
                         inputProps={{ "aria-label": "search" }}
-                        value={params}
-                        onChange={(e) => setParams(e.target.value)}
-                        name="param"
+                        value={searchTerm}
+                        onChange={(event) => setSearchTerm(event.target.value)}
+                        name="key"
                     />
-                    <IconButton type="button" name="author" onClick={() => search(params)} sx={{ p: "10px" }} aria-label="search">
+                    <IconButton type="button" name="author" onClick={() => search(searchTerm)} sx={{ p: "10px" }} aria-label="search">
                         <SearchIcon />
                     </IconButton>
                 </Paper>
