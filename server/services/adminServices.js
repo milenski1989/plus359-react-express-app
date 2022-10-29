@@ -19,13 +19,15 @@ const login = (email, password, callback) => {
 //upload to Artworks and Storage tables, after object is created in the S3 Bucket
 const uploadArt = (
   title,
-  author,
-  width,
-  height,
+  artist,
   technique,
+  dimensions,
+  price,
+  notes,
+  storageLocation,
+  cell,
   image_url,
   image_key,
-  storageLocation,
   callback
 ) => {
   connection.beginTransaction((err) => {
@@ -33,16 +35,17 @@ const uploadArt = (
       throw err;
     }
     connection.query(
-      "INSERT INTO artworks (title, author, width, height, technique, image_url, image_key, storageLocation) VALUES (?,?,?,?,?,?,?,?)",
+      "INSERT INTO artworks (title, artist, technique, dimensions, price, notes, storageLocation, image_url, image_key) VALUES (?,?,?,?,?,?,?,?,?)",
       [
         title,
-        author,
-        width,
-        height,
+        artist,
         technique,
+        dimensions,
+        price,
+        notes,
+        storageLocation,
         image_url,
         image_key,
-        storageLocation,
       ],
       (err) => {
         if (err) {
@@ -52,8 +55,8 @@ const uploadArt = (
           });
         }
         connection.query(
-          "INSERT INTO storage (storageLocation) VALUES (?)",
-          [storageLocation],
+          "INSERT INTO storage (storageLocation, cell) VALUES (?, ?)",
+          [storageLocation, cell],
           (err, result, fields) => {
             if (err) {
               connection.rollback(() => {
@@ -81,7 +84,10 @@ const uploadArt = (
 //get all entries from database
 const getArts = (callback) => {
   const query = `
-        SELECT * FROM artworks
+  SELECT artworks.id, artworks.artist, artworks.title, artworks.technique, artworks.dimensions, artworks.price, artworks.notes, artworks.image_url, artworks.image_key, storage.storageLocation, storage.cell
+  FROM artworks
+  JOIN storage
+  ON artworks.storageLocation = storage.storageLocation
         `;
   connection.query(query, (error, results) => {
     if (error) {
@@ -92,19 +98,22 @@ const getArts = (callback) => {
   });
 };
 
-//search for an entry by author name
-
+//search for an entry by artist name
 const search = (key, callback) => {
   const query = `
-  SELECT *
+  SELECT artworks.artist, artworks.title, artworks.technique, artworks.dimensions, artworks.price, artworks.notes, artworks.image_url, storage.storageLocation, storage.cell
   FROM artworks
+  JOIN storage
+  ON artworks.storageLocation = storage.storageLocation
   WHERE
-  author LIKE '%${key}%' 
-  OR title LIKE '%${key}%'
-  OR technique LIKE '%${key}%'
-  OR width LIKE '%${key}%'
-  OR height LIKE '%${key}%'
-  OR storageLocation LIKE '%${key}%';
+  artworks.artist LIKE '%${key}%' 
+  OR artworks.title LIKE '%${key}%'
+  OR artworks.technique LIKE '%${key}%'
+  OR artworks.dimensions LIKE '%${key}%'
+  OR artworks.price LIKE '%${key}%'
+  OR artworks.notes LIKE '%${key}%'
+  OR storage.storageLocation LIKE '%${key}%'
+  OR storage.cell LIKE '%${key}%';
         `;
 
   connection.query(query, (error, results) => {
@@ -131,11 +140,11 @@ const deleteArt = (id, callback) => {
 };
 
 //update in database
-const updateArt = (author, title, technique, width, height, id) => {
+const updateArt = (artist, title, technique, dimensions, price, notes, storageLocation, id) => {
   const query = `
-      UPDATE artworks SET author = ?, title = ?, technique = ?, width = ?, height = ? WHERE id = ?
+      UPDATE artworks SET artist = ?, title = ?, technique = ?, dimensions = ?, price = ?, notes = ?, storageLocation = ? WHERE id = ?
       `;
-  const params = [author, title, technique, width, height, id];
+  const params = [artist, title, technique, dimensions, price, notes, storageLocation, id];
   connection.query(query, params, (error, result) => {
     if (error) {
       console.log("ERR", error);

@@ -63,26 +63,28 @@ router.post("/login", async (req, res) => {
 
 //upload a photo with details to S3 Bucket and MySQL Database tables Artworks and Storage
 router.post("/upload", upload.single("file"), async (req, res) => {
-  const {title, author, width, height, technique, storageLocation} = req.body
+  const {title, artist, technique, dimensions, price, notes, storageLocation, cell} = req.body
   const {location, originalname} = req.file
   const image_url = location;
   const image_key = originalname
 
   adminServices.uploadArt(
   title,
-  author,
-  width,
-  height,
+  artist,
   technique,
+  dimensions,
+  price,
+  notes,
+  storageLocation,
+  cell,
   image_url,
   image_key,
-  storageLocation,
-    (error) => {
+    (error, result) => {
       if (error) {
         res.send({error: error.message})
         return;
       } else {
-        res.send({title, author, width, height, technique, storageLocation, image_url, image_key});
+        res.send({"result": result});
       }
     }
   );
@@ -116,9 +118,9 @@ router.delete("/artworks/:filename", async (req, res) => {
 
 //update single entry in database
 router.put("/artworks/:id", async (req, res) => {
-  const { author, title, technique, width, height, id } = req.body;
-  adminServices.updateArt(author, title, technique, width, height, id);
-  res.status(200).send({ "updated entry": title, "by author": author });
+  const {artist, title, technique, dimensions, price, notes, storageLocation, id} = req.body
+  adminServices.updateArt(artist, title, technique, dimensions, price, notes, storageLocation, id);
+  res.status(200).send({ "updated entry": title, "by artist": artist });
 });
 
 //search

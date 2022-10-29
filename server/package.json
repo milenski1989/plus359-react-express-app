@@ -12,7 +12,7 @@
     "dev": "nodemon server.js"
   },
   "keywords": [],
-  "author": "",
+  "artist": "",
   "license": "ISC",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.169.0",

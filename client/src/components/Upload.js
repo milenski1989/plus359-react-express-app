@@ -1,24 +1,40 @@
 /* eslint-disable react/no-children-prop */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./Upload.css";
-import { Button, IconButton, TextField } from "@mui/material";
+import {
+    Button,
+    FormControl,
+    IconButton,
+    InputLabel,
+    MenuItem,
+    Select,
+    TextField,
+} from "@mui/material";
 import "./App.css";
 import Message from "./Message";
 import SecondaryNavbar from "./SecondaryNavbar";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import axios from "axios";
 import Loader from "./Loader";
+import { locationCells, locations } from "./constants/constants";
 
 const Upload = () => {
-    const [artFormData, setArtFormData] = useState({
-        author: "",
+    const [inputsData, setInputsData] = useState({
+        artist: "",
         title: "",
         technique: "",
-        storageLocation: 1,
-        height: 0,
-        width: 0,
+        dimensions: "",
+        price: 0,
+        notes: "",
     });
 
+    const [formControlData, setFormControlData] = useState({
+        storageLocation: "",
+        cell: "",
+    });
+
+    const [cells, setCells] = useState([]);
+    const [stores, setStores] = useState([]);
     const [file, setFile] = useState();
     const [uploading, setUploading] = useState(false);
     const [uploadSuccessful, setUploadSuccessful] = useState(false);
@@ -27,16 +43,47 @@ const Upload = () => {
         message: "",
     });
 
+    useEffect(() => {
+        setStores(locations);
+    }, []);
+
+    const handleLocationSelect = (id) => {
+        const filteredCells = locationCells.filter(
+            (locationCell) => locationCell.locationNameId === id
+        );
+        setCells(filteredCells[0]);
+    };
+
+    const disableUploadButton = () => {
+        let disabled;
+        if (inputsData.artist === "" || inputsData.title === "" || inputsData.dimensions === "" || formControlData.storageLocation === "" || formControlData.cell === "") {
+            disabled = true
+        }
+
+        return disabled
+    }
+
+    const setRequiredFields = (label) => {
+        let required;
+        if (label === "artist" || label === "title" || label === "dimensions") {
+            required = true
+        }
+
+        return required
+    }
+
     const uploadFile = async () => {
         setUploading(true);
         const data = new FormData();
         data.append("file", file);
-        data.append("author", artFormData.author)
-        data.append("title", artFormData.title);
-        data.append("technique", artFormData.technique)
-        data.append("storageLocation", artFormData.storageLocation)
-        data.append("width", artFormData.width);
-        data.append("height", artFormData.height);
+        data.append("artist", inputsData.artist);
+        data.append("title", inputsData.title);
+        data.append("technique", inputsData.technique);
+        data.append("dimensions", inputsData.dimensions);
+        data.append("price", inputsData.price);
+        data.append("notes", inputsData.notes);
+        data.append("storageLocation", formControlData.storageLocation.name);
+        data.append("cell", formControlData.cell);
 
         const res = await axios.post("http://localhost:5000/api/upload", data, {
             headers: {
@@ -45,16 +92,14 @@ const Upload = () => {
         });
 
         if (res.status === 200 || res.status === 201) {
-            console.log(res)
             setUploading(false);
-            setUploadSuccessful(true)
+            setUploadSuccessful(true);
         } else {
             setUploading(false);
-            setUploadingError({ error: true, message: res.error.message })
+            setUploadingError({ error: true, message: res.error.message });
         }
-       
     };
-    
+
     return (
         <>
             {
@@ -66,7 +111,7 @@ const Upload = () => {
                 />
             }
             <SecondaryNavbar />
-       
+
             <section className="uploadSection mainSection">
                 {
                     <Message
@@ -77,7 +122,7 @@ const Upload = () => {
                     />
                 }
                 {uploading ? (
-                    <Loader/>
+                    <Loader />
                 ) : (
                     <div className="flexContainer">
                         <Button variant="outlined" component="label">
@@ -98,89 +143,81 @@ const Upload = () => {
                             <input hidden accept="image/*" type="file" />
                             <PhotoCamera />
                         </IconButton>
-                        <TextField
-                            value={artFormData.author || ""}
-                            label="Artist"
-                            variant="outlined"
-                            margin="normal"
-                            type="text"
-                            onChange={(event) =>
-                                setArtFormData((prevState) => ({
-                                    ...prevState,
-                                    author: event.target.value,
-                                }))
-                            }
-                        />
-                        <TextField
-                            value={artFormData.title || ""}
-                            multiline={true}
-                            label="Title"
-                            variant="outlined"
-                            margin="normal"
-                            type="text"
-                            onChange={(event) =>
-                                setArtFormData((prevState) => ({
-                                    ...prevState,
-                                    title: event.target.value,
-                                }))
-                            }
-                        />
-                        <TextField
-                            value={artFormData.technique || ""}
-                            multiline={true}
-                            label="Technique"
-                            variant="outlined"
-                            margin="normal"
-                            type="text"
-                            onChange={(event) =>
-                                setArtFormData((prevState) => ({
-                                    ...prevState,
-                                    technique: event.target.value,
-                                }))
-                            }
-                        />
-                        <TextField
-                            value={artFormData.storageLocation || 1}
-                            label="Location"
-                            variant="outlined"
-                            margin="normal"
-                            type="text"
-                            onChange={(event) => {console.log(event.target.value); return setArtFormData((prevState) => ({
-                                ...prevState,
-                                storageLocation: event.target.value,
-                            }))}
-                            
-                            }
-                        />
-                        <TextField
-                            value={artFormData.height || 0}
-                            label="Height(cm)"
-                            variant="outlined"
-                            margin="normal"
-                            type="number"
-                            pattern="[0-9]*"
-                            onChange={(event) =>
-                                setArtFormData((prevState) => ({
-                                    ...prevState,
-                                    height: event.target.value,
-                                }))
-                            }
-                        />
-                        <TextField
-                            value={artFormData.width || 0}
-                            label="Width(cm)"
-                            variant="outlined"
-                            margin="normal"
-                            type="number"
-                            pattern="[0-9]*"
-                            onChange={(event) =>
-                                setArtFormData((prevState) => ({
-                                    ...prevState,
-                                    width: event.target.value,
-                                }))
-                            }
-                        />
+
+                        {Object.entries(inputsData).map(([key, value]) => {
+                            return (
+                                <TextField
+                                    key={key}
+                                    value={value || ""}
+                                    error={(key === "artist" || key === "title" || key === "dimensions") && !value}
+                                    label={key}
+                                    required={setRequiredFields(key)}
+                                    variant="outlined"
+                                    margin="normal"
+                                    type={typeof value === "string" ? "text" : "number"}
+                                    onChange={(event) =>
+                                        setInputsData((prevState) => ({
+                                            ...prevState,
+                                            [key]: event.target.value,
+                                        }))
+                                    }
+                                />
+                            );
+                        })}
+
+                        <FormControl margin="normal" fullWidth error={!formControlData["storageLocation"]}>
+                            <InputLabel required>locations</InputLabel>
+                            <Select
+                                value={formControlData.storageLocation.id || ""}
+                                name="storageLocation"
+                                onChange={(event) => {
+                                    const { value } = event.target;
+                                    handleLocationSelect(value),
+                                    setFormControlData((prevState) => ({
+                                        ...prevState,
+                                        storageLocation: {
+                                            id: value,
+                                            name: stores[value - 1].name,
+                                        },
+                                    }));
+                                }}
+                            >
+                                {stores.length !== 0 &&
+                  stores.map((store, index) => {
+                      return (
+                          <MenuItem key={index} value={store.id}>
+                              {store.name}
+                          </MenuItem>
+                      );
+                  })}
+                            </Select>
+                        </FormControl>
+
+                        <FormControl margin="normal" fullWidth error={!formControlData["cell"]}>
+                            <InputLabel required>cells</InputLabel>
+                            <Select
+                                value={formControlData.cell}
+                                name="cell"
+                                onChange={(event) => {
+                                    setFormControlData((prevState) => ({
+                                        ...prevState,
+                                        cell: event.target.value,
+                                    }));
+                                }}
+                            >
+                                {cells.length !== 0 &&
+                  cells.cellNumbers.map((cell, index) => {
+                      return (
+                          <MenuItem key={index} value={cell}>
+                              {cell}
+                          </MenuItem>
+                      );
+                  })}
+                            </Select>
+                        </FormControl>
+
                         <Button
+                            disabled={disableUploadButton()}
                             children="Upload"
                             variant="outlined"
                             onClick={uploadFile}

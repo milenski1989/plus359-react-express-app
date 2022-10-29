@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import SecondaryNavbar from "./SecondaryNavbar";
 import "./Artworks.css";
 import "./App.css";
-import Message from "./Message";
 import InfoIcon from "@mui/icons-material/Info";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, InputBase, Paper, Tooltip } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -21,15 +20,14 @@ const Artworks = () => {
     const [deleting, setDeleting] = useState(false);
     const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false)
     const [editMode, setEditMode] = useState(false);
-    const [editError, setEditError] = useState({ error: false, message: "" });
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [image, setImage] = useState(null)
     const [searchTerm, setSearchTerm] = useState('')
 
-    const handleSearchItems = async (value) => {
-        if (value === '') return
+    const handleSearchByMultipleFields = async (searchTerm) => {
+        if (searchTerm === '') return
         setLoading(true)
-        const response = await fetch(`http://localhost:5000/api/search/${value}`);
+        const response = await fetch(`http://localhost:5000/api/search/${searchTerm}`);
         const data = await response.json();
 
         if (response.status === 200) {
@@ -39,10 +37,6 @@ const Artworks = () => {
             console.log('ERROR')
             setLoading(false)
         }
-    }
-
-    const search = (searchTerm) => {
-        handleSearchItems(searchTerm)
     }
 
     const getArts = async () => {
@@ -63,7 +57,7 @@ const Artworks = () => {
         if (searchTerm === '') getArts();
         else  {
             const searchDelay = setTimeout(() => {
-                search(searchTerm)
+                handleSearchByMultipleFields(searchTerm)
             }, 800)
           
             return () => clearTimeout(searchDelay)
@@ -99,7 +93,6 @@ const Artworks = () => {
             updatedEntry
         );
 
-        const data = await response.data;
         if (response.status === 200) {
             setEditMode(false);
             setUpdatedEntry({});
@@ -107,28 +100,30 @@ const Artworks = () => {
         } else {
             setEditMode(false);
             setUpdatedEntry({});
-            setEditError({ error: true, message: data.error.message.slice(0, 62) });
         }
     };
 
     const handleEdit = (id) => {
         setEditMode(true);
-        let copyOfArtDetails;
-        copyOfArtDetails = arts.find((art) => art.id === id);
+        let copyOfArtInfo;
+        copyOfArtInfo = arts.find((art) => art.id === id);
         setUpdatedEntry({
-            id: copyOfArtDetails.id,
-            author: copyOfArtDetails.author,
-            title: copyOfArtDetails.title,
-            technique: copyOfArtDetails.technique,
-            storageLocation: copyOfArtDetails.storageLocation,
-            height: copyOfArtDetails.height,
-            width: copyOfArtDetails.width,
+            id: copyOfArtInfo.id,
+            artist: copyOfArtInfo.artist,
+            title: copyOfArtInfo.title,
+            technique: copyOfArtInfo.technique,
+            dimensions: copyOfArtInfo.dimensions,
+            price: copyOfArtInfo.price,
+            notes: copyOfArtInfo.notes,
+            storageLocation: copyOfArtInfo.storageLocation,
+            cell: copyOfArtInfo.cell
         });
     };
 
     const handleSave = (id) => {
         editArt(id);
         setIsModalOpen(false)
+        getArts()
     };
 
     const handleCancel = () => {
@@ -209,15 +204,6 @@ const Artworks = () => {
             </MyDialog>
 
             {
-                <Message
-                    open={editError.error}
-                    handleClose={() => setEditError({ error: false, message: "" })}
-                    message={editError.message}
-                    severity="error"
-                />
-            }
-
-            {
                 <Dialog
                     open={openDeleteConfirmation}
                     onClose={() => setOpenDeleteConfirmation(false)}
@@ -254,7 +240,7 @@ const Artworks = () => {
                         onChange={(event) => setSearchTerm(event.target.value)}
                         name="key"
                     />
-                    <IconButton type="button" name="author" onClick={() => search(searchTerm)} sx={{ p: "10px" }} aria-label="search">
+                    <IconButton type="button" sx={{ p: "10px" }} aria-label="search">
                         <SearchIcon />
                     </IconButton>
                 </Paper>
