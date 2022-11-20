@@ -108,9 +108,11 @@ const Upload = () => {
                 storageLocation: "",
                 cell: "",
             })
+            setInputTouched(false)
         } else {
             setUploading(false);
             setUploadingError({ error: true, message: res.error.message });
+            setInputTouched(false)
         }
     };
 
@@ -176,7 +178,7 @@ const Upload = () => {
                             );
                         })}
 
-                        <FormControl margin="normal" fullWidth error={inputTouched && !formControlData["storageLocation"]}>
+                        <FormControl margin="normal" fullWidth>
                             <InputLabel required>locations</InputLabel>
                             <Select
                                 sx={{
@@ -185,6 +187,7 @@ const Upload = () => {
                                 value={formControlData.storageLocation.id || ""}
                                 name="storageLocation"
                                 onBlur={() => setInputTouched(true)}
+                                error={inputTouched && !formControlData["storageLocation"] }
                                 onChange={(event) => {
                                     const { value } = event.target;
                                     handleLocationSelect(value),
@@ -209,7 +212,7 @@ const Upload = () => {
                             </Select>
                         </FormControl>
 
-                        <FormControl margin="normal" fullWidth error={inputTouched && !formControlData["cell"]}>
+                        <FormControl margin="normal" fullWidth>
                             <InputLabel required>cells</InputLabel>
                             <Select
                                 sx={{
@@ -218,6 +221,7 @@ const Upload = () => {
                                 value={formControlData.cell}
                                 name="cell"
                                 onBlur={() => setInputTouched(true)}
+                                error={inputTouched && !formControlData["cell"] }
                                 onChange={(event) => {
                                     setFormControlData((prevState) => ({
                                         ...prevState,

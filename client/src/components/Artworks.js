@@ -13,7 +13,6 @@ import SearchIcon from "@mui/icons-material/Search";
 import MyDialog from "./MyDialog";
 
 const Artworks = () => {
-    // eslint-disable-next-line no-unused-vars
     const [arts, setArts] = useState([]);
     const [updatedEntry, setUpdatedEntry] = useState({});
     const [loading, setLoading] = useState(false);
@@ -48,6 +47,7 @@ const Artworks = () => {
 
 
         if (res.status === 200) {
+            setArts(data.artworks)
             setSearchResults(data.artworks)
             setLoading(false);
         } else {

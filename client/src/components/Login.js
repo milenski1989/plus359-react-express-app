@@ -1,9 +1,8 @@
-import { Button, CircularProgress } from "@mui/material"
+import { Button, CircularProgress, TextField } from "@mui/material"
 import { useState } from "react"
 import { useHistory, useLocation } from "react-router-dom"
 import './App.css'
 import Message from "./Message"
-import { ValidationTextField } from "./ValidationTextField"
 
 const Login = () => {
 
@@ -11,6 +10,7 @@ const Login = () => {
     const [password, setPassword] = useState('')
     const [loading, setLoading] = useState(false)
     const [loginError, setLoginError] = useState({error: false, message: ''})
+    const [inputTouched, setInputTouched] = useState(false)
 
     const history = useHistory()
     let myStorage = window.localStorage
@@ -55,23 +55,27 @@ const Login = () => {
                     : 
                     <>
                         <div className="loginField">
-                            <ValidationTextField
+                            <TextField
                                 id="email"
                                 label="Email"
                                 required
                                 variant="outlined"
                                 margin="normal"
+                                onBlur={() => setInputTouched(true)}
+                                error={inputTouched && !email}
                                 onChange={event => setEmail(event.target.value)}
                             />
                         </div>
                         <div className="loginField">
-                            <ValidationTextField
+                            <TextField
                                 id="password"
                                 label="Password"
                                 variant="outlined"
                                 type="password"
                                 required
                                 margin="normal"
+                                onBlur={() => setInputTouched(true)}
+                                error={inputTouched && !password}
                                 onChange={event => setPassword(event.target.value)} />
                         </div>
                         <div className="loginButton">
