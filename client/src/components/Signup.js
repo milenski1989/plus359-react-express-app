@@ -1,8 +1,7 @@
-import { Button, TextField } from "@mui/material"
+import { Button, CircularProgress, TextField } from "@mui/material"
 import { useState } from "react"
 import './App.css'
 import Message from "./Message"
-import Loader from "./Loader"
 
 const Signup = () => {
 
@@ -83,7 +82,7 @@ const Signup = () => {
                             variant="outlined"
                             onClick={handleSubmit} />
                     </div></> :
-                    <Loader/>
+                    <CircularProgress className="loader" color="primary" />
                 } 
             </form>
         </div>

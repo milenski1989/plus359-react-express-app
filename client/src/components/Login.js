@@ -1,9 +1,9 @@
-import { Button, TextField } from "@mui/material"
+import { Button, CircularProgress } from "@mui/material"
 import { useState } from "react"
 import { useHistory, useLocation } from "react-router-dom"
 import './App.css'
 import Message from "./Message"
-import Loader from "./Loader"
+import { ValidationTextField } from "./ValidationTextField"
 
 const Login = () => {
 
@@ -50,34 +50,38 @@ const Login = () => {
         /> }
         <div className="parent">
             <form className="loginSection">
-                { loading ? <Loader /> : 
-                    <><div className="loginField">
-                        <TextField
-                            id="email"
-                            label="Email"
-                            variant="outlined"
-                            margin="normal"
-                            type="text"
-                            required
-                            onChange={event => setEmail(event.target.value)} />
-                    </div><div className="loginField">
-                        <TextField
-                            id="password"
-                            label="Password"
-                            variant="outlined"
-                            type="password"
-                            required
-                            margin="normal"
-                            onChange={event => setPassword(event.target.value)} />
-                        {/* <img src={EyeIcon} className="clickable" onClick={handlePasswordVisibility} /> */}
-
-                    </div><div className="loginButton">
-                        <Button
-                            className="actionButton loginButton"
-                            children="Log in"
-                            variant="outlined"
-                            onClick={handleSubmit} />
-                    </div></>
+                { loading ? 
+                    <CircularProgress className="loader" color="primary" /> 
+                    : 
+                    <>
+                        <div className="loginField">
+                            <ValidationTextField
+                                id="email"
+                                label="Email"
+                                required
+                                variant="outlined"
+                                margin="normal"
+                                onChange={event => setEmail(event.target.value)}
+                            />
+                        </div>
+                        <div className="loginField">
+                            <ValidationTextField
+                                id="password"
+                                label="Password"
+                                variant="outlined"
+                                type="password"
+                                required
+                                margin="normal"
+                                onChange={event => setPassword(event.target.value)} />
+                        </div>
+                        <div className="loginButton">
+                            <Button
+                                className="actionButton loginButton"
+                                children="Log in"
+                                variant="outlined"
+                                onClick={handleSubmit} />
+                        </div>
+                    </>
                 }
 
             </form>

@@ -1,5 +1,4 @@
 const express = require("express");
-
 const router = express.Router();
 const path = require("path");
 const adminServices = require("../services/adminServices");
@@ -104,6 +103,7 @@ router.get("/artworks", async (req, res) => {
 //delete single entry from s3, then from db
 router.delete("/artworks/:filename", async (req, res) => {
   const filename = req.params.filename
+  console.log(req.params)
 
   await s3.send(new DeleteObjectCommand({Bucket: process.env.AWS_BUCKET_NAME, Key: filename}));
    
@@ -123,17 +123,17 @@ router.put("/artworks/:id", async (req, res) => {
   res.status(200).send({ "updated entry": title, "by artist": artist });
 });
 
-//search
-router.get("/search/:key", async (req, res) => {
- const {key} = req.params
+// //search
+// router.get("/search/:key", async (req, res) => {
+//  const {key} = req.params
  
-  adminServices.search(key, (error, results) => {
-    if (error) {
-      res.send({error: error.message})
-      return
-    } else  res.status(200).send({'results': results}) 
-  })
+//   adminServices.search(key, (error, results) => {
+//     if (error) {
+//       res.send({error: error.message})
+//       return
+//     } else  res.status(200).send({'results': results}) 
+//   })
  
-})
+// })
 
 module.exports = router;

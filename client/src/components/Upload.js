@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import "./Upload.css";
 import {
     Button,
+    CircularProgress,
     FormControl,
-    IconButton,
     InputLabel,
     MenuItem,
     Select,
@@ -13,12 +13,11 @@ import {
 import "./App.css";
 import Message from "./Message";
 import SecondaryNavbar from "./SecondaryNavbar";
-import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import axios from "axios";
-import Loader from "./Loader";
 import { locationCells, locations } from "./constants/constants";
 
 const Upload = () => {
+
     const [inputsData, setInputsData] = useState({
         artist: "",
         title: "",
@@ -43,6 +42,8 @@ const Upload = () => {
         message: "",
     });
 
+    const [inputTouched, setInputTouched] = useState(false)
+
     useEffect(() => {
         setStores(locations);
     }, []);
@@ -56,7 +57,7 @@ const Upload = () => {
 
     const disableUploadButton = () => {
         let disabled;
-        if (inputsData.artist === "" || inputsData.title === "" || inputsData.dimensions === "" || formControlData.storageLocation === "" || formControlData.cell === "") {
+        if (inputsData.artist === "" || inputsData.title === "" || inputsData.dimensions === "" || formControlData.storageLocation === "" || formControlData.cell === "" || !file) {
             disabled = true
         }
 
@@ -94,6 +95,19 @@ const Upload = () => {
         if (res.status === 200 || res.status === 201) {
             setUploading(false);
             setUploadSuccessful(true);
+            setInputsData({
+                artist: "",
+                title: "",
+                technique: "",
+                dimensions: "",
+                price: 0,
+                notes: "",
+            })
+
+            setFormControlData({
+                storageLocation: "",
+                cell: "",
+            })
         } else {
             setUploading(false);
             setUploadingError({ error: true, message: res.error.message });
@@ -116,45 +130,42 @@ const Upload = () => {
                 {
                     <Message
                         open={uploadSuccessful}
-                        handleClose={() => setUploadSuccessful(false)}
+                        handleClose={() => !file && setUploadSuccessful(false)}
                         message="Entry uploaded successfully!"
                         severity="success"
                     />
                 }
                 {uploading ? (
-                    <Loader />
+                    <CircularProgress className="loader" color="primary" />
                 ) : (
                     <div className="flexContainer">
-                        <Button variant="outlined" component="label">
-              Upload
-                            <input
-                                hidden
-                                accept="image/*"
-                                multiple
-                                type="file"
-                                onChange={(e) => setFile(e.target.files[0])}
-                            />
-                        </Button>
-                        <IconButton
-                            color="primary"
-                            aria-label="upload picture"
-                            component="label"
-                        >
-                            <input hidden accept="image/*" type="file" />
-                            <PhotoCamera />
-                        </IconButton>
+                           
+                        <TextField
+                            sx={{
+                                boxShadow: 1
+                            }}                            accept="image/*"
+                            multiple
+                            type="file"
+                            onChange={(e) => setFile(e.target.files[0])}
+                        />
+                       
+                    
 
                         {Object.entries(inputsData).map(([key, value]) => {
                             return (
                                 <TextField
                                     key={key}
+                                    onBlur={() => key === "artist" || key === "title" || key === "dimensions" && setInputTouched(true)}
                                     value={value || ""}
-                                    error={(key === "artist" || key === "title" || key === "dimensions") && !value}
+                                    error={(key === "artist" || key === "title" || key === "dimensions") && inputTouched && !value}
                                     label={key}
                                     required={setRequiredFields(key)}
                                     variant="outlined"
                                     margin="normal"
                                     type={typeof value === "string" ? "text" : "number"}
+                                    sx={{
+                                        boxShadow: 1
+                                    }}
                                     onChange={(event) =>
                                         setInputsData((prevState) => ({
                                             ...prevState,
@@ -165,15 +176,20 @@ const Upload = () => {
                             );
                         })}
 
-                        <FormControl margin="normal" fullWidth error={!formControlData["storageLocation"]}>
+                        <FormControl margin="normal" fullWidth error={inputTouched && !formControlData["storageLocation"]}>
                             <InputLabel required>locations</InputLabel>
                             <Select
+                                sx={{
+                                    boxShadow: 1
+                                }}
                                 value={formControlData.storageLocation.id || ""}
                                 name="storageLocation"
+                                onBlur={() => setInputTouched(true)}
                                 onChange={(event) => {
                                     const { value } = event.target;
                                     handleLocationSelect(value),
                                     setFormControlData((prevState) => ({
+                                       
                                         ...prevState,
                                         storageLocation: {
                                             id: value,
@@ -193,11 +209,15 @@ const Upload = () => {
                             </Select>
                         </FormControl>
 
-                        <FormControl margin="normal" fullWidth error={!formControlData["cell"]}>
+                        <FormControl margin="normal" fullWidth error={inputTouched && !formControlData["cell"]}>
                             <InputLabel required>cells</InputLabel>
                             <Select
+                                sx={{
+                                    boxShadow: 1
+                                }}
                                 value={formControlData.cell}
                                 name="cell"
+                                onBlur={() => setInputTouched(true)}
                                 onChange={(event) => {
                                     setFormControlData((prevState) => ({
                                         ...prevState,
@@ -221,7 +241,7 @@ const Upload = () => {
                             children="Upload"
                             variant="outlined"
                             onClick={uploadFile}
-                            sx={{ width: 100, padding: 0.5, marginTop: 0.75 }}
+                            sx={{ width: 100, padding: 0.5, marginTop: 0.75, boxShadow: 1 }}
                         />
                     </div>
                 )}

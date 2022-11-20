@@ -3,12 +3,11 @@ import CloseIcon from "@mui/icons-material/Close";
 
 const MyDialog = ({isModalOpen, handleCloseModal, children, image, editMode, updatedEntry, handleChangeEditableField}) => {
     if (image) {
-        console.log('img', image)
+   
         return (
             <Dialog open={isModalOpen}>
                 <DialogContent>
                     {children}
-    
                     <div className="infoContainer">
                         <TextField
                             value={

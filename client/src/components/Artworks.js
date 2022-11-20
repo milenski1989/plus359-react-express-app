@@ -3,7 +3,7 @@ import SecondaryNavbar from "./SecondaryNavbar";
 import "./Artworks.css";
 import "./App.css";
 import InfoIcon from "@mui/icons-material/Info";
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, InputBase, Paper, Tooltip } from "@mui/material";
+import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, InputBase, Paper, Tooltip } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import SaveIcon from "@mui/icons-material/Save";
@@ -11,9 +11,9 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import axios from "axios";
 import SearchIcon from "@mui/icons-material/Search";
 import MyDialog from "./MyDialog";
-import Loader from "./Loader";
 
 const Artworks = () => {
+    // eslint-disable-next-line no-unused-vars
     const [arts, setArts] = useState([]);
     const [updatedEntry, setUpdatedEntry] = useState({});
     const [loading, setLoading] = useState(false);
@@ -22,21 +22,21 @@ const Artworks = () => {
     const [editMode, setEditMode] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [image, setImage] = useState(null)
-    const [searchTerm, setSearchTerm] = useState('')
+    const [searchResults, setSearchResults] = useState([]);
 
-    const handleSearchByMultipleFields = async (searchTerm) => {
-        if (searchTerm === '') return
-        setLoading(true)
-        const response = await fetch(`http://localhost:5000/api/search/${searchTerm}`);
-        const data = await response.json();
+    const handleSearch = (e) => {
+        const {value} = e.target
+        const resultsArray = arts.filter(art => {
+            if (
+                art.artist.includes(value) || art.title.includes(value) || art.technique.includes(value) ||
+                art.dimensions.includes(value) || art.notes.includes(value) || art.storageLocation.includes(value) ||
+                art.cell.includes(value)
+            ) return true;
+           
+        })
+        console.log(resultsArray)
 
-        if (response.status === 200) {
-            setArts(data.results)
-            setLoading(false)
-        } else {
-            console.log('ERROR')
-            setLoading(false)
-        }
+        setSearchResults(resultsArray)
     }
 
     const getArts = async () => {
@@ -44,9 +44,11 @@ const Artworks = () => {
         const res = await fetch("http://localhost:5000/api/artworks");
 
         const data = await res.json();
+        console.log('data after fetch', data)
+
 
         if (res.status === 200) {
-            setArts(data.artworks);
+            setSearchResults(data.artworks)
             setLoading(false);
         } else {
             setLoading(false);
@@ -54,15 +56,8 @@ const Artworks = () => {
     };
 
     useEffect(() => {
-        if (searchTerm === '') getArts();
-        else  {
-            const searchDelay = setTimeout(() => {
-                handleSearchByMultipleFields(searchTerm)
-            }, 800)
-          
-            return () => clearTimeout(searchDelay)
-        }
-    }, [searchTerm]);
+        getArts()
+    }, []);
 
     const deleteSingleArt = async (filename, id) => {
 
@@ -76,7 +71,8 @@ const Artworks = () => {
         );
         
         if (response.status === 200) {
-            setArts(arts.filter((art) => art.id !== id));
+            getArts()
+            setSearchResults(arts.filter((art) => art.id !== id));
             setDeleting(false);
         }
     };
@@ -106,7 +102,7 @@ const Artworks = () => {
     const handleEdit = (id) => {
         setEditMode(true);
         let copyOfArtInfo;
-        copyOfArtInfo = arts.find((art) => art.id === id);
+        copyOfArtInfo = searchResults.find((art) => art.id === id);
         setUpdatedEntry({
             id: copyOfArtInfo.id,
             artist: copyOfArtInfo.artist,
@@ -144,7 +140,7 @@ const Artworks = () => {
     }
 
     const handleCloseModal = () => {
-        setIsModalOpen(false)
+        setIsModalOpen(prev => !prev)
         setEditMode(false)
         setImage(null)
     } 
@@ -236,9 +232,7 @@ const Artworks = () => {
                         sx={{ ml: 1, flex: 1 }}
                         placeholder="Search..."
                         inputProps={{ "aria-label": "search" }}
-                        value={searchTerm}
-                        onChange={(event) => setSearchTerm(event.target.value)}
-                        name="key"
+                        onChange={handleSearch}
                     />
                     <IconButton type="button" sx={{ p: "10px" }} aria-label="search">
                         <SearchIcon />
@@ -247,11 +241,11 @@ const Artworks = () => {
             </div>
 
             {loading || deleting ? (
-                <Loader/>
+                <CircularProgress className="loader" color="primary" />
             ) : (
                 <div className="gallery">
-                    {arts.map((art, id) => ( 
-              
+                    {searchResults.map((art, id) => ( 
+               
                         <div key={id}>
                             <Tooltip title="Show more">
                                 <IconButton
@@ -263,7 +257,6 @@ const Artworks = () => {
                                     <InfoIcon />
                                 </IconButton>
                             </Tooltip>
-
                             <img
                                 src={art.image_url}
                                 alt="No Preview"
@@ -272,6 +265,7 @@ const Artworks = () => {
                             />
                           
                         </div>
+                        
                     ))}
                 </div>
             )}

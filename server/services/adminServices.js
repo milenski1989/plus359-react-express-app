@@ -84,10 +84,10 @@ const uploadArt = (
 //get all entries from database
 const getArts = (callback) => {
   const query = `
-  SELECT artworks.id, artworks.artist, artworks.title, artworks.technique, artworks.dimensions, artworks.price, artworks.notes, artworks.image_url, artworks.image_key, storage.storageLocation, storage.cell
-  FROM artworks
-  JOIN storage
-  ON artworks.storageLocation = storage.storageLocation
+  SELECT a.id, a.artist, a.title, a.technique, a.dimensions, a.price, a.notes, a.image_url, a.image_key, s.storageLocation, s.cell
+  FROM artworks a
+  JOIN storage s
+  ON a.storageLocation = s.storageLocation AND a.id = s.id
         `;
   connection.query(query, (error, results) => {
     if (error) {
@@ -98,32 +98,32 @@ const getArts = (callback) => {
   });
 };
 
-//search for an entry by artist name
-const search = (key, callback) => {
-  const query = `
-  SELECT artworks.artist, artworks.title, artworks.technique, artworks.dimensions, artworks.price, artworks.notes, artworks.image_url, storage.storageLocation, storage.cell
-  FROM artworks
-  JOIN storage
-  ON artworks.storageLocation = storage.storageLocation
-  WHERE
-  artworks.artist LIKE '%${key}%' 
-  OR artworks.title LIKE '%${key}%'
-  OR artworks.technique LIKE '%${key}%'
-  OR artworks.dimensions LIKE '%${key}%'
-  OR artworks.price LIKE '%${key}%'
-  OR artworks.notes LIKE '%${key}%'
-  OR storage.storageLocation LIKE '%${key}%'
-  OR storage.cell LIKE '%${key}%';
-        `;
+// //search for an entry by artist name
+// const search = (key, callback) => {
+//   const query = `
+//   SELECT artworks.artist, artworks.title, artworks.technique, artworks.dimensions, artworks.price, artworks.notes, artworks.image_url, storage.storageLocation, storage.cell
+//   FROM artworks
+//   JOIN storage
+//   ON artworks.storageLocation = storage.storageLocation
+//   WHERE
+//   artworks.artist LIKE '%${key}%' 
+//   OR artworks.title LIKE '%${key}%'
+//   OR artworks.technique LIKE '%${key}%'
+//   OR artworks.dimensions LIKE '%${key}%'
+//   OR artworks.price LIKE '%${key}%'
+//   OR artworks.notes LIKE '%${key}%'
+//   OR storage.storageLocation LIKE '%${key}%'
+//   OR storage.cell LIKE '%${key}%';
+//         `;
 
-  connection.query(query, (error, results) => {
-    if (error) {
-      callback(error);
-      return;
-    }
-    callback(null, results);
-  });
-};
+//   connection.query(query, (error, results) => {
+//     if (error) {
+//       callback(error);
+//       return;
+//     }
+//     callback(null, results);
+//   });
+// };
 
 //delete one from database
 const deleteArt = (id, callback) => {
@@ -159,6 +159,5 @@ module.exports = {
   uploadArt,
   getArts,
   deleteArt,
-  updateArt,
-  search,
+  updateArt
 };
