@@ -7,7 +7,6 @@ const dotenv = require("dotenv").config();
 
 const {
   S3Client,
-  PutObjectCommand,
   DeleteObjectCommand,
 } = require("@aws-sdk/client-s3");
 
@@ -123,17 +122,4 @@ router.put("/artworks/:id", async (req, res) => {
   res.status(200).send({ "updated entry": title, "by artist": artist });
 });
 
-// //search
-// router.get("/search/:key", async (req, res) => {
-//  const {key} = req.params
- 
-//   adminServices.search(key, (error, results) => {
-//     if (error) {
-//       res.send({error: error.message})
-//       return
-//     } else  res.status(200).send({'results': results}) 
-//   })
- 
-// })
-
-module.exports = router;
+module.exports = router;  

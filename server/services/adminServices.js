@@ -98,45 +98,46 @@ const getArts = (callback) => {
   });
 };
 
-// //search for an entry by artist name
-// const search = (key, callback) => {
-//   const query = `
-//   SELECT artworks.artist, artworks.title, artworks.technique, artworks.dimensions, artworks.price, artworks.notes, artworks.image_url, storage.storageLocation, storage.cell
-//   FROM artworks
-//   JOIN storage
-//   ON artworks.storageLocation = storage.storageLocation
-//   WHERE
-//   artworks.artist LIKE '%${key}%' 
-//   OR artworks.title LIKE '%${key}%'
-//   OR artworks.technique LIKE '%${key}%'
-//   OR artworks.dimensions LIKE '%${key}%'
-//   OR artworks.price LIKE '%${key}%'
-//   OR artworks.notes LIKE '%${key}%'
-//   OR storage.storageLocation LIKE '%${key}%'
-//   OR storage.cell LIKE '%${key}%';
-//         `;
-
-//   connection.query(query, (error, results) => {
-//     if (error) {
-//       callback(error);
-//       return;
-//     }
-//     callback(null, results);
-//   });
-// };
-
 //delete one from database
 const deleteArt = (id, callback) => {
-  const query = `DELETE FROM artworks WHERE id = ?;`
 
-  connection.query(query, id, (error, result) => {
-    if (error) {
-      callback(error);
-      return;
+  connection.beginTransaction((err) => {
+    if (err) {
+      throw err;
     }
-    callback(null, result);
+    connection.query(
+     "DELETE FROM storage WHERE id = ?;", id,
+      (err) => {
+        if (err) {
+          connection.rollback(() => {
+            callback(err);
+            return;
+          });
+        }
+        connection.query(
+          "DELETE FROM artworks WHERE id = ?;", id,
+          (err, result, fields) => {
+            if (err) {
+              connection.rollback(() => {
+                callback(err);
+                return;
+              });
+            }
+            connection.commit((err) => {
+              if (err) {
+                connection.rollback(() => {
+                  callback(err);
+                  return;
+                });
+              }
+              callback(null, result);
+             
+            });
+          }
+        );
+      }
+    );
   });
- 
 };
 
 //update in database
@@ -161,3 +162,4 @@ module.exports = {
   deleteArt,
   updateArt
 };
+

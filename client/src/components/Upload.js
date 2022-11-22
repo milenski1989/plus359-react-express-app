@@ -24,7 +24,7 @@ const Upload = () => {
         technique: "",
         dimensions: "",
         price: 0,
-        notes: "",
+        notes: ""
     });
 
     const [formControlData, setFormControlData] = useState({
@@ -41,6 +41,7 @@ const Upload = () => {
         error: false,
         message: "",
     });
+    const [progress, setProgress] = useState(0)
 
     const [inputTouched, setInputTouched] = useState(false)
 
@@ -69,11 +70,15 @@ const Upload = () => {
         if (label === "artist" || label === "title" || label === "dimensions") {
             required = true
         }
-
         return required
     }
 
     const uploadFile = async () => {
+       
+        const onUploadProgress = (event) => {
+            const percentage = Math.round((100 * event.loaded) / event.total);
+            setProgress(percentage)
+        };
         setUploading(true);
         const data = new FormData();
         data.append("file", file);
@@ -90,9 +95,11 @@ const Upload = () => {
             headers: {
                 "Content-Type": "multipart/form-data",
             },
+            onUploadProgress
         });
 
         if (res.status === 200 || res.status === 201) {
+            setProgress(0)
             setUploading(false);
             setUploadSuccessful(true);
             setInputsData({
@@ -109,10 +116,12 @@ const Upload = () => {
                 cell: "",
             })
             setInputTouched(false)
+           
         } else {
+            setProgress(0)
             setUploading(false);
             setUploadingError({ error: true, message: res.error.message });
-            setInputTouched(false)
+            setInputTouched(false) 
         }
     };
 
@@ -132,13 +141,13 @@ const Upload = () => {
                 {
                     <Message
                         open={uploadSuccessful}
-                        handleClose={() => !file && setUploadSuccessful(false)}
+                        handleClose={() => setUploadSuccessful(false)}
                         message="Entry uploaded successfully!"
                         severity="success"
                     />
                 }
                 {uploading ? (
-                    <CircularProgress className="loader" color="primary" />
+                    <CircularProgress variant="determinate" value={progress} className="loader" color="primary" />
                 ) : (
                     <div className="flexContainer">
                            
