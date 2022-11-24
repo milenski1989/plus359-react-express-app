@@ -61,7 +61,7 @@ router.post("/login", async (req, res) => {
 
 //upload a photo with details to S3 Bucket and MySQL Database tables Artworks and Storage
 router.post("/upload", upload.single("file"), async (req, res) => {
-  const {title, artist, technique, dimensions, price, notes, storageLocation, cell} = req.body
+  const {title, artist, technique, dimensions, price, notes, storageLocation, cell, position} = req.body
   const {location, originalname} = req.file
   const image_url = location;
   const image_key = originalname
@@ -75,6 +75,7 @@ router.post("/upload", upload.single("file"), async (req, res) => {
   notes,
   storageLocation,
   cell,
+  position,
   image_url,
   image_key,
     (error, result) => {
@@ -99,10 +100,21 @@ router.get("/artworks", async (req, res) => {
   });
 });
 
+router.get("/storage/:cell", async (req, res) => {
+  const {cell} = req.params
+  adminServices.getArtsNumbers(cell, (error,storage) => {
+    
+    if (error) {
+      res.send({ error: error.message });
+      return;
+    }
+    res.status(200).send({ storage });
+  });
+});
+
 //delete single entry from s3, then from db
 router.delete("/artworks/:filename", async (req, res) => {
   const filename = req.params.filename
-  console.log(req.params)
 
   await s3.send(new DeleteObjectCommand({Bucket: process.env.AWS_BUCKET_NAME, Key: filename}));
    

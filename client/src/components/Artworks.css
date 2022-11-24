@@ -31,6 +31,24 @@
     column-width: 50%;
   }
 
+  .imageContainer {
+    position: relative;
+  }
+
+  .numberLabel {
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    color: white;
+    background: rgb(94, 88, 88);
+  }
+
+  .infoButtonContainer {
+    position: absolute;
+    bottom: 6px;
+    left: -6px
+  }
+
   .searchBar {
     margin-top: 3rem;
   }

@@ -88,7 +88,20 @@ const MyDialog = ({isModalOpen, handleCloseModal, children, image, editMode, upd
                         />
 
                         
-                        
+                        <TextField
+                            value={
+                                editMode && image.id === updatedEntry.id
+                                    ? updatedEntry.position
+                                    : image.position
+                            }
+                            label="Position"
+                            variant={editMode ? "outlined" : "standard"}
+                            margin="normal"
+                            type="text"
+                            name="position"
+                            disabled={image.id !== updatedEntry.id || !editMode}
+                            onChange={(event) => handleChangeEditableField(event)}
+                        />
                         <TextField
                             value={
                                 editMode && image.id === updatedEntry.id

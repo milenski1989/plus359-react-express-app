@@ -27,12 +27,13 @@ const Artworks = () => {
         const {value} = e.target
         const resultsArray = arts.filter(art => {
             if (
-                art.artist.includes(value) || art.title.includes(value) || art.technique.includes(value) ||
+                art.artist.includes(value) || art.title.includes(value) || art.image_key.includes(value) || art.technique.includes(value) ||
                 art.dimensions.includes(value) || art.notes.includes(value) || art.storageLocation.includes(value) ||
-                art.cell.includes(value)
+                art.cell.includes(value) || art.position.toString().includes(value)
             ) return true;
            
         })
+
         console.log(resultsArray)
 
         setSearchResults(resultsArray)
@@ -41,10 +42,7 @@ const Artworks = () => {
     const getArts = async () => {
         setLoading(true);
         const res = await fetch("http://localhost:5000/api/artworks");
-
         const data = await res.json();
-        console.log('data after fetch', data)
-
 
         if (res.status === 200) {
             setArts(data.artworks)
@@ -112,7 +110,8 @@ const Artworks = () => {
             price: copyOfArtInfo.price,
             notes: copyOfArtInfo.notes,
             storageLocation: copyOfArtInfo.storageLocation,
-            cell: copyOfArtInfo.cell
+            cell: copyOfArtInfo.cell,
+            position: copyOfArtInfo.position
         });
     };
 
@@ -247,23 +246,25 @@ const Artworks = () => {
                     {searchResults.map((art, id) => ( 
                
                         <div key={id}>
-                            <Tooltip title="Show more">
-                                <IconButton
-                                    style={{marginBottom:'-3rem'}}
-                                    variant="outlined"
-                                    onClick={() => handleOpenModal(art)}
-                                    sx={{ marginTop: 0.75 }}
-                                >
-                                    <InfoIcon />
-                                </IconButton>
-                            </Tooltip>
-                            <img
-                                src={art.image_url}
-                                alt="No Preview"
-                                className="artImage"
-                                style={{ width: "100%" }}
-                            />
-                          
+                            
+                            <div className="imageContainer">
+                                <Tooltip className="infoButtonContainer" title="Show more">
+                                    <IconButton
+                                        style={{marginBottom:'-3rem'}}
+                                        variant="outlined"
+                                        onClick={() => handleOpenModal(art)}
+                                        sx={{ marginTop: 0.75 }}
+                                    >
+                                        <InfoIcon />
+                                    </IconButton>
+                                </Tooltip>
+                                <img
+                                    src={art.image_url}
+                                    alt="No Preview"
+                                    className="artImage"
+                                    style={{ width: "100%" }}
+                                /> 
+                                <div className="numberLabel">{art.position}</div> </div>
                         </div>
                         
                     ))}

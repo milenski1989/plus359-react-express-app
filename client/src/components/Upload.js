@@ -14,7 +14,7 @@ import "./App.css";
 import Message from "./Message";
 import SecondaryNavbar from "./SecondaryNavbar";
 import axios from "axios";
-import { locationCells, locations } from "./constants/constants";
+import { createDropdownOptions, locationCells, locations } from "./constants/constants";
 
 const Upload = () => {
 
@@ -30,10 +30,12 @@ const Upload = () => {
     const [formControlData, setFormControlData] = useState({
         storageLocation: "",
         cell: "",
+        position: ""
     });
 
     const [cells, setCells] = useState([]);
     const [stores, setStores] = useState([]);
+    const [positions, setPositions] = useState([])
     const [file, setFile] = useState();
     const [uploading, setUploading] = useState(false);
     const [uploadSuccessful, setUploadSuccessful] = useState(false);
@@ -49,30 +51,7 @@ const Upload = () => {
         setStores(locations);
     }, []);
 
-    const handleLocationSelect = (id) => {
-        const filteredCells = locationCells.filter(
-            (locationCell) => locationCell.locationNameId === id
-        );
-        setCells(filteredCells[0]);
-    };
-
-    const disableUploadButton = () => {
-        let disabled;
-        if (inputsData.artist === "" || inputsData.title === "" || inputsData.dimensions === "" || formControlData.storageLocation === "" || formControlData.cell === "" || !file) {
-            disabled = true
-        }
-
-        return disabled
-    }
-
-    const setRequiredFields = (label) => {
-        let required;
-        if (label === "artist" || label === "title" || label === "dimensions") {
-            required = true
-        }
-        return required
-    }
-
+   
     const uploadFile = async () => {
        
         const onUploadProgress = (event) => {
@@ -90,6 +69,7 @@ const Upload = () => {
         data.append("notes", inputsData.notes);
         data.append("storageLocation", formControlData.storageLocation.name);
         data.append("cell", formControlData.cell);
+        data.append("position", formControlData.position)
 
         const res = await axios.post("http://localhost:5000/api/upload", data, {
             headers: {
@@ -114,6 +94,7 @@ const Upload = () => {
             setFormControlData({
                 storageLocation: "",
                 cell: "",
+                position: ""
             })
             setInputTouched(false)
            
@@ -124,6 +105,51 @@ const Upload = () => {
             setInputTouched(false) 
         }
     };
+
+    
+    
+
+    const handleLocationSelect = (id) => {
+        const filteredCells = locationCells.filter(
+            (locationCell) => locationCell.locationNameId === id
+        );
+        setCells(filteredCells[0]);
+    }; 
+
+    const disableUploadButton = () => {
+        let disabled;
+        if (inputsData.artist === "" || inputsData.title === "" || inputsData.dimensions === "" || formControlData.storageLocation === "" || formControlData.cell === "" || !file) {
+            disabled = true
+        }
+
+        return disabled
+    }
+
+    const setRequiredFields = (label) => {
+        let required;
+        if (label === "artist" || label === "title" || label === "dimensions") {
+            required = true
+        }
+        return required
+    }
+ 
+    const handleSelectPosition = (event) => {
+        setFormControlData((prevState) => ({
+            ...prevState,
+            position: event.target.value,
+        }));
+    }
+
+    const handleCellSelect = async (event) => {
+        const {value} = event.target
+        const availablePositions =  await createDropdownOptions(value).then(data => data)
+        setPositions(availablePositions)
+        
+        setFormControlData((prevState) => ({
+            ...prevState,
+            cell: value,
+        }));
+    }
 
     return (
         <>
@@ -154,8 +180,8 @@ const Upload = () => {
                         <TextField
                             sx={{
                                 boxShadow: 1
-                            }}                            accept="image/*"
-                            multiple
+                            }}                           
+                            accept="image/*"
                             type="file"
                             onChange={(e) => setFile(e.target.files[0])}
                         />
@@ -231,12 +257,7 @@ const Upload = () => {
                                 name="cell"
                                 onBlur={() => setInputTouched(true)}
                                 error={inputTouched && !formControlData["cell"] }
-                                onChange={(event) => {
-                                    setFormControlData((prevState) => ({
-                                        ...prevState,
-                                        cell: event.target.value,
-                                    }));
-                                }}
+                                onChange={handleCellSelect}
                             >
                                 {cells.length !== 0 &&
                   cells.cellNumbers.map((cell, index) => {
@@ -246,6 +267,26 @@ const Upload = () => {
                           </MenuItem>
                       );
                   })}
+                            </Select>
+                        </FormControl>
+                        
+                        <FormControl margin="normal" fullWidth>
+                            <InputLabel required>positions</InputLabel>
+                            <Select
+                                sx={{
+                                    boxShadow: 1
+                                }}
+                                value={formControlData.position}
+                                name="position"
+                                onChange={(event) => handleSelectPosition(event)}
+                            >
+                                {positions.length !==0 && positions.map((position, index) => {
+                                    return (
+                                        <MenuItem key={index} value={position}>
+                                            {position}
+                                        </MenuItem>
+                                    );
+                                })}
                             </Select>
                         </FormControl>
 

@@ -26,6 +26,7 @@ const uploadArt = (
   notes,
   storageLocation,
   cell,
+  position,
   image_url,
   image_key,
   callback
@@ -55,8 +56,8 @@ const uploadArt = (
           });
         }
         connection.query(
-          "INSERT INTO storage (storageLocation, cell) VALUES (?, ?)",
-          [storageLocation, cell],
+          "INSERT INTO storage (storageLocation, cell, position) VALUES (?, ?, ?)",
+          [storageLocation, cell, position],
           (err, result, fields) => {
             if (err) {
               connection.rollback(() => {
@@ -84,12 +85,27 @@ const uploadArt = (
 //get all entries from database
 const getArts = (callback) => {
   const query = `
-  SELECT a.id, a.artist, a.title, a.technique, a.dimensions, a.price, a.notes, a.image_url, a.image_key, s.storageLocation, s.cell
+  SELECT a.id, a.artist, a.title, a.technique, a.dimensions, a.price, a.notes, a.image_url, a.image_key, s.storageLocation, s.cell, s.position
   FROM artworks a
   JOIN storage s
   ON a.storageLocation = s.storageLocation AND a.id = s.id
         `;
   connection.query(query, (error, results) => {
+    if (error) {
+      callback(error);
+      return;
+    }
+    callback(null, results);
+  });
+};
+
+const getArtsNumbers = (cell, callback) => {
+  const query = `
+  SELECT * FROM storage WHERE cell = ?
+        `;
+        const params = [cell];
+
+  connection.query(query, params, (error, results) => {
     if (error) {
       callback(error);
       return;
@@ -151,7 +167,6 @@ const updateArt = (artist, title, technique, dimensions, price, notes, storageLo
       console.log("ERR", error);
       return;
     }
-    console.log("RES", result);
   });
 };
 
@@ -159,6 +174,7 @@ module.exports = {
   login,
   uploadArt,
   getArts,
+  getArtsNumbers,
   deleteArt,
   updateArt
 };
