@@ -115,10 +115,8 @@ router.post("/upload", upload.single("file"), async (req, res) => {
 
 try {
   const result = await Promise.all(promises);
-  console.log('RES',result[0].insertId)
   res.status(200).json(`Inserted entry with id ${result[0].insertId} on location ${storageLocation}, cell ${cell}, position ${position} `)
 } catch (error) {
-  console.log('ERR', error)
   res.status(400).json(error)
 }
 })

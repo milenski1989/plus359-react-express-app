@@ -3,10 +3,10 @@ import SecondaryNavbar from "./SecondaryNavbar";
 import "./Artworks.css";
 import "./App.css";
 import InfoIcon from "@mui/icons-material/Info";
-import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
 import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, InputBase, Paper, Tooltip } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import ModeEditIcon from "@mui/icons-material/ModeEdit";
+import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Cancel";
 import axios from "axios";
@@ -30,25 +30,11 @@ const Artworks = () => {
     const [currentImage, setCurrentImage] = useState(null)
     const [searchResults, setSearchResults] = useState([]);
 
-    const handleSearchByAllFields = (e) => {
-        const {value} = e.target
-        const resultsArray = entries.filter(art => {
-            if (
-                art.artist.includes(value) || art.title.includes(value) || art.image_key.includes(value) || art.technique.includes(value) ||
-                art.dimensions.includes(value) || art.notes.includes(value) || art.storageLocation.includes(value) ||
-                art.cell.includes(value) || art.position.toString().includes(value)
-            ) return true;
-           
-        })
-
-        setSearchResults(resultsArray)
-    }
-
+    //GET entries
     const getAllEntries = async () => {
         setLoading(true);
         const res = await fetch("http://localhost:5000/api/artworks");
         const data = await res.json();
-        console.log(data)
        
         if (res.status === 200) {
             setEntries(data)
@@ -61,6 +47,7 @@ const Artworks = () => {
      
     };
 
+    //download original image
     const downloadImage = (downloadUrl, name ) => {
         saveAs(downloadUrl, name)
     }
@@ -69,6 +56,91 @@ const Artworks = () => {
         getAllEntries()
     }, []);
 
+    //handle search by all fields
+    const handleSearchByAllFields = (e) => {
+        const {value} = e.target
+        const resultsArray = entries.filter(art => {
+            if (
+                art.artist.includes(value) || art.title.includes(value) || art.image_key.includes(value) || art.technique.includes(value) ||
+                art.dimensions.includes(value) || art.notes.includes(value) || art.storageLocation.includes(value) ||
+                art.cell.includes(value) || art.position.toString().includes(value)
+            ) return true;
+        })
+
+        setSearchResults(resultsArray)
+    }
+
+    //handle open info modal
+    const handleOpenInfoModal = (art) => {
+        setIsInfoModalOpen(true)
+        setCurrentImage(art)
+    }
+
+    //handle close info modal
+    const handleCloseInfoModal = () => {
+        setIsInfoModalOpen(prev => !prev)
+        setIsEditMode(false)
+        setCurrentImage(null)
+    } 
+
+    //handle change editable field in modal
+    const handleChangeEditableField = (e) => {
+        const { name, value } = e.target;
+        setUpdatedEntry(prevState => ({
+            ...prevState,
+            [name]: value,
+        }));
+    };
+
+    //UPDATE entry - THERE IS MORE TO DO
+    const editInfo = async (id) => {
+        const response = await axios.put(
+            `http://localhost:5000/api/artworks/${id}`,
+            updatedEntry
+        );
+
+        if (response.status === 200) {
+            setIsEditMode(false);
+            setUpdatedEntry({});
+            getAllEntries();
+        } else {
+            setIsEditMode(false);
+            setUpdatedEntry({});
+        }
+    };
+
+    //handle copy original img info to prefill the editable fields
+    const handlePrefillEditableFields = (id) => {
+        setIsEditMode(true);
+        let copyOfEntry;
+        copyOfEntry = searchResults.find((art) => art.id === id);
+        setUpdatedEntry({
+            id: copyOfEntry.id,
+            artist: copyOfEntry.artist,
+            title: copyOfEntry.title,
+            technique: copyOfEntry.technique,
+            dimensions: copyOfEntry.dimensions,
+            price: copyOfEntry.price,
+            notes: copyOfEntry.notes,
+            storageLocation: copyOfEntry.storageLocation,
+            cell: copyOfEntry.cell,
+            position: copyOfEntry.position
+        });
+    };
+
+    //handle save edited info
+    const handleSaveEditedInfo = (id) => {
+        editInfo(id);
+        setIsInfoModalOpen(false)
+        getAllEntries()
+    };
+
+    //handle cancel edit mode
+    const handleCancelEditMode = () => {
+        setIsEditMode(false);
+    };
+
+    //DELETE thumbnail, original image and entry
     const deleteImageAndEntry = async (originalFilename ,filename, id) => {
         setIsDeleting(true);
 
@@ -89,75 +161,13 @@ const Artworks = () => {
         
     };
 
+    //handle delete thumbnail, original image and entry
     const hadleDeleteImageAndEntry = (originalName, filename, id) => {
         deleteImageAndEntry(originalName, filename, id)
         setIsDeleteConfOpen(false)
         setIsInfoModalOpen(false)
     };
 
-    const editInfo = async (id) => {
-        const response = await axios.put(
-            `http://localhost:5000/api/artworks/${id}`,
-            updatedEntry
-        );
-
-        if (response.status === 200) {
-            setIsEditMode(false);
-            setUpdatedEntry({});
-            getAllEntries();
-        } else {
-            setIsEditMode(false);
-            setUpdatedEntry({});
-        }
-    };
-
-    const handleEditInfo = (id) => {
-        setIsEditMode(true);
-        let copyOfEntry;
-        copyOfEntry = searchResults.find((art) => art.id === id);
-        setUpdatedEntry({
-            id: copyOfEntry.id,
-            artist: copyOfEntry.artist,
-            title: copyOfEntry.title,
-            technique: copyOfEntry.technique,
-            dimensions: copyOfEntry.dimensions,
-            price: copyOfEntry.price,
-            notes: copyOfEntry.notes,
-            storageLocation: copyOfEntry.storageLocation,
-            cell: copyOfEntry.cell,
-            position: copyOfEntry.position
-        });
-    };
-
-    const handleSaveEditedInfo = (id) => {
-        editInfo(id);
-        setIsInfoModalOpen(false)
-        getAllEntries()
-    };
-
-    const handleCancelEditMode = () => {
-        setIsEditMode(false);
-    };
-
-    const handleChangeEditableField = (e) => {
-        const { name, value } = e.target;
-        setUpdatedEntry(prevState => ({
-            ...prevState,
-            [name]: value,
-        }));
-    };
-
-    const handleOpenInfoModal = (art) => {
-        setIsInfoModalOpen(true)
-        setCurrentImage(art)
-    }
-
-    const handleCloseInfoModal = () => {
-        setIsInfoModalOpen(prev => !prev)
-        setIsEditMode(false)
-        setCurrentImage(null)
-    } 
- 
     return (
         <>
             {
@@ -183,16 +193,16 @@ const Artworks = () => {
                             onClick={() => setIsDeleteConfOpen(true) }
                             sx={{ marginTop: 0.75 }}
                         >
-                            <DeleteIcon />
+                            <DeleteIcon color="primary"/>
                         </IconButton>
                     </Tooltip>
                     <Tooltip title="Edit"  placement="top">
                         <IconButton
                             variant="outlined"
-                            onClick={() => handleEditInfo(currentImage.id)}
+                            onClick={() => handlePrefillEditableFields(currentImage.id)}
                             sx={{ marginTop: 0.75 }}
                         >
-                            <ModeEditIcon />
+                            <EditIcon color="primary"/>
                         </IconButton>
                     </Tooltip>
 
@@ -203,7 +213,7 @@ const Artworks = () => {
                                     onClick={() => handleSaveEditedInfo(updatedEntry.id)}
                                     sx={{ marginTop: 0.75 }}
                                 >
-                                    <SaveIcon />
+                                    <SaveIcon color="primary"/>
                                 </IconButton>
                             </Tooltip>
 
@@ -212,7 +222,7 @@ const Artworks = () => {
                                     onClick={handleCancelEditMode}
                                     sx={{ marginTop: 0.75 }}
                                 >
-                                    <CancelIcon />
+                                    <CancelIcon color="primary" />
                                 </IconButton>
                             </Tooltip>
                         </>
@@ -221,11 +231,11 @@ const Artworks = () => {
 
                     <Tooltip title="Download" placement="top">
                         <IconButton
+                            color='error'
                             variant="outlined"
                             onClick={() => downloadImage(currentImage.download_url, currentImage.download_key)}
-                            sx={{ marginTop: 0.75 }}
                         >
-                            <FileDownloadIcon />
+                            <DownloadForOfflineIcon fontSize="medium" color="primary"/>
                         </IconButton>
                     </Tooltip>
                 </div>
@@ -275,9 +285,9 @@ const Artworks = () => {
             {loading || isDeleting ? (
                 <CircularProgress className="loader" color="primary" />
             ) : (
-                <div className="gridContainer">
+                <div className="imagesContainer">
                     {searchResults.map((art, id) => ( 
-                        <div className="gridItem" key={id}>
+                        <div className="imageAndButtonsContainer" key={id}>
                             <div className="numberLabel">{art.position}</div>
 
                             <div className="downloadButtonContainer">
@@ -287,7 +297,7 @@ const Artworks = () => {
                                         onClick={() => downloadImage(art.download_url, art.download_key)}
                                         sx={{ marginTop: 0.75 }}
                                     >
-                                        <FileDownloadIcon />
+                                        <DownloadForOfflineIcon fontSize="medium" color="primary"/>
                                     </IconButton>
                                 </Tooltip>
                             </div>
@@ -305,7 +315,7 @@ const Artworks = () => {
                                         onClick={() => handleOpenInfoModal(art)}
                                         sx={{ marginTop: 0.75 }}
                                     >
-                                        <InfoIcon />
+                                        <InfoIcon fontSize="medium" color="primary" />
                                     </IconButton>
                                 </Tooltip>
                             </div>
