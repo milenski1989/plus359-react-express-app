@@ -5,7 +5,7 @@ export const locations = [
     {id: 4, name: "Other"}
 ]
 
-export const locationCells = [
+export const cellsData = [
     {
         id: 1,
         locationNameId: 1,
@@ -28,7 +28,7 @@ export const createDropdownOptions = async (selectedCell) => {
     const getArtsNumbers = async () => {
         const res = await fetch(`http://localhost:5000/api/storage/${selectedCell}`)
         const data = await res.json()
-        return data.storage
+        return data
     };
     
     const storageEntries = await getArtsNumbers()

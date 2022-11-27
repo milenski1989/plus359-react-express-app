@@ -34,7 +34,7 @@ const Login = () => {
             setLoginError(null)
             history.replace(from)
         } else {
-            setLoginError({error: true, message: data.message})
+            setLoginError({error: true, message: data.error})
             setLoading(false)
         }
     }

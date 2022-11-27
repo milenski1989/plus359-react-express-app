@@ -14,7 +14,7 @@ import "./App.css";
 import Message from "./Message";
 import SecondaryNavbar from "./SecondaryNavbar";
 import axios from "axios";
-import { createDropdownOptions, locationCells, locations } from "./constants/constants";
+import { createDropdownOptions, cellsData, locations } from "./constants/constants";
 
 const Upload = () => {
 
@@ -51,34 +51,32 @@ const Upload = () => {
         setStores(locations);
     }, []);
 
-   
     const uploadFile = async () => {
-       
-        const onUploadProgress = (event) => {
-            const percentage = Math.round((100 * event.loaded) / event.total);
-            setProgress(percentage)
-        };
-        setUploading(true);
-        const data = new FormData();
-        data.append("file", file);
-        data.append("artist", inputsData.artist);
-        data.append("title", inputsData.title);
-        data.append("technique", inputsData.technique);
-        data.append("dimensions", inputsData.dimensions);
-        data.append("price", inputsData.price);
-        data.append("notes", inputsData.notes);
-        data.append("storageLocation", formControlData.storageLocation.name);
-        data.append("cell", formControlData.cell);
-        data.append("position", formControlData.position)
-
-        const res = await axios.post("http://localhost:5000/api/upload", data, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-            },
-            onUploadProgress
-        });
-
-        if (res.status === 200 || res.status === 201) {
+        try {
+            const onUploadProgress = (event) => {
+                const percentage = Math.round((100 * event.loaded) / event.total);
+                setProgress(percentage)
+            };
+            setUploading(true);
+            const data = new FormData();
+            data.append("file", file);
+            data.append("artist", inputsData.artist);
+            data.append("title", inputsData.title);
+            data.append("technique", inputsData.technique);
+            data.append("dimensions", inputsData.dimensions);
+            data.append("price", inputsData.price);
+            data.append("notes", inputsData.notes);
+            data.append("storageLocation", formControlData.storageLocation.name);
+            data.append("cell", formControlData.cell);
+            data.append("position", formControlData.position)
+    
+            await axios.post("http://localhost:5000/api/upload", data, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+                onUploadProgress
+            });
+    
             setProgress(0)
             setUploading(false);
             setUploadSuccessful(true);
@@ -90,27 +88,25 @@ const Upload = () => {
                 price: 0,
                 notes: "",
             })
-
+    
             setFormControlData({
                 storageLocation: "",
                 cell: "",
                 position: ""
             })
             setInputTouched(false)
-           
-        } else {
+            
+        } catch (error) {
+            console.log(error)
             setProgress(0)
             setUploading(false);
-            setUploadingError({ error: true, message: res.error.message });
-            setInputTouched(false) 
+            setUploadingError({ error: true, message: error.response.data.sqlMessage || error.message});
+            setInputTouched(false)
         }
     };
 
-    
-    
-
     const handleLocationSelect = (id) => {
-        const filteredCells = locationCells.filter(
+        const filteredCells = cellsData.filter(
             (locationCell) => locationCell.locationNameId === id
         );
         setCells(filteredCells[0]);
