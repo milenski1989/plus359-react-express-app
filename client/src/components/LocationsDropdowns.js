@@ -107,6 +107,8 @@ function LocationsDropdowns({formControlData, setFormControlData, inputTouched, 
                     }}
                     value={formControlData.position}
                     name="position"
+                    onBlur={() => setInputTouched(true)}
+                    error={inputTouched && !formControlData["position"] }
                     onChange={(event) => handleSelectPosition(event)}
                 >
                     {positions.length !==0 && positions.map((position, index) => {

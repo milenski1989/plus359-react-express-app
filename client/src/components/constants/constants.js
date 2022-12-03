@@ -26,7 +26,7 @@ export const createDropdownOptions = async (selectedCell) => {
     let newArray;
     let dropdownOptions
     const getArtsNumbers = async () => {
-        const res = await fetch(`https://app.plus359gallery.eu/api/storage/${selectedCell}`)
+        const res = await fetch(`http://localhost:5000/api/storage/${selectedCell}`)
         const data = await res.json()
         return data
     };

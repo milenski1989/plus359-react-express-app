@@ -1,4 +1,3 @@
-/* eslint-disable react/no-children-prop */
 import { useState } from "react";
 import "./Upload.css";
 import {
@@ -11,6 +10,8 @@ import Message from "./Message";
 import SecondaryNavbar from "./SecondaryNavbar";
 import axios from "axios";
 import LocationsDropdowns from "./LocationsDropdowns";
+
+const imageMimeType = /image\/(png|jpg|jpeg)/i;
 
 const Upload = () => {
 
@@ -42,7 +43,16 @@ const Upload = () => {
 
     const disableUploadButton = () => {
         let disabled;
-        if (inputsData.artist === "" || inputsData.title === "" || inputsData.dimensions === "" || formControlData.storageLocation === "" || formControlData.cell === "" || !file) {
+        if (
+            inputsData.artist === "" || 
+            inputsData.title === "" || 
+            inputsData.dimensions === "" || 
+            formControlData.storageLocation === "" || 
+            formControlData.cell === "" || 
+            formControlData.position === "" ||
+            !file || 
+            !file.type.match(imageMimeType)
+        ) {
             disabled = true
         }
 
@@ -55,6 +65,15 @@ const Upload = () => {
             required = true
         }
         return required
+    }
+
+    const imageSelectHandler = (e) => {
+        const file = e.target.files[0];
+        if (!file.type.match(imageMimeType)) {
+            setUploadingError({ error: true, message: "The selected file is not an image!"});
+            return;
+        }
+        setFile(file);
     }
 
     const uploadFile = async () => {
@@ -76,7 +95,7 @@ const Upload = () => {
             data.append("cell", formControlData.cell);
             data.append("position", formControlData.position)
     
-            await axios.post("https://app.plus359gallery.eu/api/upload", data, {
+            await axios.post("http://localhost:5000/api/upload", data, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -141,7 +160,7 @@ const Upload = () => {
                             }}                           
                             accept="image/*"
                             type="file"
-                            onChange={(e) => setFile(e.target.files[0])}
+                            onChange={imageSelectHandler}
                         />
 
                         {Object.entries(inputsData).map(([key, value]) => {

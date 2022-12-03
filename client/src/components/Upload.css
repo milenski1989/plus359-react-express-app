@@ -8,13 +8,13 @@
 
 @media screen and (max-width: 350px) {
     .flexContainer {
-        max-width: 65vw;
+        max-width: 55vw;
     }
   }
 
 @media screen and (min-width: 1200px) {
     .flexContainer {
-        max-width: 50vw;
+        max-width: 40vw;
     }
   }
 

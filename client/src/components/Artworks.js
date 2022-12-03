@@ -34,7 +34,7 @@ const Artworks = () => {
     //GET entries
     const getAllEntries = async () => {
         setLoading(true);
-        const res = await fetch("https://app.plus359gallery.eu/api/artworks");
+        const res = await fetch("http://localhost:5000/api/artworks");
         const data = await res.json();
        
         if (res.status === 200) {
@@ -96,7 +96,7 @@ const Artworks = () => {
     //UPDATE entry - THERE IS MORE TO DO
     const editInfo = async (id) => {
         const response = await axios.put(
-            `https://app.plus359gallery.eu/api/artworks/${id}`,
+            `http://localhost:5000/api/artworks/${id}`,
             updatedEntry
         );
 
@@ -145,12 +145,12 @@ const Artworks = () => {
     const deleteImageAndEntry = async (originalFilename ,filename, id) => {
         setIsDeleting(true);
 
-        await axios.delete(`https://app.plus359gallery.eu/api/artworks/${originalFilename}`,
+        await axios.delete(`http://localhost:5000/api/artworks/${originalFilename}`,
             {originalFilename: originalFilename})
 
-        await axios.delete(`https://app.plus359gallery.eu/api/artworks/${filename}`,{filename: filename})
+        await axios.delete(`http://localhost:5000/api/artworks/${filename}`,{filename: filename})
         const response = await axios.delete(
-            `https://app.plus359gallery.eu/api/artworks/${id}`,
+            `http://localhost:5000/api/artworks/${id}`,
             { id: id }
         );
         
