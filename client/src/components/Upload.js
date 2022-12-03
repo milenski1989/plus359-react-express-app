@@ -71,6 +71,7 @@ const Upload = () => {
         const file = e.target.files[0];
         if (!file.type.match(imageMimeType)) {
             setUploadingError({ error: true, message: "The selected file is not an image!"});
+            setFile()
             return;
         }
         setFile(file);
@@ -157,8 +158,7 @@ const Upload = () => {
                         <TextField
                             sx={{
                                 boxShadow: 1
-                            }}                           
-                            accept="image/*"
+                            }}                          
                             type="file"
                             onChange={imageSelectHandler}
                         />

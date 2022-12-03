@@ -19,14 +19,6 @@ const upload = multer({
   storage: multerS3({
     s3,
     bucket: process.env.AWS_BUCKET_NAME,
-    imageFilter : function(req, file, cb) {
-    // Accept images only
-   if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|gif|GIF)$/)) {
-  req.fileValidationError = 'Only image files are allowed!';
-  return cb(new Error('Only image files are allowed!'), false);
-   }
-    cb(null, true)
-    },
     shouldTransform: function (req, file, cb) {
       cb(null, /^image/i.test(file.mimetype))
     },
