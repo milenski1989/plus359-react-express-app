@@ -3,3 +3,9 @@
     grid-template-columns: 1fr 1fr 1fr;
     column-gap: 1rem;
 }
+
+@media screen and (max-width: 600px) {
+    .infoContainer {
+        grid-template-columns: 1fr 1fr;
+    }
+  }

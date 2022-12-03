@@ -132,8 +132,7 @@ const deleteArt = (id, callback) => {
                   return;
                 });
               }
-              callback(null, result);
-             
+              callback(null, result);    
             });
           }
         );
@@ -176,7 +175,6 @@ const updateArt = (artist, title, technique, dimensions, price, notes, storageLo
                 });
               }
               callback(null, result);
-             console.log('RESULT', result)
             });
           }
         );

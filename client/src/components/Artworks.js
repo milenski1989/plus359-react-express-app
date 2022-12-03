@@ -29,11 +29,12 @@ const Artworks = () => {
     const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
     const [currentImage, setCurrentImage] = useState(null)
     const [searchResults, setSearchResults] = useState([]);
+    const [deletedSuccessful, setDeleteSuccessful] = useState(false);
 
     //GET entries
     const getAllEntries = async () => {
         setLoading(true);
-        const res = await fetch("http://localhost:5000/api/artworks");
+        const res = await fetch("https://app.plus359gallery.eu/api/artworks");
         const data = await res.json();
        
         if (res.status === 200) {
@@ -95,7 +96,7 @@ const Artworks = () => {
     //UPDATE entry - THERE IS MORE TO DO
     const editInfo = async (id) => {
         const response = await axios.put(
-            `http://localhost:5000/api/artworks/${id}`,
+            `https://app.plus359gallery.eu/api/artworks/${id}`,
             updatedEntry
         );
 
@@ -144,12 +145,12 @@ const Artworks = () => {
     const deleteImageAndEntry = async (originalFilename ,filename, id) => {
         setIsDeleting(true);
 
-        await axios.delete(`http://localhost:5000/api/artworks/${originalFilename}`,
+        await axios.delete(`https://app.plus359gallery.eu/api/artworks/${originalFilename}`,
             {originalFilename: originalFilename})
 
-        await axios.delete(`http://localhost:5000/api/artworks/${filename}`,{filename: filename})
+        await axios.delete(`https://app.plus359gallery.eu/api/artworks/${filename}`,{filename: filename})
         const response = await axios.delete(
-            `http://localhost:5000/api/artworks/${id}`,
+            `https://app.plus359gallery.eu/api/artworks/${id}`,
             { id: id }
         );
         
@@ -157,6 +158,7 @@ const Artworks = () => {
             getAllEntries()
             setSearchResults(entries.filter((art) => art.id !== id));
             setIsDeleting(false);
+            setDeleteSuccessful(true)
         }
         
     };
@@ -178,6 +180,15 @@ const Artworks = () => {
                     severity="error"
                 />
             }
+
+            {
+                <Message
+                    open={deletedSuccessful}
+                    handleClose={() => setDeleteSuccessful(false)}
+                    message="Entry deleted successfully!"
+                    severity="success"
+                />
+            }
             <MyDialog
                 isModalOpen={isInfoModalOpen}
                 handleCloseModal={handleCloseInfoModal}
@@ -193,7 +204,7 @@ const Artworks = () => {
                             onClick={() => setIsDeleteConfOpen(true) }
                             sx={{ marginTop: 0.75 }}
                         >
-                            <DeleteIcon color="primary"/>
+                            <DeleteIcon/>
                         </IconButton>
                     </Tooltip>
                     <Tooltip title="Edit"  placement="top">
@@ -202,7 +213,7 @@ const Artworks = () => {
                             onClick={() => handlePrefillEditableFields(currentImage.id)}
                             sx={{ marginTop: 0.75 }}
                         >
-                            <EditIcon color="primary"/>
+                            <EditIcon/>
                         </IconButton>
                     </Tooltip>
 
@@ -213,7 +224,7 @@ const Artworks = () => {
                                     onClick={() => handleSaveEditedInfo(updatedEntry.id)}
                                     sx={{ marginTop: 0.75 }}
                                 >
-                                    <SaveIcon color="primary"/>
+                                    <SaveIcon/>
                                 </IconButton>
                             </Tooltip>
 
@@ -222,20 +233,18 @@ const Artworks = () => {
                                     onClick={handleCancelEditMode}
                                     sx={{ marginTop: 0.75 }}
                                 >
-                                    <CancelIcon color="primary" />
+                                    <CancelIcon />
                                 </IconButton>
                             </Tooltip>
                         </>
                         
                     )}
-
                     <Tooltip title="Download" placement="top">
                         <IconButton
-                            color='error'
                             variant="outlined"
                             onClick={() => downloadImage(currentImage.download_url, currentImage.download_key)}
                         >
-                            <DownloadForOfflineIcon fontSize="medium" color="primary"/>
+                            <DownloadForOfflineIcon fontSize="medium"/>
                         </IconButton>
                     </Tooltip>
                 </div>
@@ -288,6 +297,7 @@ const Artworks = () => {
                 <div className="imagesContainer">
                     {searchResults.map((art, id) => ( 
                         <div className="imageAndButtonsContainer" key={id}>
+
                             <div className="numberLabel">{art.position}</div>
 
                             <div className="downloadButtonContainer">
@@ -301,12 +311,6 @@ const Artworks = () => {
                                     </IconButton>
                                 </Tooltip>
                             </div>
-                           
-                            <img 
-                                className="image"
-                                src={art.image_url}
-                                alt="no preview"
-                            />
 
                             <div className="infoButtonContainer">
                                 <Tooltip title="Show more">
@@ -319,12 +323,17 @@ const Artworks = () => {
                                     </IconButton>
                                 </Tooltip>
                             </div>
+
+                            <img 
+                                className="image"
+                                src={art.image_url}
+                                alt="no preview"
+                            />
                         </div>
                         
                     ))}
                 </div>
-                
-                
+ 
             )}
         </>
     );

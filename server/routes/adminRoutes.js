@@ -123,25 +123,27 @@ try {
 
 //get all photos from S3 and details from database
 router.get("/artworks", async (req, res) => {
-  adminServices.getArts((error, results) => {
-    if (error) {
-      res.status(400).json(error);
-      return;
-    }
-    res.status(200).json(results);
-  });
+  try {
+    adminServices.getArts((error, results) => {
+      res.status(200).json(results);
+    });
+
+  } catch (error) {
+    res.status(400).json(error);
+  }
 });
 
 router.get("/storage/:cell", async (req, res) => {
   const {cell} = req.params
-  adminServices.getArtsNumbers(cell, (error, results) => {
-    if (error) {
-      res.status(400).json(error)
-      return
-    }
-      res.status(200).json(results);
-    
-  });
+
+  try {
+    adminServices.getArtsNumbers(cell, (error, results) => {
+        res.status(200).json(results);
+    });
+  } catch (error) {
+    res.status(400).json(error)
+  }
+
 });
 
 //delete single entry from s3, then from db
@@ -150,12 +152,12 @@ router.delete("/artworks/:filename", async (req, res) => {
 
   await s3.deleteObject({Bucket: process.env.AWS_BUCKET_NAME, Key: filename}).promise();
    
-      await adminServices.deleteArt(filename, async (error, result) => {
+     adminServices.deleteArt(filename, async (error, result) => {
         if (error) {
           res.send({ error: error.message });
           return;
         }
-        res.status(200).send({"deletedEntry": result.affectedRows})
+        res.status(200).send("Entry deleted successfully!")
         });
 })
 
