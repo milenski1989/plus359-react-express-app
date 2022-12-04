@@ -1,14 +1,11 @@
-import { Button } from '@mui/material'
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import { IconButton, Tooltip } from "@mui/material";
 import React from 'react'
+import { useHistory } from 'react-router';
 
-const buttonStyle = {
-    position: "absolute",
-    top: "2rem",
-    right: "2rem",
-    color:"white"
-}
+function Logout({styles}) {
 
-function Logout() {
+    const history = useHistory()
 
     const handleLogout = () => {
         window.localStorage.clear()
@@ -18,12 +15,15 @@ function Logout() {
 
     return (
         <>
-            <Button
-                style={buttonStyle}
-                className="actionButton logoutButton"
-                children="Log out"
-                onClick={handleLogout}
-            />
+            <Tooltip title="Log out"  placement="bottom">
+                <IconButton
+                    variant="outlined"
+                    onClick={handleLogout}
+                    sx={{ position: 'absolute', ...styles}}
+                >
+                    <ExitToAppIcon fontSize="medium" color="primary"/>
+                </IconButton>
+            </Tooltip>
         </>
        
     )

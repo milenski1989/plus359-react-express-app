@@ -1,8 +1,16 @@
-import { Button, CircularProgress, TextField } from "@mui/material"
+import { Button, CircularProgress, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField } from "@mui/material"
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useState } from "react"
-import { useHistory, useLocation } from "react-router-dom"
+import { Link, useHistory, useLocation } from "react-router-dom"
 import './App.css'
 import Message from "./Message"
+
+const linkStyle = {
+    textDecoration: "none",
+    color: "blue",
+    display: "inline"
+};
 
 const Login = () => {
 
@@ -11,6 +19,7 @@ const Login = () => {
     const [loading, setLoading] = useState(false)
     const [loginError, setLoginError] = useState({error: false, message: ''})
     const [inputTouched, setInputTouched] = useState(false)
+    const [viewPassword, setViewPassword] = useState(false)
 
     const history = useHistory()
     let myStorage = window.localStorage
@@ -29,7 +38,8 @@ const Login = () => {
         const data = await response.json()
 
         if (response.status === 200) {
-            myStorage.setItem('username', data.username)
+            console.log(data)
+            myStorage.setItem('user', JSON.stringify({username: data.username, email : data.email}))
             setLoading(false)
             setLoginError(null)
             history.replace(from)
@@ -45,10 +55,14 @@ const Login = () => {
         handleLogin()
     }
 
+    const handleViewPassword = () => {
+        setViewPassword(!viewPassword)
+    }
+
     return <>
         {<Message open={loginError.error} handleClose={() => setLoginError({error: false, message: ""})} message={loginError.message} severity="error"
         /> }
-        <div className="parent">
+        <div className="mainSection">
             <form className="loginSection">
                 { loading ? 
                     <CircularProgress className="loader" color="primary" /> 
@@ -67,27 +81,46 @@ const Login = () => {
                             />
                         </div>
                         <div className="loginField">
-                            <TextField
-                                id="password"
-                                label="Password"
-                                variant="outlined"
-                                type="password"
-                                required
-                                margin="normal"
-                                onBlur={() => setInputTouched(true)}
-                                error={inputTouched && !password}
-                                onChange={event => setPassword(event.target.value)} />
+                            <FormControl sx={{width: '210.400px', marginTop: "0.5rem" }} variant="outlined">
+                                <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                                <OutlinedInput
+                                    id="outlined-adornment-password"
+                                    type={viewPassword ? 'text' : 'password'}
+                                    value={password}
+                                    onBlur={() => setInputTouched(true)}
+                                    error={inputTouched && !password}
+                                    onChange={event => setPassword(event.target.value)}
+                                    endAdornment={
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                aria-label="toggle password visibility"
+                                                onClick={handleViewPassword}
+                                               
+                                                edge="end"
+                                            >
+                                                {viewPassword ? <VisibilityOff /> : <Visibility />}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    }
+                                    label="Password" />
+                            
+                            </FormControl>
                         </div>
                         <div className="loginButton">
                             <Button
                                 className="actionButton loginButton"
                                 children="Log in"
                                 variant="outlined"
-                                onClick={handleSubmit} />
+                                onClick={handleSubmit}
+                                disabled={!email || !password} />
+                        </div>
+
+                        <div className="loginSignupTextContainer">
+                            Not registered yet? Go to <Link to='/signup' style={linkStyle}>signup</Link>
                         </div>
                     </>
                 }
-
+                
             </form>
         </div>
     </>

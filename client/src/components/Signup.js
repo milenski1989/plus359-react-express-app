@@ -1,7 +1,14 @@
 import { Button, CircularProgress, TextField } from "@mui/material"
 import { useState } from "react"
+import { Link } from "react-router-dom"
 import './App.css'
 import Message from "./Message"
+import './Signup.css'
+
+const linkStyle = {
+    textDecoration: "none",
+    color: "blue",
+};
 
 const Signup = () => {
 
@@ -9,7 +16,9 @@ const Signup = () => {
     const [password, setPassword] = useState('')
     const [userName, setUserName] = useState('')
     const [loading, setLoading] = useState(false)
-    const [loginError, setLoginError] = useState({error: false, message: ''})
+    const [signupError, setSignupError] = useState({error: false, message: ''})
+    const [inputTouched, setInputTouched] = useState(false)
+    const [signupSuccess, setSignupSuccess] = useState({success: false, message: ''})
 
     const handleSignup = async () => {
         const response = await fetch("http://localhost:5000/api/signup", {
@@ -20,16 +29,15 @@ const Signup = () => {
             body: JSON.stringify({
                 email,
                 password,
-                userName: userName
+                userName
             })
         })
         const data = await response.json();
         if (response.status === 200 || response.status === 201) {
-            console.log(data)
             setLoading(false)
-            setLoginError(null)
+            setSignupSuccess({success: true, message: data.message})
         } else {
-            setLoginError({error: true, message: data.error})
+            setSignupError({error: true, message: data.error})
             setLoading(false)
         }
     }
@@ -40,53 +48,62 @@ const Signup = () => {
         handleSignup()
     }
 
-    return <>
-        {<Message open={loginError.error} handleClose={() => setLoginError({error: false, message: ""})} message={loginError.message} severity="error"
+    return(<>
+        {<Message open={signupError.error} handleClose={() => setSignupError({error: false, message: ""})} message={signupError.message} severity="error"
         /> }
-        <div className="parent">
-            <form className="loginSection">
+        {<Message open={signupSuccess.success} handleClose={() => setSignupSuccess(false)} message={signupSuccess.message} severity="success"
+        /> }
+
+        <div className="signupSection">
+            <form className="signupForm">
                 {!loading ?
                     <><div className="loginField">
                         <TextField
                             id="email"
                             label="Email"
                             variant="outlined"
-                            margin="normal"
+                            onBlur={() => setInputTouched(true)}
+                            error={inputTouched && !email}
                             type="text"
                             required
                             onChange={event => setEmail(event.target.value)} />
                     </div><div className="loginField">
                         <TextField
+                            sx={{marginTop: "1rem"}}
                             id="password"
                             label="Password"
                             variant="outlined"
-                            type="password"
-                            required
-                            margin="normal"
-                            onChange={event => setPassword(event.target.value)} />
-                        {/* <img src={EyeIcon} className="clickable" onClick={handlePasswordVisibility} /> */}
-
-                        <TextField
-                            id="username"
-                            label="Username"
-                            variant="outlined"
                             type="text"
                             required
-                            margin="normal"
-                            onChange={event => setUserName(event.target.value)} />
+                            onBlur={() => setInputTouched(true)}
+                            error={inputTouched && !password}
+                            onChange={event => setPassword(event.target.value)} />
+                        <div className="loginField">
+                            <TextField
+                                sx={{marginTop: "1rem"}}
+                                id="username"
+                                label="Username"
+                                variant="outlined"
+                                type="text"
+                                onChange={event => setUserName(event.target.value)} />
+                        </div>
 
-                    </div><div className="loginButton">
+                    </div><div className="signupButton">
                         <Button
-                            className="actionButton loginButton"
                             children="Sign up"
                             variant="outlined"
-                            onClick={handleSubmit} />
-                    </div></> :
+                            onClick={handleSubmit}
+                            disabled={!email || !password} />
+                    </div>
+                    <div className="loginSignupTextContainer">
+                        Have an account? Go back to <Link to='/login' style={linkStyle}>login</Link>
+                    </div>
+                    </> :
                     <CircularProgress className="loader" color="primary" />
                 } 
             </form>
         </div>
-    </>
+    </>)
 }
 
 export default Signup

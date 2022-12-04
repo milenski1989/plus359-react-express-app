@@ -16,7 +16,7 @@ body {
     }
   }
 
-  .parent {
+  .mainSection {
     position: relative;
     width: 100vw;
     height: 100vh;
@@ -31,6 +31,7 @@ body {
 
   .loginButton {
     text-align: center;
+    margin-top: 1rem;
   }
 
   .loader {
@@ -38,5 +39,12 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%)
+ }
+
+ .loginSignupTextContainer {
+  position: absolute;
+  top:100%;
+  margin-top: 1rem;
+  text-align: center;
  }
 

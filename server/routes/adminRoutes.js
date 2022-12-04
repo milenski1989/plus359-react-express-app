@@ -65,6 +65,19 @@ const upload = multer({
   }),
 });
 
+//signup
+router.post("/signup", async (req, res) => {
+  const {email, password, userName} = req.body
+
+try {
+  adminServices.signup(email, password, userName)
+  res.status(200).send({message:"You've signed up successfully! Your account is active now!"});
+} catch (error) {
+  console.log(error)
+  res.status(400).send({error: "User with this email is already registered!"})
+}
+});
+
 //login
 router.post("/login", async (req, res) => {
   const {email, password} = req.body
@@ -73,7 +86,7 @@ try {
   const result = await adminServices.login(email, password)
   req.session.loggedin = true;
   req.session.username = result[0].userName;
-  res.status(200).send({ username: result[0].userName });
+  res.status(200).send({ username: result[0].userName, email: result[0].email, isSuperUser: result[0].superUser });
 } catch (error) {
   res.status(400).send({error: "Incorrect username and or/password!"})
 }

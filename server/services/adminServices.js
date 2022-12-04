@@ -1,19 +1,47 @@
 const connection = require("../database");
+const bcrypt = require('bcrypt')
+const saltRounds = 10
+
+//signup
+const signup = (email, password, userName) => {
+  
+  bcrypt.hash(password, saltRounds, (err, hash) => {
+    if (err) console.log(err)
+    const query = `
+    INSERT INTO users (email, password, userName) VALUES(?,?,?)
+    `;
+  const params = [email, hash, userName];
+
+    return new Promise ((resolve, reject) => {
+      connection.query(query, params, (error, result) => {
+          if(error){
+              return reject(error);
+          }
+          return resolve(result);
+      });
+  });
+  })
+};
 
 //login
 const login = (email, password) => {
   const query = `
-    SELECT * FROM users WHERE email = ? AND password = ?
+    SELECT * FROM users WHERE email = ?
     `;
-  const params = [email, password];
 
   return new Promise ((resolve, reject) => {
-    connection.query(query, params, (error, result) => {
-        if(error){
-            return reject(error);
+    connection.query(query, email, (error, result) => {
+
+        if (result.length > 0) {
+          (bcrypt.compare(password, result[0].password, (err, response) => {
+            if (response) {
+              return resolve(result);
+            } else {
+              return reject(error);
+            }
+          }))
         }
-        return resolve(result);
-    });
+    })
 });
 };
 
@@ -184,6 +212,7 @@ const updateArt = (artist, title, technique, dimensions, price, notes, storageLo
 };
 
 module.exports = {
+  signup,
   login,
   insertIntoArtworks,
   insertIntoStorage,

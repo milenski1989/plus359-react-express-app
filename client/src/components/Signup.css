@@ -1,0 +1,16 @@
+.signupSection {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.signupForm { 
+display: flex;
+flex-direction: column;
+}
+
+.signupButton {
+    text-align: center;
+    margin-top: 1rem;
+  }

@@ -2,8 +2,7 @@ import { Link } from "react-router-dom"
 import './NavBar.css'
 import './App.css'
 import styled from "styled-components";
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-import { IconButton, Tooltip } from "@mui/material";
+import Logout from "./Logout";
 
 const NavUnlisted = styled.ul`
   display: flex;
@@ -22,23 +21,12 @@ const linkStyle = {
 const SecondaryNavbar = () => {
 
     return  <>
-       
         <NavUnlisted>
             <Link to='/' style={linkStyle}>Home</Link>
             <Link to='/upload' style={linkStyle}>Upload</Link>
             <Link to='/artworks' style={linkStyle}>Gallery</Link>
         </NavUnlisted>
-
-        <Tooltip title="Log out"  placement="bottom">
-            <IconButton
-                variant="outlined"
-                onClick={() => console.log('clicked') }
-                sx={{ position: 'absolute', top: '5px', right: '3px'}}
-            >
-                <ExitToAppIcon fontSize="medium" color="primary"/>
-            </IconButton>
-        </Tooltip>
-        
+        <Logout styles={{top: '5px', right: '3px'}}/>
     </>
 }
 

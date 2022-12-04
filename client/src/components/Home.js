@@ -8,8 +8,6 @@ import Upload from './Upload'
 import Artworks from './Artworks'
 import Logout from './Logout'
 
-
-
 const icons = {
     logo: require('./assets/logo359 gallery-white1.png')
 }
@@ -34,7 +32,7 @@ const Home = () => {
     return <div className="parent">
         <div className="bar">
             <Link to='/'><img className="logo" alt="logo" src={icons.logo} /></Link> 
-            <Logout/>
+            <Logout styles={{top: '25px', right: '3px'}}/>
         </div>
         <IconsNavBar/>
         {activeTab}

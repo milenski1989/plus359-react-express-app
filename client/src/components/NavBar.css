@@ -21,5 +21,6 @@
 .bar {
     background: rgb(29, 28, 28);
     padding-top: 0.75rem;
-    padding-bottom: 0.75rem
+    padding-bottom: 0.75rem;
+    position: relative;
 }

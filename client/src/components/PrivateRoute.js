@@ -2,7 +2,7 @@ import { Route, Redirect } from 'react-router-dom'
 
 
 const isAuthenticated = () => {
-    const user = localStorage.getItem('username');
+    const user = localStorage.getItem('user');
     return user
     
 }
