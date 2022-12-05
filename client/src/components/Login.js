@@ -39,7 +39,7 @@ const Login = () => {
 
         if (response.status === 200) {
             console.log(data)
-            myStorage.setItem('user', JSON.stringify({username: data.username, email : data.email}))
+            myStorage.setItem('user', JSON.stringify({username: data.username, email : data.email, isSuperUser: data.isSuperUser}))
             setLoading(false)
             setLoginError(null)
             history.replace(from)

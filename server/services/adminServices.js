@@ -25,21 +25,23 @@ const signup = (email, password, userName) => {
 
 //login
 const login = (email, password) => {
-  const query = `
+ 
+  return new Promise ((resolve, reject) => {
+    const query = `
     SELECT * FROM users WHERE email = ?
     `;
-
-  return new Promise ((resolve, reject) => {
     connection.query(query, email, (error, result) => {
 
         if (result.length > 0) {
-          (bcrypt.compare(password, result[0].password, (err, response) => {
+           bcrypt.compare(password, result[0].password, (err, response) => {
             if (response) {
               return resolve(result);
             } else {
               return reject(error);
             }
-          }))
+          })
+        } else {
+          return reject(error)
         }
     })
 });

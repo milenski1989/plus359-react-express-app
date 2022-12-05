@@ -16,7 +16,10 @@ import { saveAs } from 'file-saver'
 import Message from "./Message";
 
 const Artworks = () => {
-    const [entries, setEntries] = useState([]);
+
+    const user = JSON.parse(localStorage.getItem('user'));   
+
+    const [entries, setEntries] = useState([])
     const [updatedEntry, setUpdatedEntry] = useState({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState({
@@ -75,6 +78,70 @@ const Artworks = () => {
     const handleOpenInfoModal = (art) => {
         setIsInfoModalOpen(true)
         setCurrentImage(art)
+    }
+
+    const renderButtonsBasedOnAdminRights = () => {
+        if (user.isSuperUser) {
+            return (<> 
+                <Tooltip title="Delete" placement="top">
+                    <IconButton
+                        variant="outlined"
+                        onClick={() => setIsDeleteConfOpen(true)}
+                        sx={{ marginTop: 0.75 }}
+                    >
+                        <DeleteIcon />
+                    </IconButton>
+                </Tooltip><Tooltip title="Edit" placement="top">
+                    <IconButton
+                        variant="outlined"
+                        onClick={() => handlePrefillEditableFields(currentImage.id)}
+                        sx={{ marginTop: 0.75 }}
+                    >
+                        <EditIcon />
+                    </IconButton>
+                </Tooltip>
+
+                {isEditMode && currentImage.id === updatedEntry.id && 
+                
+                <><Tooltip title="Save" placement="top">
+                    <IconButton
+                        onClick={() => handleSaveEditedInfo(updatedEntry.id)}
+                        sx={{ marginTop: 0.75 }}
+                    >
+                        <SaveIcon />
+                    </IconButton>
+                </Tooltip><Tooltip title="Cancel" placement="top">
+                    <IconButton
+                        onClick={handleCancelEditMode}
+                        sx={{ marginTop: 0.75 }}
+                    >
+                        <CancelIcon />
+                    </IconButton>
+                </Tooltip><Tooltip title="Download" placement="top">
+                    <IconButton
+                        variant="outlined"
+                        onClick={() => downloadImage(currentImage.download_url, currentImage.download_key)}
+                    >
+                        <DownloadForOfflineIcon fontSize="medium" />
+                    </IconButton>
+                </Tooltip></>}
+            </>
+               
+            )     
+        } else {
+            return (
+                <>
+                    <Tooltip title="Download" placement="top">
+                        <IconButton
+                            variant="outlined"
+                            onClick={() => downloadImage(currentImage.download_url, currentImage.download_key)}
+                        >
+                            <DownloadForOfflineIcon fontSize="medium" />
+                        </IconButton>
+                    </Tooltip>
+                </>
+            )
+        }
     }
 
     //handle close info modal
@@ -198,55 +265,7 @@ const Artworks = () => {
                 handleChangeEditableField={handleChangeEditableField}
             >
                 <div className="buttonsContainer">
-                    <Tooltip title="Delete"  placement="top">
-                        <IconButton
-                            variant="outlined"
-                            onClick={() => setIsDeleteConfOpen(true) }
-                            sx={{ marginTop: 0.75 }}
-                        >
-                            <DeleteIcon/>
-                        </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Edit"  placement="top">
-                        <IconButton
-                            variant="outlined"
-                            onClick={() => handlePrefillEditableFields(currentImage.id)}
-                            sx={{ marginTop: 0.75 }}
-                        >
-                            <EditIcon/>
-                        </IconButton>
-                    </Tooltip>
-
-                    {isEditMode && currentImage.id === updatedEntry.id && (
-                        <>
-                            <Tooltip title="Save" placement="top">
-                                <IconButton
-                                    onClick={() => handleSaveEditedInfo(updatedEntry.id)}
-                                    sx={{ marginTop: 0.75 }}
-                                >
-                                    <SaveIcon/>
-                                </IconButton>
-                            </Tooltip>
-
-                            <Tooltip title="Cancel" placement="top">
-                                <IconButton
-                                    onClick={handleCancelEditMode}
-                                    sx={{ marginTop: 0.75 }}
-                                >
-                                    <CancelIcon />
-                                </IconButton>
-                            </Tooltip>
-                        </>
-                        
-                    )}
-                    <Tooltip title="Download" placement="top">
-                        <IconButton
-                            variant="outlined"
-                            onClick={() => downloadImage(currentImage.download_url, currentImage.download_key)}
-                        >
-                            <DownloadForOfflineIcon fontSize="medium"/>
-                        </IconButton>
-                    </Tooltip>
+                    {renderButtonsBasedOnAdminRights()}                  
                 </div>
             </MyDialog>
 
