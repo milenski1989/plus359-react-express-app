@@ -4,27 +4,20 @@
     margin-left: auto;
     margin-right: auto;
     margin-top: 5rem;
+    margin-bottom: 5rem;
 }
 
 @media screen and (max-width: 350px) {
     .flexContainer {
-        max-width: 55vw;
+        width: 50vw;
     }
   }
 
 @media screen and (min-width: 1200px) {
     .flexContainer {
-        max-width: 40vw;
+        width: 40vw;
     }
   }
-
-.uploadSection {
-    width: 90vw;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 3rem;
-    margin-top: -2rem;
-}
 
 .buttonsFlexContainer {
     display: flex;

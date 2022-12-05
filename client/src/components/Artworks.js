@@ -3,21 +3,16 @@ import SecondaryNavbar from "./SecondaryNavbar";
 import "./Artworks.css";
 import "./App.css";
 import InfoIcon from "@mui/icons-material/Info";
-import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, InputBase, Paper, Tooltip } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from '@mui/icons-material/Edit';
-import SaveIcon from "@mui/icons-material/Save";
-import CancelIcon from "@mui/icons-material/Cancel";
 import axios from "axios";
 import SearchIcon from "@mui/icons-material/Search";
 import MyDialog from "./MyDialog";
 import { saveAs } from 'file-saver'
 import Message from "./Message";
+import SuperUserButtons from "./SuperUserButtons";
 
 const Artworks = () => {
-
-    const user = JSON.parse(localStorage.getItem('user'));   
 
     const [entries, setEntries] = useState([])
     const [updatedEntry, setUpdatedEntry] = useState({});
@@ -80,70 +75,6 @@ const Artworks = () => {
         setCurrentImage(art)
     }
 
-    const renderButtonsBasedOnAdminRights = () => {
-        if (user.isSuperUser) {
-            return (<> 
-                <Tooltip title="Delete" placement="top">
-                    <IconButton
-                        variant="outlined"
-                        onClick={() => setIsDeleteConfOpen(true)}
-                        sx={{ marginTop: 0.75 }}
-                    >
-                        <DeleteIcon />
-                    </IconButton>
-                </Tooltip><Tooltip title="Edit" placement="top">
-                    <IconButton
-                        variant="outlined"
-                        onClick={() => handlePrefillEditableFields(currentImage.id)}
-                        sx={{ marginTop: 0.75 }}
-                    >
-                        <EditIcon />
-                    </IconButton>
-                </Tooltip>
-
-                {isEditMode && currentImage.id === updatedEntry.id && 
-                
-                <><Tooltip title="Save" placement="top">
-                    <IconButton
-                        onClick={() => handleSaveEditedInfo(updatedEntry.id)}
-                        sx={{ marginTop: 0.75 }}
-                    >
-                        <SaveIcon />
-                    </IconButton>
-                </Tooltip><Tooltip title="Cancel" placement="top">
-                    <IconButton
-                        onClick={handleCancelEditMode}
-                        sx={{ marginTop: 0.75 }}
-                    >
-                        <CancelIcon />
-                    </IconButton>
-                </Tooltip><Tooltip title="Download" placement="top">
-                    <IconButton
-                        variant="outlined"
-                        onClick={() => downloadImage(currentImage.download_url, currentImage.download_key)}
-                    >
-                        <DownloadForOfflineIcon fontSize="medium" />
-                    </IconButton>
-                </Tooltip></>}
-            </>
-               
-            )     
-        } else {
-            return (
-                <>
-                    <Tooltip title="Download" placement="top">
-                        <IconButton
-                            variant="outlined"
-                            onClick={() => downloadImage(currentImage.download_url, currentImage.download_key)}
-                        >
-                            <DownloadForOfflineIcon fontSize="medium" />
-                        </IconButton>
-                    </Tooltip>
-                </>
-            )
-        }
-    }
-
     //handle close info modal
     const handleCloseInfoModal = () => {
         setIsInfoModalOpen(prev => !prev)
@@ -160,53 +91,6 @@ const Artworks = () => {
         }));
     };
 
-    //UPDATE entry - THERE IS MORE TO DO
-    const editInfo = async (id) => {
-        const response = await axios.put(
-            `http://localhost:5000/api/artworks/${id}`,
-            updatedEntry
-        );
-
-        if (response.status === 200) {
-            setIsEditMode(false);
-            setUpdatedEntry({});
-            getAllEntries();
-        } else {
-            setIsEditMode(false);
-            setUpdatedEntry({});
-        }
-    };
-
-    //handle copy original img info to prefill the editable fields
-    const handlePrefillEditableFields = (id) => {
-        setIsEditMode(true);
-        let copyOfEntry;
-        copyOfEntry = searchResults.find((art) => art.id === id);
-        setUpdatedEntry({
-            id: copyOfEntry.id,
-            artist: copyOfEntry.artist,
-            title: copyOfEntry.title,
-            technique: copyOfEntry.technique,
-            dimensions: copyOfEntry.dimensions,
-            price: copyOfEntry.price,
-            notes: copyOfEntry.notes,
-            storageLocation: copyOfEntry.storageLocation,
-            cell: copyOfEntry.cell,
-            position: copyOfEntry.position
-        });
-    };
-
-    //handle save edited info
-    const handleSaveEditedInfo = (id) => {
-        editInfo(id);
-        setIsInfoModalOpen(false)
-        getAllEntries()
-    };
-
-    //handle cancel edit mode
-    const handleCancelEditMode = () => {
-        setIsEditMode(false);
-    };
 
     //DELETE thumbnail, original image and entry
     const deleteImageAndEntry = async (originalFilename ,filename, id) => {
@@ -265,7 +149,19 @@ const Artworks = () => {
                 handleChangeEditableField={handleChangeEditableField}
             >
                 <div className="buttonsContainer">
-                    {renderButtonsBasedOnAdminRights()}                  
+                    <SuperUserButtons
+                        currentImage={currentImage}
+                        searchResults={searchResults}
+                        updatedEntry={updatedEntry}
+                        openDeleteConfirmationDialog={setIsDeleteConfOpen}
+                        isEditMode={isEditMode}
+                        downloadImage={downloadImage}
+                        openEditMode={setIsEditMode}
+                        setEntryToUpdate={setUpdatedEntry}
+                        closeInfoModal={setIsInfoModalOpen}
+                        getAllEntries={getAllEntries}
+                    
+                    />                 
                 </div>
             </MyDialog>
 
@@ -326,7 +222,7 @@ const Artworks = () => {
                                         onClick={() => downloadImage(art.download_url, art.download_key)}
                                         sx={{ marginTop: 0.75 }}
                                     >
-                                        <DownloadForOfflineIcon fontSize="medium" color="primary"/>
+                                        <FileDownloadIcon fontSize="medium" color="primary"/>
                                     </IconButton>
                                 </Tooltip>
                             </div>
