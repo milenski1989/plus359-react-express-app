@@ -3,19 +3,14 @@
     flex-direction: column;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 5rem;
-    margin-bottom: 5rem;
+    margin-top: 4rem;
+    margin-bottom: 4rem;
+    width: 40vw;
 }
 
-@media screen and (max-width: 350px) {
+@media screen and (max-width: 500px) {
     .flexContainer {
-        width: 50vw;
-    }
-  }
-
-@media screen and (min-width: 1200px) {
-    .flexContainer {
-        width: 40vw;
+        width: 60vw;
     }
   }
 

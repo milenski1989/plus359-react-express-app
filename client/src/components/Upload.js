@@ -153,7 +153,7 @@ const Upload = () => {
             {uploading ? (
                 <CircularProgress variant="determinate" value={progress} className="loader" color="primary" />
             ) : (
-                <section className="flexContainer">
+                <section className="flexContainer mainSection">
                            
                     <TextField
                         sx={{

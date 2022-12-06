@@ -1,18 +1,18 @@
 .imagesContainer {
-  margin-top: 5rem;
-  margin-bottom: 5rem;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  padding-left: 5rem;
-  padding-right: 5rem;
+  display: flex;
+  flex-flow: row wrap;
+  margin-top: 4rem;
+  margin-bottom: 4rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 1rem;
 }
 
   .imageAndButtonsContainer {
   position: relative;
   width: 200px;
-  margin-bottom: 1rem;
-  margin-left: auto;
-  margin-right: auto;
   }
 
   .image {
@@ -32,7 +32,7 @@
     color: white;
     padding: 0 0.3rem;
   }
-
+  
   .downloadButtonContainer {
     position: absolute;
     right: -5px;
@@ -46,5 +46,5 @@
   }
 
   .searchBar {
-    margin-top: 5rem;
+    margin-top: 4rem;
   }

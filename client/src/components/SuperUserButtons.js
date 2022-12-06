@@ -5,8 +5,6 @@ import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Cancel";
 import FileDownloadIcon from '@mui/icons-material/FileDownload';import axios from 'axios';
-import './SuperUserButtons.css'
-
 
 function SuperUserButtons({
     currentImage,
@@ -21,8 +19,7 @@ function SuperUserButtons({
     getAllEntries})
 {
 
-    const user = JSON.parse(localStorage.getItem('user')); 
-    const {id, download_url, download_key} = currentImage
+    const {id} = currentImage
     const {id: updatedEntryId} = updatedEntry
 
 
@@ -77,28 +74,26 @@ function SuperUserButtons({
     
     if (currentImage) {
         return (
-      
-            user.isSuperUser ?
-                <> 
-                    <Tooltip title="Delete" placement="top">
-                        <IconButton
-                            variant="outlined"
-                            onClick={() => openDeleteConfirmationDialog(true)}
-                            sx={{ marginTop: 0.75 }}
-                        >
-                            <DeleteIcon />
-                        </IconButton>
-                    </Tooltip><Tooltip title="Edit" placement="top">
-                        <IconButton
-                            variant="outlined"
-                            onClick={() => handlePrefillEditableFields(id)}
-                            sx={{ marginTop: 0.75 }}
-                        >
-                            <EditIcon />
-                        </IconButton>
-                    </Tooltip>
+            <div className="buttonsContainer">
+                <Tooltip title="Delete" placement="top">
+                    <IconButton
+                        variant="outlined"
+                        onClick={() => openDeleteConfirmationDialog(true)}
+                        sx={{ marginTop: 0.75 }}
+                    >
+                        <DeleteIcon />
+                    </IconButton>
+                </Tooltip><Tooltip title="Edit" placement="top">
+                    <IconButton
+                        variant="outlined"
+                        onClick={() => handlePrefillEditableFields(id)}
+                        sx={{ marginTop: 0.75 }}
+                    >
+                        <EditIcon />
+                    </IconButton>
+                </Tooltip>
         
-                    {isEditMode && currentImage.id === updatedEntryId && 
+                {isEditMode && currentImage.id === updatedEntryId && 
                         
                         <><Tooltip title="Save" placement="top">
                             <IconButton
@@ -117,30 +112,17 @@ function SuperUserButtons({
                         </Tooltip>
                         </>}
 
-                    <Tooltip title="Download" placement="top">
-                        <IconButton
-                            variant="outlined"
-                            onClick={() => downloadImage(currentImage.download_url, currentImage.download_key)}
-                        >
-                            <FileDownloadIcon fontSize="medium" sx={{marginBottom: "-0.5rem"}} />
-                        </IconButton>
-                    </Tooltip>
-                </>
-                :
-                <div className='downloadButtonForNonSuperUsers'>
-                    <Tooltip title="Download" placement="top">
-                        <IconButton
-                            variant="outlined"
-                            onClick={() => downloadImage(download_url, download_key)}
-                        >
-                            <FileDownloadIcon fontSize="medium" />
-                        </IconButton>
-                    </Tooltip>
-                </div>     
-            
+                <Tooltip title="Download" placement="top">
+                    <IconButton
+                        variant="outlined"
+                        onClick={() => downloadImage(currentImage.download_url, currentImage.download_key)}
+                    >
+                        <FileDownloadIcon fontSize="medium" sx={{marginBottom: "-0.5rem"}} />
+                    </IconButton>
+                </Tooltip>
+            </div>     
         )
     }
-
    
 }
 

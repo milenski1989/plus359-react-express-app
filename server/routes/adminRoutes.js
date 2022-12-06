@@ -29,7 +29,7 @@ const upload = multer({
       key: function (req, file, cb) {
         const ext = path.extname(file.originalname);
         const name = path.parse(file.originalname).name;
-      cb(null, `${name}original${ext}`);
+      cb(null, `${name}_${Date.now()}original${ext}`);
       },
       metadata: (req, file, cb) => {
         cb(null, { fieldName: file.fieldname });
@@ -42,7 +42,7 @@ const upload = multer({
       key: function (req, file, cb) {
         const ext = path.extname(file.originalname);
         const name = path.parse(file.originalname).name;
-        cb(null, `${name}thumbnail${ext}`);
+        cb(null, `${name}_${Date.now()} thumbnail${ext}`);
       },
       metadata: (req, file, cb) => {
         cb(null, { fieldName: file.fieldname });

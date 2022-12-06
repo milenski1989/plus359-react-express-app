@@ -14,6 +14,9 @@ import SuperUserButtons from "./SuperUserButtons";
 
 const Artworks = () => {
 
+    const user = JSON.parse(localStorage.getItem('user')); 
+
+
     const [entries, setEntries] = useState([])
     const [updatedEntry, setUpdatedEntry] = useState({});
     const [loading, setLoading] = useState(false);
@@ -61,7 +64,7 @@ const Artworks = () => {
         const resultsArray = entries.filter(art => {
             if (
                 art.artist.includes(value) || art.title.includes(value) || art.image_key.includes(value) || art.technique.includes(value) ||
-                art.dimensions.includes(value) || art.notes.includes(value) || art.storageLocation.includes(value) ||
+                art.dimensions.includes(value) || art.notes.includes(value) || art.storageLocation.toLowerCase().includes(value) ||
                 art.cell.includes(value) || art.position.toString().includes(value)
             ) return true;
         })
@@ -97,12 +100,12 @@ const Artworks = () => {
         setIsDeleting(true);
 
         await axios.delete(`http://localhost:5000/api/artworks/${originalFilename}`,
-            {originalFilename: originalFilename})
+            {originalFilename})
 
-        await axios.delete(`http://localhost:5000/api/artworks/${filename}`,{filename: filename})
+        await axios.delete(`http://localhost:5000/api/artworks/${filename}`,{filename})
         const response = await axios.delete(
             `http://localhost:5000/api/artworks/${id}`,
-            { id: id }
+            { id }
         );
         
         if (response.status === 200) {
@@ -122,7 +125,7 @@ const Artworks = () => {
     };
 
     return (
-        <>
+        <div className="mainSection">
             {
                 <Message
                     open={error.error}
@@ -148,7 +151,7 @@ const Artworks = () => {
                 updatedEntry={updatedEntry}
                 handleChangeEditableField={handleChangeEditableField}
             >
-                <div className="buttonsContainer">
+                { user.isSuperUser ? 
                     <SuperUserButtons
                         currentImage={currentImage}
                         searchResults={searchResults}
@@ -161,8 +164,10 @@ const Artworks = () => {
                         closeInfoModal={setIsInfoModalOpen}
                         getAllEntries={getAllEntries}
                     
-                    />                 
-                </div>
+                    />  :
+                    <> </>               
+                }
+              
             </MyDialog>
 
             {
@@ -245,12 +250,13 @@ const Artworks = () => {
                                 alt="no preview"
                             />
                         </div>
+                      
                         
                     ))}
                 </div>
  
             )}
-        </>
+        </div>
     );
 };
 export default Artworks;
