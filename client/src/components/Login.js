@@ -2,9 +2,9 @@ import { Button, CircularProgress, FormControl, IconButton, InputAdornment, Inpu
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useState } from "react"
-import { Link, useHistory, useLocation } from "react-router-dom"
 import './App.css'
 import Message from "./Message"
+import { Link,  useHistory, useLocation } from "react-router-dom";
 
 const linkStyle = {
     textDecoration: "none",
@@ -41,7 +41,7 @@ const Login = () => {
             console.log(data)
             myStorage.setItem('user', JSON.stringify({username: data.username, email : data.email, isSuperUser: data.isSuperUser}))
             setLoading(false)
-            setLoginError(null)
+            setLoginError({error: false, message: ''})
             history.replace(from)
         } else {
             setLoginError({error: true, message: data.error})
