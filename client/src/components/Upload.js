@@ -174,7 +174,7 @@ const Upload = () => {
                                 required={setRequiredFields(key)}
                                 variant="outlined"
                                 margin="normal"
-                                type={typeof value === "string" ? "text" : "number"}
+                                type="text"
                                 sx={{
                                     boxShadow: 1
                                 }}

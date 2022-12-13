@@ -21,7 +21,8 @@ const MyDialog = ({isModalOpen, handleCloseModal, children, image, editMode, upd
                                 <div className="infoTextField" key={key}>
                                     <TextField 
                                         value={
-                                            editMode && image.id === updatedEntry.id
+                                            editMode && 
+                                            image.id === updatedEntry.id
                                                 ? updatedEntry[key]
                                                 : value
                                         }
@@ -30,7 +31,11 @@ const MyDialog = ({isModalOpen, handleCloseModal, children, image, editMode, upd
                                         margin="normal"
                                         type="text"
                                         name={key}
-                                        disabled={image.id !== updatedEntry.id || !editMode || key === "id"}
+                                        disabled={image.id !== updatedEntry.id || 
+                                            !editMode || key === "id" || 
+                                            key === "storageLocation" ||
+                                        key === "cell" ||
+                                        key === "position"}
                                         onChange={(event) => handleChangeEditableField(event)}
                                     />
                                 </div>

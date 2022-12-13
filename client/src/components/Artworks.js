@@ -151,7 +151,7 @@ const Artworks = () => {
                 updatedEntry={updatedEntry}
                 handleChangeEditableField={handleChangeEditableField}
             >
-                { user.isSuperUser ? 
+                { user.superUser ? 
                     <SuperUserButtons
                         currentImage={currentImage}
                         searchResults={searchResults}

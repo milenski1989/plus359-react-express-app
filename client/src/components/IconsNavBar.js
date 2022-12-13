@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { Button } from "@mui/material"
 import UploadIcon from '@mui/icons-material/Upload';
 import CollectionsIcon from '@mui/icons-material/Collections';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
 
 const NavUnlisted = styled.ul`
   position: absolute;
@@ -42,6 +43,14 @@ const IconsNavbar = () => {
                     sx={{ width: 100, padding: 0.5, marginTop: 0.75 }} 
                     startIcon={<CollectionsIcon />}>
                         Gallery
+                </Button>
+            }</Link>
+            <Link to='/account' style={linkStyle}>{
+                <Button 
+                    variant="outlined"
+                    sx={{ width: 100, padding: 0.5, marginTop: 0.75 }} 
+                    startIcon={<AccountBoxIcon />}>
+                        Account
                 </Button>
             }</Link>
         </NavUnlisted>

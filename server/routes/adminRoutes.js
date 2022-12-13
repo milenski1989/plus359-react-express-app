@@ -84,10 +84,17 @@ router.post("/login", async (req, res) => {
 
 try {
   const result = await adminServices.login(email, password)
+  const {id, userName, userMail, superUser, timestamp} = result[0]
+
   req.session.loggedin = true;
-  req.session.username = result[0].userName;
-  res.status(200).send({ username: result[0].userName, email: result[0].email, isSuperUser: result[0].superUser });
+  req.session.username = userName;
+  console.log(result[0])
+ 
+  res.status(200).send({
+    id: id, userName: userName, userMail: email, superUser: superUser, createdAt: timestamp
+  });
 } catch (error) {
+  console.log(error)
   res.status(400).send({error: "Incorrect username and or/password!"})
 }
 });

@@ -6,6 +6,7 @@ import Home from './Home'
 import Upload from './Upload'
 import Artworks from './Artworks'
 import Signup from './Signup'
+import Account from './Account'
 
 const App = () => {
 
@@ -17,6 +18,7 @@ const App = () => {
                 <PrivateRoute exact path="/" component={Home} />
                 <PrivateRoute exact path="/upload" component={Upload} />
                 <PrivateRoute exact path="/artworks" component={Artworks} />
+                <PrivateRoute exact path="/account" component={Account} />
                 <Redirect exact path="/" to="/" />
                 <Redirect exact path="/logout" to="/login" />
             </Switch>

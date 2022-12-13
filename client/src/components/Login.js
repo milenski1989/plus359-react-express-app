@@ -38,8 +38,15 @@ const Login = () => {
         const data = await response.json()
 
         if (response.status === 200) {
+            const {id, userName, userMail, superUser, createdAt} = data
             console.log(data)
-            myStorage.setItem('user', JSON.stringify({username: data.username, email : data.email, isSuperUser: data.isSuperUser}))
+            myStorage.setItem('user', JSON.stringify({
+                id, 
+                userName, 
+                userMail, 
+                superUser, 
+                createdAt
+            }))
             setLoading(false)
             setLoginError({error: false, message: ''})
             history.replace(from)
