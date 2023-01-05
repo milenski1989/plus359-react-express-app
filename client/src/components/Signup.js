@@ -21,7 +21,7 @@ const Signup = () => {
     const [signupSuccess, setSignupSuccess] = useState({success: false, message: ''})
 
     const handleSignup = async () => {
-        const response = await fetch("http://localhost:5000/api/signup", {
+        const response = await fetch("https://app.plus359gallery.eu/api/signup", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

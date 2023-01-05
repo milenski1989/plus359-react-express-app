@@ -3,15 +3,18 @@ import "./Upload.css";
 import {
     Button,
     CircularProgress,
+    IconButton,
+    InputAdornment,
     TextField,
+    Tooltip,
 } from "@mui/material";
 import "./App.css";
 import Message from "./Message";
 import SecondaryNavbar from "./SecondaryNavbar";
 import axios from "axios";
 import LocationsDropdowns from "./LocationsDropdowns";
-
-const imageMimeType = /image\/(png|jpg|jpeg)/i;
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { yellow } from '@mui/material/colors';
 
 const Upload = () => {
 
@@ -50,8 +53,7 @@ const Upload = () => {
             formControlData.storageLocation === "" || 
             formControlData.cell === "" || 
             formControlData.position === "" ||
-            !file || 
-            !file.type.match(imageMimeType)
+            !file
         ) {
             disabled = true
         }
@@ -69,11 +71,6 @@ const Upload = () => {
 
     const imageSelectHandler = (e) => {
         const file = e.target.files[0];
-        if (!file.type.match(imageMimeType)) {
-            setUploadingError({ error: true, message: "The selected file is not an image!"});
-            setFile()
-            return;
-        }
         setFile(file);
     }
 
@@ -96,7 +93,7 @@ const Upload = () => {
             data.append("cell", formControlData.cell);
             data.append("position", formControlData.position)
     
-            await axios.post("http://localhost:5000/api/upload", data, {
+            await axios.post("https://app.plus359gallery.eu/api/upload", data, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -171,6 +168,28 @@ const Upload = () => {
                                 value={value || ""}
                                 error={(key === "artist" || key === "title" || key === "dimensions") && inputTouched && !value}
                                 label={key}
+                                InputProps={key === "notes" ? {endAdornment: <><InputAdornment position="end">
+                                    <Tooltip title="on a wall" placement="top">
+                                        <IconButton
+                                            aria-label="toggle password visibility"
+                                            onClick={() => console.log('test')}
+                                            edge="end"
+                                        >
+                                            <CheckCircleIcon sx={{ color: yellow[500]}} />
+                                        </IconButton>
+                                    </Tooltip>
+                                </InputAdornment>
+                                <InputAdornment position="end">
+                                    <Tooltip title="in exhibition" placement="top">
+                                        <IconButton
+                                            aria-label="toggle password visibility"
+                                            onClick={() => console.log('test')}
+                                            edge="end"
+                                        >
+                                            <CheckCircleIcon color="success" />
+                                        </IconButton>
+                                    </Tooltip>
+                                </InputAdornment></>} : null}
                                 required={setRequiredFields(key)}
                                 variant="outlined"
                                 margin="normal"

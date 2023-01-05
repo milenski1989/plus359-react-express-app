@@ -35,7 +35,7 @@ const Artworks = () => {
     //GET entries
     const getAllEntries = async () => {
         setLoading(true);
-        const res = await fetch("http://localhost:5000/api/artworks");
+        const res = await fetch("https://app.plus359gallery.eu/api/artworks");
         const data = await res.json();
        
         if (res.status === 200) {
@@ -63,9 +63,9 @@ const Artworks = () => {
         const {value} = e.target
         const resultsArray = entries.filter(art => {
             if (
-                art.artist.includes(value) || art.title.includes(value) || art.image_key.includes(value) || art.technique.includes(value) ||
-                art.dimensions.includes(value) || art.notes.includes(value) || art.storageLocation.toLowerCase().includes(value) ||
-                art.cell.includes(value) || art.position.toString().includes(value)
+                art.artist.toLowerCase().includes(value) || art.title.toLowerCase().includes(value) || art.image_key.toLowerCase().includes(value) || art.technique.toLowerCase().includes(value) ||
+                art.dimensions.toLowerCase().includes(value) || art.notes.toLowerCase().includes(value) || art.storageLocation.toLowerCase().includes(value) ||
+                art.cell.toLowerCase().includes(value) || art.position.toString().toLowerCase().includes(value)
             ) return true;
         })
 
@@ -86,8 +86,8 @@ const Artworks = () => {
     } 
 
     //handle change editable field in modal
-    const handleChangeEditableField = (e) => {
-        const { name, value } = e.target;
+    const handleChangeEditableField = (event) => {
+        const { name, value } = event.target;
         setUpdatedEntry(prevState => ({
             ...prevState,
             [name]: value,
@@ -99,12 +99,12 @@ const Artworks = () => {
     const deleteImageAndEntry = async (originalFilename ,filename, id) => {
         setIsDeleting(true);
 
-        await axios.delete(`http://localhost:5000/api/artworks/${originalFilename}`,
+        await axios.delete(`https://app.plus359gallery.eu/api/artworks/${originalFilename}`,
             {originalFilename})
 
-        await axios.delete(`http://localhost:5000/api/artworks/${filename}`,{filename})
+        await axios.delete(`https://app.plus359gallery.eu/api/artworks/${filename}`,{filename})
         const response = await axios.delete(
-            `http://localhost:5000/api/artworks/${id}`,
+            `https://app.plus359gallery.eu/api/artworks/${id}`,
             { id }
         );
         

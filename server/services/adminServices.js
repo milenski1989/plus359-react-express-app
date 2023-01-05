@@ -104,6 +104,7 @@ const getArts = (callback) => {
   FROM artworks a
   JOIN storage s
   ON a.storageLocation = s.storageLocation AND a.id = s.id
+  ORDER BY a.id DESC
         `;
   connection.query(query, (error, results) => {
     if (error) {

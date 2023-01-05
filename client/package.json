@@ -2,7 +2,7 @@
   "name": "plus359gallery-frontend-react",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://localhost:5000",
+  "homepage": "https://app.plus359gallery.eu",
   "dependencies": {
     "@babel/runtime": "^7.18.9",
     "@emotion/react": "^11.10.0",

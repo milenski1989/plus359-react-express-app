@@ -2,7 +2,7 @@ import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import React, { useEffect, useState } from 'react'
 import { locations, cellsData, createDropdownOptions } from "./constants/constants";
 
-function LocationsDropdowns({formControlData, setFormControlData, inputTouched, setInputTouched, }) {
+function LocationsDropdowns({formControlData, setFormControlData, inputTouched, setInputTouched}) {
 
     const [cells, setCells] = useState([]);
     const [stores, setStores] = useState([]);
@@ -23,7 +23,7 @@ function LocationsDropdowns({formControlData, setFormControlData, inputTouched, 
     //select cell
     const handleCellSelect = async (event) => {
         const {value} = event.target
-        const availablePositions =  await createDropdownOptions(value).then(data => data)
+        const availablePositions =  await createDropdownOptions(value, cells.locationNameId).then(data => data)
         setPositions(availablePositions)
         
         setFormControlData((prevState) => ({
