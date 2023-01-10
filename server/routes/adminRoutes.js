@@ -102,7 +102,9 @@ try {
 //upload a photo with details to S3 Bucket and MySQL Database tables Artworks and Storage
 router.post("/upload", upload.single("file"), async (req, res) => {
 
-  const {title, artist, technique, dimensions, price, notes, storageLocation, cell, position} = req.body
+  const {title, artist, technique, dimensions, price, notes, onWall,
+    inExhibition, storageLocation, cell, position} = req.body
+    console.log(req.body)
   const image_url = req.file.transforms[0].location
   const image_key = req.file.transforms[0].key
   const download_url = req.file.transforms[1].location
@@ -115,6 +117,8 @@ router.post("/upload", upload.single("file"), async (req, res) => {
     dimensions,
     price,
     notes,
+    onWall,
+    inExhibition,
     storageLocation,
     image_url,
     image_key,

@@ -24,8 +24,11 @@ const Upload = () => {
         technique: "",
         dimensions: "",
         price: 0,
-        notes: ""
+        notes: "",
+        onWall: 0,
+        inExhibition: 0
     });
+    console.log(inputsData)
 
     const [formControlData, setFormControlData] = useState({
         storageLocation: "",
@@ -89,11 +92,13 @@ const Upload = () => {
             data.append("dimensions", inputsData.dimensions);
             data.append("price", inputsData.price);
             data.append("notes", inputsData.notes);
+            data.append("onWall", inputsData.onWall);
+            data.append("inExhibition", inputsData.inExhibition);
             data.append("storageLocation", formControlData.storageLocation.name);
             data.append("cell", formControlData.cell);
             data.append("position", formControlData.position)
     
-            await axios.post("https://app.plus359gallery.eu/api/upload", data, {
+            await axios.post("http://localhost:5000/api/upload", data, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -162,6 +167,7 @@ const Upload = () => {
 
                     {Object.entries(inputsData).map(([key, value]) => {
                         return (
+                            key !== "onWall" && key !== "inExhibition" &&
                             <TextField
                                 key={key}
                                 onBlur={() => key === "artist" || key === "title" || key === "dimensions" && setInputTouched(true)}
@@ -172,7 +178,11 @@ const Upload = () => {
                                     <Tooltip title="on a wall" placement="top">
                                         <IconButton
                                             aria-label="toggle password visibility"
-                                            onClick={() => console.log('test')}
+                                            onClick={() =>  
+                                                setInputsData((prevState) => ({
+                                                    ...prevState,
+                                                    onWall: 1,
+                                                }))}
                                             edge="end"
                                         >
                                             <CheckCircleIcon sx={{ color: yellow[500]}} />
@@ -183,7 +193,11 @@ const Upload = () => {
                                     <Tooltip title="in exhibition" placement="top">
                                         <IconButton
                                             aria-label="toggle password visibility"
-                                            onClick={() => console.log('test')}
+                                            onClick={() =>  
+                                                setInputsData((prevState) => ({
+                                                    ...prevState,
+                                                    inExhibition: 1,
+                                                }))}
                                             edge="end"
                                         >
                                             <CheckCircleIcon color="success" />

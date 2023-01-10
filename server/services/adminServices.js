@@ -49,12 +49,15 @@ const login = (email, password) => {
 
 //upload to Artworks and Storage tables, after object is created in the S3 Bucket
 
-  const insertIntoArtworks = (title,
+  const insertIntoArtworks = (
+    title,
     artist,
     technique,
     dimensions,
     price,
     notes,
+    onWall,
+    inExhibition,
     storageLocation,
     image_url,
     image_key,
@@ -62,7 +65,7 @@ const login = (email, password) => {
     download_key) => {
 
     return new Promise((resolve, reject)=> {
-        connection.query("INSERT INTO artworks (title, artist, technique, dimensions, price, notes, storageLocation, image_url, image_key, download_url, download_key) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+        connection.query("INSERT INTO artworks (title, artist, technique, dimensions, price, notes, onWall, inExhibition, storageLocation, image_url, image_key, download_url, download_key) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
         [
           title,
           artist,
@@ -70,6 +73,8 @@ const login = (email, password) => {
           dimensions,
           price,
           notes,
+          onWall,
+          inExhibition,
           storageLocation,
           image_url,
           image_key,
@@ -89,6 +94,7 @@ const insertIntoStorage = (storageLocation, cell, position) => {
       connection.query( "INSERT INTO storage (storageLocation, cell, position) VALUES (?, ?, ?)",
       [storageLocation, cell, position], (error, results) =>{
           if(error){
+            console.log(error)
               return reject(error);
           }
           return resolve(results);
@@ -100,7 +106,7 @@ const insertIntoStorage = (storageLocation, cell, position) => {
 //get all entries from database
 const getArts = (callback) => {
   const query = `
-  SELECT a.id, a.artist, a.title, a.technique, a.dimensions, a.price, a.notes, a.image_url, a.image_key, a.download_url, a.download_key, s.storageLocation, s.cell, s.position
+  SELECT a.id, a.artist, a.title, a.technique, a.dimensions, a.price, a.notes, a.onWall, a.inExhibition, a.image_url, a.image_key, a.download_url, a.download_key, s.storageLocation, s.cell, s.position
   FROM artworks a
   JOIN storage s
   ON a.storageLocation = s.storageLocation AND a.id = s.id

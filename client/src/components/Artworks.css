@@ -1,48 +1,68 @@
-.imagesContainer {
-  display: flex;
-  flex-flow: row wrap;
-  margin-top: 4rem;
-  margin-bottom: 4rem;
-  padding-left: 2rem;
-  padding-right: 2rem;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 1rem;
+.gallery {
+  padding: 10px;
+  width: 80%;
+  margin-right: auto;
+  margin-left: auto;
+  margin-top: 3rem;
 }
 
-  .imageAndButtonsContainer {
-  position: relative;
-  width: 200px;
+@media screen and (max-width: 400px) {
+  .gallery {
+    column-count: 1;
+  }
+}
+
+@media screen and (min-width: 900px) {
+  .gallery {
+    column-count: 2;
+  }
+}
+
+@media screen and (min-width: 901px) {
+  .gallery {
+    column-count: 3;
+  }
+}
+
+@media screen and (min-width: 1201px) {
+  .gallery {
+    column-count: 4;
+  }
+}
+
+@media screen and (min-width: 1500px) {
+  .gallery {
+    column-count: 6;
+  }
+}
+
+.galleryItem {
+ margin-bottom: 1rem;
+ align-self: flex-start	;
+ box-shadow: 0.3rem 0.4rem 0.4rem rgba(0,0,0,0.4);
+ overflow: hidden;
+}
+
+  .galleryImage {
+    max-width: 100%;
+    height: 85%;
+    align-self: center;
+    object-fit: contain;
   }
 
-  .image {
-    width: 200px;
-    height: auto;
-  }
-
-  .infoButtons {
+  .imageButtons {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
     align-items: baseline;
+
   }
 
-  .numberLabel {
+  .imagePositionLabel {
     position: absolute;
     background: rgb(85, 84, 84);
     color: white;
     padding: 0 0.3rem;
-  }
-  
-  .downloadButtonContainer {
-    position: absolute;
-    right: -5px;
-    top: -12px;
-  }
-
-  .infoButtonContainer {
-    position: absolute;
-    right: -5px;
-    top: 15px;
   }
 
   .searchBar {

@@ -11,6 +11,8 @@ import MyDialog from "./MyDialog";
 import { saveAs } from 'file-saver'
 import Message from "./Message";
 import SuperUserButtons from "./SuperUserButtons";
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { yellow, green } from '@mui/material/colors';
 
 const Artworks = () => {
 
@@ -18,6 +20,7 @@ const Artworks = () => {
 
 
     const [entries, setEntries] = useState([])
+    console.log(entries)
     const [updatedEntry, setUpdatedEntry] = useState({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState({
@@ -35,7 +38,7 @@ const Artworks = () => {
     //GET entries
     const getAllEntries = async () => {
         setLoading(true);
-        const res = await fetch("https://app.plus359gallery.eu/api/artworks");
+        const res = await fetch("http://localhost:5000/api/artworks");
         const data = await res.json();
        
         if (res.status === 200) {
@@ -99,12 +102,12 @@ const Artworks = () => {
     const deleteImageAndEntry = async (originalFilename ,filename, id) => {
         setIsDeleting(true);
 
-        await axios.delete(`https://app.plus359gallery.eu/api/artworks/${originalFilename}`,
+        await axios.delete(`http://localhost:5000/api/artworks/${originalFilename}`,
             {originalFilename})
 
-        await axios.delete(`https://app.plus359gallery.eu/api/artworks/${filename}`,{filename})
+        await axios.delete(`http://localhost:5000/api/artworks/${filename}`,{filename})
         const response = await axios.delete(
-            `https://app.plus359gallery.eu/api/artworks/${id}`,
+            `http://localhost:5000/api/artworks/${id}`,
             { id }
         );
         
@@ -125,7 +128,7 @@ const Artworks = () => {
     };
 
     return (
-        <div className="mainSection">
+        <>
             {
                 <Message
                     open={error.error}
@@ -214,49 +217,57 @@ const Artworks = () => {
             {loading || isDeleting ? (
                 <CircularProgress className="loader" color="primary" />
             ) : (
-                <div className="imagesContainer">
+                <div className="gallery">
                     {searchResults.map((art, id) => ( 
-                        <div className="imageAndButtonsContainer" key={id}>
-
-                            <div className="numberLabel">{art.position}</div>
-
-                            <div className="downloadButtonContainer">
-                                <Tooltip title="Download" placement="top">
-                                    <IconButton
-                                        variant="outlined"
-                                        onClick={() => downloadImage(art.download_url, art.download_key)}
-                                        sx={{ marginTop: 0.75 }}
-                                    >
-                                        <FileDownloadIcon fontSize="medium" color="primary"/>
-                                    </IconButton>
-                                </Tooltip>
-                            </div>
-
-                            <div className="infoButtonContainer">
-                                <Tooltip title="Show more">
-                                    <IconButton
-                                        variant="outlined"
-                                        onClick={() => handleOpenInfoModal(art)}
-                                        sx={{ marginTop: 0.75 }}
-                                    >
-                                        <InfoIcon fontSize="medium" color="primary" />
-                                    </IconButton>
-                                </Tooltip>
-                            </div>
-
-                            <img 
-                                className="image"
-                                src={art.image_url}
-                                alt="no preview"
-                            />
-                        </div>
-                      
                         
+                        <div className="galleryItem" key={id}>
+                            <div className="imagePositionLabel">{art.position}</div>
+                            <img
+                                className="galleryImage"
+                                src={art.image_url}
+                                alt="no preview" />
+
+                            <div className="imageButtons">
+                                <div>
+                                    <Tooltip title="Show more">
+                                        <IconButton
+                                            variant="outlined"
+                                            onClick={() => handleOpenInfoModal(art)}
+                                            sx={{ marginTop: 0.75 }}
+                                        >
+                                            <InfoIcon fontSize="medium" color="primary" />
+                                        </IconButton>
+                                    </Tooltip>
+                                </div>
+
+                                <div>
+                                    <Tooltip title="Download" placement="top">
+                                        <IconButton
+                                            variant="outlined"
+                                            onClick={() => downloadImage(art.download_url, art.download_key)}
+                                            sx={{ marginTop: 0.75 }}
+                                        >
+                                            <FileDownloadIcon fontSize="medium" color="primary" />
+                                        </IconButton>
+                                    </Tooltip>
+                                </div>
+                                {
+                                    art.onWall || art.inExhibition ?
+                                        <div>
+                                            <Tooltip title={art.onWall && "on a wall" || art.inExhibition && "in exhibition"} placement="top">
+                                                <IconButton>
+                                                    <CheckCircleIcon sx={{ color: art.onWall && yellow[500] || art.inExhibition && green[500] }} />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </div> : <></>
+                                }
+                            </div>
+                        </div>
                     ))}
                 </div>
  
             )}
-        </div>
+        </>
     );
 };
 export default Artworks;
