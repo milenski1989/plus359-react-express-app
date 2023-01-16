@@ -18,9 +18,7 @@ const Artworks = () => {
 
     const user = JSON.parse(localStorage.getItem('user')); 
 
-
     const [entries, setEntries] = useState([])
-    console.log(entries)
     const [updatedEntry, setUpdatedEntry] = useState({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState({
@@ -255,9 +253,12 @@ const Artworks = () => {
                                     art.onWall || art.inExhibition ?
                                         <div>
                                             <Tooltip title={art.onWall && "on a wall" || art.inExhibition && "in exhibition"} placement="top">
-                                                <IconButton>
-                                                    <CheckCircleIcon sx={{ color: art.onWall && yellow[500] || art.inExhibition && green[500] }} />
-                                                </IconButton>
+                                                <span>
+                                                    <IconButton disabled>
+                                                        <CheckCircleIcon sx={{ color: art.onWall && yellow[500] || art.inExhibition && green[500] }} />
+                                                    </IconButton>
+                                                </span>
+                                               
                                             </Tooltip>
                                         </div> : <></>
                                 }

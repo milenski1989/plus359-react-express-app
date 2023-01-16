@@ -27,7 +27,7 @@ const SecondaryNavbar = () => {
             <Link to='/artworks' style={linkStyle}>Gallery</Link>
             <Link to='/account' style={linkStyle}>Account</Link>
         </NavUnlisted>
-        <Logout styles={{top: '5px', right: '3px'}}/>
+        <Logout styles={{top: '5px', right: '-3px'}}/>
     </>
 }
 

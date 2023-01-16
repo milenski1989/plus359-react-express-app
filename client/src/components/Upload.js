@@ -28,7 +28,6 @@ const Upload = () => {
         onWall: 0,
         inExhibition: 0
     });
-    console.log(inputsData)
 
     const [formControlData, setFormControlData] = useState({
         storageLocation: "",

@@ -5,7 +5,7 @@ import { useState } from "react";
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { yellow } from '@mui/material/colors';
+import { yellow, green } from '@mui/material/colors';
 
 const MyDialog = ({isModalOpen, handleCloseModal, children, image, editMode, updatedEntry, handleChangeEditableField}) => {
     if (image) {
@@ -25,15 +25,13 @@ const MyDialog = ({isModalOpen, handleCloseModal, children, image, editMode, upd
             <Dialog open={isModalOpen}>
                 <DialogContent>
                     {children}
-                    <div>
-                        <img src={imageCopy.image_url} style={{
-                            width: "200px", height: "auto", objectFit: "cover", marginTop: "1rem"
-                        }}/>
-                    </div>
+                   
+                    <img className="infoDialogImage" src={imageCopy.image_url}/>
+                
                     <div className="infoContainer">
                         {Object.entries(imageCopy).map(([key, value]) =>
                             (
-                                key !== "image_url" &&
+                                key !== "image_url" && key !== "onWall" && key !== "inExhibition" &&
                                 <div className="infoTextField" key={key}>
                                     {key === "price" ?
                                         <>
@@ -60,7 +58,8 @@ const MyDialog = ({isModalOpen, handleCloseModal, children, image, editMode, upd
                                                         {viewPrice ? <VisibilityOff /> : <Visibility />}
                                                     </IconButton>
                                                 </InputAdornment>}}
-                                                label={key} /></>
+                                                label={key} />
+                                        </>
                                         :
 
                                         <TextField 
@@ -71,28 +70,42 @@ const MyDialog = ({isModalOpen, handleCloseModal, children, image, editMode, upd
                                                     : value
                                             }
                                             label={key === "storageLocation" ? "location" : key}
-                                            InputProps={key === "notes" ? {endAdornment: <><InputAdornment position="end">
-                                                <Tooltip title="on a wall" placement="top">
-                                                    <IconButton
-                                                        aria-label="toggle password visibility"
-                                                        onClick={() => console.log('test')}
-                                                        edge="end"
-                                                    >
-                                                        <CheckCircleIcon sx={{ color: yellow[500]}} />
-                                                    </IconButton>
-                                                </Tooltip>
-                                            </InputAdornment>
-                                            <InputAdornment position="end">
-                                                <Tooltip title="in exhibition" placement="top">
-                                                    <IconButton
-                                                        aria-label="toggle password visibility"
-                                                        onClick={() => console.log('test')}
-                                                        edge="end"
-                                                    >
-                                                        <CheckCircleIcon color="success" />
-                                                    </IconButton>
-                                                </Tooltip>
-                                            </InputAdornment></>} : null}
+                                            InputProps={key === "notes" && editMode && {endAdornment: 
+
+                                                <InputAdornment position="end">
+                                                    <Tooltip title={imageCopy.onWall && "change to: in exhibition" || imageCopy.inExhibition && "change to: on a wall"} placement="top">
+                                                        <IconButton
+                                                            aria-label="toggle password visibility"
+                                                            edge="end"
+                                                        >
+                                                            <CheckCircleIcon sx={{ color: imageCopy.onWall ? green[500] : yellow[500]}} />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                </InputAdornment>
+                                             
+                                             || 
+                                                 <>
+                                                     <InputAdornment position="end">
+                                                         <Tooltip title="on a wall" placement="top">
+                                                             <IconButton
+                                                                 aria-label="toggle password visibility"
+                                                                 edge="end"
+                                                             >
+                                                                 <CheckCircleIcon sx={{color: yellow[500]}} />
+                                                             </IconButton>
+                                                         </Tooltip>
+                                                     </InputAdornment>
+                                                     <InputAdornment position="end">
+                                                         <Tooltip title="in exhibition" placement="top">
+                                                             <IconButton
+                                                                 aria-label="toggle password visibility"
+                                                                 edge="end"
+                                                             >
+                                                                 <CheckCircleIcon sx={{color: green[500]}} />
+                                                             </IconButton>
+                                                         </Tooltip>
+                                                     </InputAdornment>
+                                                 </>}}
                                             variant={editMode ? "outlined" : "standard"}
                                             margin="normal"
                                             type="text"

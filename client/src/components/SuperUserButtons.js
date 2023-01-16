@@ -5,6 +5,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Cancel";
 import FileDownloadIcon from '@mui/icons-material/FileDownload';import axios from 'axios';
+import './SuperUserButtons.css'
 
 function SuperUserButtons({
     currentImage,
@@ -28,7 +29,7 @@ function SuperUserButtons({
         openEditMode(true);
         let copyOfEntry;
         copyOfEntry = searchResults.find((art) => art.id === id);
-        const {id: copyId, artist, title, technique, dimensions, price, notes, storageLocation, cell, position} = copyOfEntry
+        const {id: copyId, artist, title, technique, dimensions, price, notes, storageLocation, cell, position, onWall, inExhibition} = copyOfEntry
         setEntryToUpdate({
             id: copyId,
             artist,
@@ -39,7 +40,9 @@ function SuperUserButtons({
             notes,
             storageLocation,
             cell,
-            position
+            position,
+            onWall,
+            inExhibition
         });
     };
 
@@ -79,7 +82,7 @@ function SuperUserButtons({
                     <IconButton
                         variant="outlined"
                         onClick={() => openDeleteConfirmationDialog(true)}
-                        sx={{ marginTop: 0.75 }}
+                        sx={{ marginTop: 0.75}}
                     >
                         <DeleteIcon />
                     </IconButton>
