@@ -219,7 +219,7 @@ const Artworks = () => {
                     {searchResults.map((art, id) => ( 
                         
                         <div className="galleryItem" key={id}>
-                            <div className="imagePositionLabel">{art.position}</div>
+                            <span className="imagePositionLabel">{art.position}</span>
                             <img
                                 className="galleryImage"
                                 src={art.image_url}
