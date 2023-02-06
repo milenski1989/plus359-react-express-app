@@ -103,8 +103,7 @@ try {
 router.post("/upload", upload.single("file"), async (req, res) => {
 
   const {title, artist, technique, dimensions, price, notes, onWall,
-    inExhibition, storageLocation, cell, position} = req.body
-    console.log(req.body)
+    inExhibition, storageLocation, cell, position, by_user} = req.body
   const image_url = req.file.transforms[0].location
   const image_key = req.file.transforms[0].key
   const download_url = req.file.transforms[1].location
@@ -120,14 +119,15 @@ router.post("/upload", upload.single("file"), async (req, res) => {
     onWall,
     inExhibition,
     storageLocation,
+    cell,
+    position,
     image_url,
     image_key,
     download_url,
-    download_key
+    download_key,
+    by_user
     )
-
-  const query2 = adminServices.insertIntoStorage (storageLocation, cell, position)
-  const promises = [query1, query2]
+  const promises = [query1]
 
 try {
   const result = await Promise.all(promises);
@@ -141,6 +141,7 @@ try {
 router.get("/artworks", async (req, res) => {
   try {
     adminServices.getArts((error, results) => {
+      console.log(results)
       res.status(200).json(results);
     });
 
@@ -185,7 +186,7 @@ router.delete("/artworks/:originalFilename", async (req, res) => {
 
 //update single entry in database
 router.put("/artworks/:id", async (req, res) => {
-  const {artist, title, technique, dimensions, price, notes, storageLocation,cell, position, id} = req.body
+  const {artist, title, technique, dimensions, price, notes, storageLocation, cell, position, id} = req.body
   adminServices.updateArt(artist, title, technique, dimensions, price, notes, storageLocation, cell, position, id, async (error, result) => {
     if (error) {
       res.send({ error: error.message });

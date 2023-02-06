@@ -18,6 +18,9 @@ import { yellow } from '@mui/material/colors';
 
 const Upload = () => {
 
+    let myStorage = window.localStorage
+    let user = JSON.parse(myStorage.getItem('user'));
+
     const [inputsData, setInputsData] = useState({
         artist: "",
         title: "",
@@ -96,6 +99,7 @@ const Upload = () => {
             data.append("storageLocation", formControlData.storageLocation.name);
             data.append("cell", formControlData.cell);
             data.append("position", formControlData.position)
+            data.append("by_user", user.userName)
     
             await axios.post("http://localhost:5000/api/upload", data, {
                 headers: {

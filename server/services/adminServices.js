@@ -47,7 +47,7 @@ const login = (email, password) => {
 });
 };
 
-//upload to Artworks and Storage tables, after object is created in the S3 Bucket
+//upload to Artworks after object is created in the S3 Bucket
 
   const insertIntoArtworks = (
     title,
@@ -59,13 +59,16 @@ const login = (email, password) => {
     onWall,
     inExhibition,
     storageLocation,
+    cell,
+    position,
     image_url,
     image_key,
     download_url,
-    download_key) => {
+    download_key,
+    by_user) => {
 
     return new Promise((resolve, reject)=> {
-        connection.query("INSERT INTO artworks (title, artist, technique, dimensions, price, notes, onWall, inExhibition, storageLocation, image_url, image_key, download_url, download_key) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        connection.query("INSERT INTO artworks (title, artist, technique, dimensions, price, notes, onWall, inExhibition, storageLocation, cell, position, image_url, image_key, download_url, download_key, by_user) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, ?)",
         [
           title,
           artist,
@@ -76,10 +79,13 @@ const login = (email, password) => {
           onWall,
           inExhibition,
           storageLocation,
+          cell,
+          position,
           image_url,
           image_key,
           download_url,
           download_key,
+          by_user
         ],  (error, results)=>{
             if(error){
                 return reject(error);
@@ -89,48 +95,29 @@ const login = (email, password) => {
     });
 };
 
-const insertIntoStorage = (storageLocation, cell, position) => {
-  return new Promise((resolve, reject)=>{
-      connection.query( "INSERT INTO storage (storageLocation, cell, position) VALUES (?, ?, ?)",
-      [storageLocation, cell, position], (error, results) =>{
-          if(error){
-            console.log(error)
-              return reject(error);
-          }
-          return resolve(results);
-      });
-  });
-};
-
-
 //get all entries from database
 const getArts = (callback) => {
-  const query = `
-  SELECT a.id, a.artist, a.title, a.technique, a.dimensions, a.price, a.notes, a.onWall, a.inExhibition, a.image_url, a.image_key, a.download_url, a.download_key, s.storageLocation, s.cell, s.position
-  FROM artworks a
-  JOIN storage s
-  ON a.storageLocation = s.storageLocation AND a.id = s.id
-  ORDER BY a.id DESC
-        `;
+  const query = `SELECT * FROM artworks
+  ORDER BY id DESC`;
   connection.query(query, (error, results) => {
     if (error) {
       callback(error);
       return;
     }
+
     callback(null, results);
   });
 };
 
 const getArtsNumbers = (cell, callback) => {
   const query = `
-  SELECT * FROM storage WHERE cell = ?
+  SELECT * FROM artworks WHERE cell = ?
         `;
         const params = [cell];
 
   connection.query(query, params, (error, results) => {
     if (error) {
       callback(error);
-      
       return;
     }
     callback(null, results);
@@ -139,92 +126,41 @@ const getArtsNumbers = (cell, callback) => {
 
 //delete one from database
 const deleteArt = (id, callback) => {
+  const query = `
+  DELETE FROM artworks WHERE id = ?;
+        `;
+        const params = [id];
 
-  connection.beginTransaction((err) => {
-    if (err) {
-      throw err;
+  connection.query(query, params, (error, result) => {
+    if (error) {
+      callback(error);
+      return;
     }
-    connection.query(
-     "DELETE FROM storage WHERE id = ?;", id,
-      (err) => {
-        if (err) {
-          connection.rollback(() => {
-            callback(err);
-            return;
-          });
-        }
-        connection.query(
-          "DELETE FROM artworks WHERE id = ?;", id,
-          (err, result) => {
-            if (err) {
-              connection.rollback(() => {
-                callback(err);
-                return;
-              });
-            }
-            connection.commit((err) => {
-              if (err) {
-                connection.rollback(() => {
-                  callback(err);
-                  return;
-                });
-              }
-              callback(null, result);    
-            });
-          }
-        );
-      }
-    );
+    callback(null, result);
   });
 };
 
 //update in database
-const updateArt = (artist, title, technique, dimensions, price, notes, storageLocation,cell, position, id, callback) => {
+const updateArt = (artist, title, technique, dimensions, price, notes, storageLocation, cell, position, id, callback) => {
+  const query = `
+  UPDATE artworks SET artist = ?, title = ?, technique = ?, dimensions = ?, price = ?, notes = ?, storageLocation = ?, cell = ?, position = ? WHERE id = ?;
+        `;
+        const params = [artist, title, technique, dimensions, price, notes, storageLocation, cell, position, id]
 
-  connection.beginTransaction((err) => {
-    if (err) {
-      throw err;
-    }
-    connection.query(
-      "UPDATE storage SET storageLocation = ?, cell = ?, position = ? WHERE id = ?", [storageLocation, cell, position, id],
-      (err) => {
-        if (err) {
-          connection.rollback(() => {
-            callback(err);
+        connection.query(query, params, (error, result) => {
+          if (error) {
+            callback(error);
             return;
-          });
-        }
-        connection.query(
-          "UPDATE artworks SET artist = ?, title = ?, technique = ?, dimensions = ?, price = ?, notes = ?, storageLocation = ? WHERE id = ?",
-          [artist, title, technique, dimensions, price, notes, storageLocation, id],
-          (err, result, fields) => {
-            if (err) {
-              connection.rollback(() => {
-                callback(err);
-                return;
-              });
-            }
-            connection.commit((err) => {
-              if (err) {
-                connection.rollback(() => {
-                  callback(err);
-                  return;
-                });
-              }
-              callback(null, result);
-            });
           }
-        );
-      }
-    );
-  });
+          callback(null, result);
+        });
+
 };
 
 module.exports = {
   signup,
   login,
   insertIntoArtworks,
-  insertIntoStorage,
   getArts,
   getArtsNumbers,
   deleteArt,
