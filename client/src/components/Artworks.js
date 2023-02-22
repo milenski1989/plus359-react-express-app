@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {  useEffect, useState } from "react";
 import SecondaryNavbar from "./SecondaryNavbar";
 import "./Artworks.css";
 import "./App.css";
@@ -35,8 +35,9 @@ const Artworks = () => {
 
     //GET entries
     const getAllEntries = async () => {
+        console.log('invoked function')
         setLoading(true);
-        const res = await fetch("http://localhost:5000/api/artworks");
+        const res = await fetch("https://app.plus359gallery.com/api/artworks");
         const data = await res.json();
        
         if (res.status === 200) {
@@ -100,12 +101,12 @@ const Artworks = () => {
     const deleteImageAndEntry = async (originalFilename ,filename, id) => {
         setIsDeleting(true);
 
-        await axios.delete(`http://localhost:5000/api/artworks/${originalFilename}`,
+        await axios.delete(`https://app.plus359gallery.com/api/artworks/${originalFilename}`,
             {originalFilename})
 
-        await axios.delete(`http://localhost:5000/api/artworks/${filename}`,{filename})
+        await axios.delete(`https://app.plus359gallery.com/api/artworks/${filename}`,{filename})
         const response = await axios.delete(
-            `http://localhost:5000/api/artworks/${id}`,
+            `https://app.plus359gallery.com/api/artworks/${id}`,
             { id }
         );
         

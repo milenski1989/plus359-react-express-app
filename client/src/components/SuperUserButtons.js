@@ -61,10 +61,10 @@ function SuperUserButtons({
     //UPDATE entry - THERE IS MORE TO DO
     const editInfo = async (id) => {
         const response = await axios.put(
-            `http://localhost:5000/api/artworks/${id}`,
+            `https://app.plus359gallery.com/api/artworks/${id}`,
             updatedEntry
         );
-    
+        console.log(response)
         if (response.status === 200) {
             openEditMode(false);
             setEntryToUpdate({});

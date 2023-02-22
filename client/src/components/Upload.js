@@ -101,7 +101,7 @@ const Upload = () => {
             data.append("position", formControlData.position)
             data.append("by_user", user.userName)
     
-            await axios.post("http://localhost:5000/api/upload", data, {
+            await axios.post("https://app.plus359gallery.com/api/upload", data, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -118,6 +118,8 @@ const Upload = () => {
                 dimensions: "",
                 price: 0,
                 notes: "",
+                onWall: 0,
+                inExhibition: 0
             })
     
             setFormControlData({
@@ -131,6 +133,22 @@ const Upload = () => {
             setProgress(0)
             setUploading(false);
             setUploadingError({ error: true, message: error.message});
+            setInputsData({
+                artist: "",
+                title: "",
+                technique: "",
+                dimensions: "",
+                price: 0,
+                notes: "",
+                onWall: 0,
+                inExhibition: 0
+            })
+    
+            setFormControlData({
+                storageLocation: "",
+                cell: "",
+                position: ""
+            })
             setInputTouched(false)
         }
     };
