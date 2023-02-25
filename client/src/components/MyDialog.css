@@ -1,14 +1,20 @@
 .infoContainer {
     display: grid;
+    margin-top: 1rem;
     grid-template-columns: 1fr 1fr 1fr;
     column-gap: 1rem;
+}
+
+.infoTextField {
+    margin-top: 1rem;
+    margin-right: 0.5rem;
 }
 
 .infoDialogImage {
     width: 200px;
     height: auto;
     object-fit: cover;
-    margin-top: 1rem;
+    margin-top: 2rem;
     position: relative;
     left: 50%;
     right: 50%;

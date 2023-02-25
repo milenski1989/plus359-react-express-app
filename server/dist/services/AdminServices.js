@@ -113,11 +113,12 @@ exports.uploadService = uploadService;
 //get all entries from database
 const getArtsService = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log('invoked 1');
         const results = yield artsRepository.find({
             order: {
-                id: "DESC",
+                id: "DESC"
             },
+            skip: 2,
+            take: 2
         });
         return results;
     }
@@ -128,7 +129,6 @@ const getArtsService = () => __awaiter(void 0, void 0, void 0, function* () {
 exports.getArtsService = getArtsService;
 const getCellsService = (cell) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log('invoked 2');
         const results = yield artsRepository.find({
             where: {
                 cell: cell

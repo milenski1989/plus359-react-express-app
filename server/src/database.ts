@@ -8,7 +8,7 @@ export const dbConnection = new DataSource({
         type: 'mysql',
         username: process.env.MYSQL_USER,
         host: process.env.MYSQL_HOST,
-        port: 3306,
+        port: 5432,
         password: process.env.MYSQL_PASSWORD,
         database: process.env.MYSQL_DATABASE,
         logging: true,

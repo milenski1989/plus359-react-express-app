@@ -134,11 +134,10 @@ export const uploadService = async (
 //get all entries from database
 export const getArtsService = async () => {
  try {
-  console.log('invoked 1')
   const results = await artsRepository.find({
     order: {
-      id: "DESC",
-  },
+      id: "DESC"
+  }
   })
   return results
  } catch {
@@ -150,7 +149,6 @@ export const getArtsService = async () => {
  export const getCellsService = async (cell: string) => {
 
   try {
-    console.log('invoked 2')
 
     const results = await artsRepository.find({
       where: {

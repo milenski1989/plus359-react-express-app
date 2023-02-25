@@ -35,7 +35,7 @@ const Upload = () => {
     const [formControlData, setFormControlData] = useState({
         storageLocation: "",
         cell: "",
-        position: ""
+        position: 0
     });
 
     const [uploadingError, setUploadingError] = useState({
@@ -53,11 +53,8 @@ const Upload = () => {
         let disabled;
         if (
             inputsData.artist === "" || 
-            inputsData.title === "" || 
             inputsData.dimensions === "" || 
-            formControlData.storageLocation === "" || 
-            formControlData.cell === "" || 
-            formControlData.position === "" ||
+            formControlData.storageLocation === "" ||
             !file
         ) {
             disabled = true
@@ -68,7 +65,7 @@ const Upload = () => {
 
     const setRequiredFields = (label) => {
         let required;
-        if (label === "artist" || label === "title" || label === "dimensions") {
+        if (label === "artist" || label === "dimensions") {
             required = true
         }
         return required
@@ -101,7 +98,7 @@ const Upload = () => {
             data.append("position", formControlData.position)
             data.append("by_user", user.userName)
     
-            await axios.post("https://app.plus359gallery.com/api/upload", data, {
+            await axios.post("http://localhost:5000/api/upload", data, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -125,7 +122,7 @@ const Upload = () => {
             setFormControlData({
                 storageLocation: "",
                 cell: "",
-                position: ""
+                position: 0
             })
             setInputTouched(false)
             
@@ -147,7 +144,7 @@ const Upload = () => {
             setFormControlData({
                 storageLocation: "",
                 cell: "",
-                position: ""
+                position: 0
             })
             setInputTouched(false)
         }
@@ -191,9 +188,9 @@ const Upload = () => {
                             key !== "onWall" && key !== "inExhibition" &&
                             <TextField
                                 key={key}
-                                onBlur={() => key === "artist" || key === "title" || key === "dimensions" && setInputTouched(true)}
+                                onBlur={() => key === "artist" || key === "dimensions" && setInputTouched(true)}
                                 value={value || ""}
-                                error={(key === "artist" || key === "title" || key === "dimensions") && inputTouched && !value}
+                                error={(key === "artist" || key === "dimensions") && inputTouched && !value}
                                 label={key}
                                 InputProps={key === "notes" ? {endAdornment: <><InputAdornment position="end">
                                     <Tooltip title="on a wall" placement="top">

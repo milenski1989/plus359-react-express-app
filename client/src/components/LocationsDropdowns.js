@@ -2,7 +2,7 @@ import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import React, { useEffect, useState } from 'react'
 import { locations, cellsData, createDropdownOptions } from "./constants/constants";
 
-function LocationsDropdowns({formControlData, setFormControlData, inputTouched, setInputTouched}) {
+function LocationsDropdowns({formControlData, setFormControlData, setUpdatedEntry = null, inputTouched, setInputTouched}) {
 
     const [cells, setCells] = useState([]);
     const [stores, setStores] = useState([]);
@@ -30,6 +30,13 @@ function LocationsDropdowns({formControlData, setFormControlData, inputTouched, 
             ...prevState,
             cell: value,
         }));
+
+        if (setUpdatedEntry) {
+            setUpdatedEntry((prevState) => ({
+                ...prevState,
+                cell: value
+            }))
+        }  
     }
 
     //select position
@@ -38,6 +45,13 @@ function LocationsDropdowns({formControlData, setFormControlData, inputTouched, 
             ...prevState,
             position: event.target.value,
         }));
+
+        if (setUpdatedEntry) {
+            setUpdatedEntry((prevState) => ({
+                ...prevState,
+                position: event.target.value
+            }))
+        }  
     }
 
     return (
@@ -50,19 +64,24 @@ function LocationsDropdowns({formControlData, setFormControlData, inputTouched, 
                     }}
                     value={formControlData.storageLocation.id || ""}
                     name="storageLocation"
-                    onBlur={() => setInputTouched(true)}
+                    onBlur={() => !setUpdatedEntry && setInputTouched(true)}
                     error={inputTouched && !formControlData["storageLocation"] }
                     onChange={(event) => {
                         const { value } = event.target;
                         handleLocationSelect(value),
                         setFormControlData((prevState) => ({
-                                       
                             ...prevState,
                             storageLocation: {
                                 id: value,
                                 name: stores[value - 1].name,
                             },
-                        }));
+                        })),
+                        setUpdatedEntry &&
+                            setUpdatedEntry((prevState) => ({
+                                ...prevState,
+                                storageLocation: stores[value - 1].name
+                            }))
+                        
                     }}
                 >
                     {stores.length !== 0 &&
@@ -77,15 +96,15 @@ function LocationsDropdowns({formControlData, setFormControlData, inputTouched, 
             </FormControl>
 
             <FormControl margin="normal" fullWidth>
-                <InputLabel required>cells</InputLabel>
+                <InputLabel>cells</InputLabel>
                 <Select
                     sx={{
                         boxShadow: 1
                     }}
                     value={formControlData.cell}
                     name="cell"
-                    onBlur={() => setInputTouched(true)}
-                    error={inputTouched && !formControlData["cell"] }
+                    // onBlur={() => setInputTouched(true)}
+                    // error={inputTouched && !formControlData["cell"] }
                     onChange={handleCellSelect}
                 >
                     {cells.length !== 0 &&
@@ -100,15 +119,15 @@ function LocationsDropdowns({formControlData, setFormControlData, inputTouched, 
             </FormControl>
                         
             <FormControl margin="normal" fullWidth>
-                <InputLabel required>positions</InputLabel>
+                <InputLabel>positions</InputLabel>
                 <Select
                     sx={{
                         boxShadow: 1
                     }}
                     value={formControlData.position}
                     name="position"
-                    onBlur={() => setInputTouched(true)}
-                    error={inputTouched && !formControlData["position"] }
+                    // onBlur={() => setInputTouched(true)}
+                    // error={inputTouched && !formControlData["position"] }
                     onChange={(event) => handleSelectPosition(event)}
                 >
                     {positions.length !==0 && positions.map((position, index) => {

@@ -1,21 +1,106 @@
-import { Dialog, DialogContent, IconButton, InputAdornment, TextField, Tooltip } from "@mui/material"
+/* eslint-disable react/jsx-key */
+import { Dialog, DialogContent, IconButton, TextField, Tooltip, InputAdornment } from "@mui/material"
 import CloseIcon from "@mui/icons-material/Close";
 import './MyDialog.css'
+import LocationsDropdowns from "./LocationsDropdowns";
 import { useState } from "react";
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { yellow, green } from '@mui/material/colors';
+// import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+// import { yellow, green } from '@mui/material/colors';
 
-const MyDialog = ({isModalOpen, handleCloseModal, children, image, editMode, updatedEntry, handleChangeEditableField}) => {
+
+
+const MyDialog = ({isModalOpen, handleCloseModal, children, image, editMode, updatedEntry, setUpdatedEntry, handleChangeEditableField}) => {
     if (image) {
-        const imageCopy = {...image}
-        delete imageCopy.download_url
-        delete imageCopy.download_key
-        delete imageCopy.image_key
-        delete imageCopy.id
+
+        const {artist, title, technique, dimensions, price, storageLocation, cell, position, notes,  by_user: user, image_url: url} = image
+
+        const textfields = Object.assign({}, {artist, title, technique, dimensions, price, notes, user})
+        const dropdowns = Object.assign({}, {storageLocation, cell, position})
+
+        const allFields = Object.assign({}, {...textfields, ...dropdowns})
 
         const [viewPrice, setViewPrice] = useState(false)
+
+        const [formControlData, setFormControlData] = useState({
+            storageLocation: "",
+            cell: "",
+            position: 0
+        });
+
+        const renderInputProps = (key) => {
+            let inputProps;
+            if (key === "price") {
+                inputProps = {
+                    endAdornment: <InputAdornment position="end">
+                        <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={handleViewPrice}
+                            edge="end"
+                        >
+                            {viewPrice ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                    </InputAdornment>
+                }
+
+                return inputProps
+            }
+        }
+
+        const renderTextFieldType = (key) => {
+            let type;
+            if (key === "price") {
+                if (viewPrice) {
+                    type = "text"
+                    return type
+                } else {
+                    type = "password"
+                    return type
+                }
+            } else {
+                type = "text"
+                return type
+            }
+        }
+
+        const renderNonEditableFields = () => {
+
+            return Object.entries(allFields).map(([key, value]) => (
+                <div className="infoTextField" key={key}>
+                    <TextField
+                        type={renderTextFieldType(key)}
+                        InputProps={renderInputProps(key)}
+                        variant="standard"
+                        value={value}
+                        disabled={!editMode}
+                        name={key}
+                        label={key} />
+                </div>
+            ))
+        }
+        
+        const renderEditableFields = () => {
+
+            return (
+
+                Object.entries(textfields).map(([key, ]) => (
+                    <div className="infoTextField" key={key}>
+                        <TextField
+                            type="text"
+                            variant="outlined"
+                            value={image.id === updatedEntry.id
+                            && updatedEntry[key]}
+                            disabled={!editMode}
+                            onChange={(event) => handleChangeEditableField(event)}
+                            name={key}
+                            label={key}
+                        />
+
+                    </div>
+                ))
+            )
+        }
 
         const handleViewPrice = () => {
             setViewPrice(!viewPrice)
@@ -25,110 +110,29 @@ const MyDialog = ({isModalOpen, handleCloseModal, children, image, editMode, upd
             <Dialog open={isModalOpen}>
                 <DialogContent>
                     {children}
-                   
-                    <img className="infoDialogImage" src={imageCopy.image_url}/>
+                    <img className="infoDialogImage" src={url}/>
                 
                     <div className="infoContainer">
-                        {Object.entries(imageCopy).map(([key, value]) =>
-                            (
-                                key !== "image_url" && key !== "onWall" && key !== "inExhibition" &&
-                                <div className="infoTextField" key={key}>
-                                    {key === "price" ?
-                                        <>
-                                            <TextField
-                                                type={viewPrice ? 'text' : 'password'}
-                                                sx={{position: "relative", top: 16}}
-                                                variant={editMode ? "outlined" : "standard"}
-                                                value={
-                                                    editMode && 
-                                                image.id === updatedEntry.id
-                                                        ? updatedEntry[key]
-                                                        : value
-                                                }
-                                                disabled={image.id !== updatedEntry.id ||
-                                            !editMode || key === "id"}
-                                                onChange={(event) => handleChangeEditableField(event)}
-                                                name={key}
-                                                InputProps={{endAdornment: <InputAdornment position="end">
-                                                    <IconButton
-                                                        aria-label="toggle password visibility"
-                                                        onClick={handleViewPrice}
-                                                        edge="end"
-                                                    >
-                                                        {viewPrice ? <VisibilityOff /> : <Visibility />}
-                                                    </IconButton>
-                                                </InputAdornment>}}
-                                                label={key} />
-                                        </>
-                                        :
+                        {!editMode ?
+                            renderNonEditableFields() :
 
-                                        <TextField 
-                                            value={
-                                                editMode && 
-                                            image.id === updatedEntry.id
-                                                    ? updatedEntry[key]
-                                                    : value
-                                            }
-                                            label={key === "storageLocation" ? "location" : key}
-                                            InputProps={key === "notes" && editMode && {endAdornment: 
-
-                                                <InputAdornment position="end">
-                                                    <Tooltip title={imageCopy.onWall && "change to: in exhibition" || imageCopy.inExhibition && "change to: on a wall"} placement="top">
-                                                        <IconButton
-                                                            aria-label="toggle password visibility"
-                                                            edge="end"
-                                                        >
-                                                            <CheckCircleIcon sx={{ color: imageCopy.onWall ? green[500] : yellow[500]}} />
-                                                        </IconButton>
-                                                    </Tooltip>
-                                                </InputAdornment>
-                                             
-                                             || 
-                                                 <>
-                                                     <InputAdornment position="end">
-                                                         <Tooltip title="on a wall" placement="top">
-                                                             <IconButton
-                                                                 aria-label="toggle password visibility"
-                                                                 edge="end"
-                                                             >
-                                                                 <CheckCircleIcon sx={{color: yellow[500]}} />
-                                                             </IconButton>
-                                                         </Tooltip>
-                                                     </InputAdornment>
-                                                     <InputAdornment position="end">
-                                                         <Tooltip title="in exhibition" placement="top">
-                                                             <IconButton
-                                                                 aria-label="toggle password visibility"
-                                                                 edge="end"
-                                                             >
-                                                                 <CheckCircleIcon sx={{color: green[500]}} />
-                                                             </IconButton>
-                                                         </Tooltip>
-                                                     </InputAdornment>
-                                                 </>}}
-                                            variant={editMode ? "outlined" : "standard"}
-                                            margin="normal"
-                                            type="text"
-                                            name={key}
-                                            disabled={image.id !== updatedEntry.id || 
-                                            !editMode || key === "id"}
-                                            onChange={(event) => handleChangeEditableField(event)}
-                                        />
-                                    }
-                                    
-                                </div>
-                              
-                            ))}
+                            [renderEditableFields(),
+                                <LocationsDropdowns
+                                    formControlData={formControlData}
+                                    setFormControlData={setFormControlData}
+                                    setUpdatedEntry={setUpdatedEntry}
+                                />]
+                        }
                     </div>
                 </DialogContent>
-                <Tooltip title="Close"  placement="top">
+                <Tooltip title="Close" placement="top">
                     <IconButton
                         aria-label="close"
                         onClick={handleCloseModal}
                         sx={{
                             position: "absolute",
-                            right: 8,
-                            top: 8,
+                            right: 5,
+                            top: 5,
                             color: (theme) => theme.palette.grey[500],
                         }}
                     >

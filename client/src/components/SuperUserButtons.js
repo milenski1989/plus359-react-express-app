@@ -61,7 +61,7 @@ function SuperUserButtons({
     //UPDATE entry - THERE IS MORE TO DO
     const editInfo = async (id) => {
         const response = await axios.put(
-            `https://app.plus359gallery.com/api/artworks/${id}`,
+            `http://localhost:5000/api/artworks/${id}`,
             updatedEntry
         );
         console.log(response)

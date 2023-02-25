@@ -58,6 +58,13 @@
 
   }
 
+  .buttonsContainer {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    margin-bottom: 1rem;
+}
+
   .imagePositionLabel {
     position: absolute;
     background: rgb(85, 84, 84, 0.4);
