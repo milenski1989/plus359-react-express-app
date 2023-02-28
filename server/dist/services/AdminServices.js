@@ -12,11 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateArtService = exports.deleteArtService = exports.getCellsService = exports.getArtsService = exports.uploadService = exports.signupService = exports.loginService = void 0;
+exports.updateArtService = exports.deleteArtService = exports.getCellsService = exports.searchService = exports.getArtsService = exports.uploadService = exports.signupService = exports.loginService = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const User_1 = require("../entities/User");
 const database_1 = require("../database");
 const Artworks_1 = require("../entities/Artworks");
+const typeorm_1 = require("typeorm");
 const saltRounds = 10;
 database_1.dbConnection
     .initialize()
@@ -126,6 +127,28 @@ const getArtsService = (page) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.getArtsService = getArtsService;
+//search
+const searchService = (params) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const results = yield artsRepository.find({ where: [
+                { artist: (0, typeorm_1.Like)(`%${params}%`) },
+                { technique: (0, typeorm_1.Like)(`%${params}%`) },
+                { title: (0, typeorm_1.Like)(`%${params}%`) },
+                { storageLocation: (0, typeorm_1.Like)(`%${params}%`) },
+                { dimensions: (0, typeorm_1.Like)(`%${params}%`) },
+                { notes: (0, typeorm_1.Like)(`%${params}%`) }
+            ],
+            order: {
+                id: "DESC",
+            },
+        });
+        return results;
+    }
+    catch (_e) {
+        throw new Error("Fetch failed!");
+    }
+});
+exports.searchService = searchService;
 const getCellsService = (cell) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const results = yield artsRepository.find({
@@ -135,7 +158,7 @@ const getCellsService = (cell) => __awaiter(void 0, void 0, void 0, function* ()
         });
         return results;
     }
-    catch (_e) {
+    catch (_f) {
         throw new Error("Error getting free positions in the selected cell");
     }
 });
@@ -146,7 +169,7 @@ const deleteArtService = (id) => __awaiter(void 0, void 0, void 0, function* () 
         const results = yield artsRepository.delete(id);
         return results;
     }
-    catch (_f) {
+    catch (_g) {
         throw new Error("Could not delete the entry!");
     }
 });
@@ -174,7 +197,7 @@ const updateArtService = (title, artist, technique, dimensions, price, notes, on
         const results = yield artsRepository.save(item);
         return results;
     }
-    catch (_g) {
+    catch (_h) {
         throw new Error("Could not update entry");
     }
 });

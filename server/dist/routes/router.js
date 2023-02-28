@@ -68,6 +68,7 @@ const upload = (0, multer_1.default)({
     }),
 });
 router.get('/artworks', AdminController_1.getArts);
+router.get('/artworks/:param', AdminController_1.searchArts);
 router.get('/storage/:cell', AdminController_1.getFreeCells);
 router.post('/login', AdminController_1.login);
 router.post('/signup', AdminController_1.signup);

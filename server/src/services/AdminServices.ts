@@ -3,6 +3,8 @@ import bcrypt from "bcrypt"
 import { User } from "../entities/User";
 import { dbConnection } from "../database";
 import { Artworks } from "../entities/Artworks";
+import { Like } from "typeorm"
+
 const saltRounds = 10
 
 dbConnection
@@ -139,7 +141,6 @@ export const getArtsService = async (page: number) => {
   skip: page === 1 ? 1 : (page -1) * 25,
   take: 25
   })
-  
 
   return results
  } catch {
@@ -147,6 +148,30 @@ export const getArtsService = async (page: number) => {
   
  }
 };
+
+//search
+export const searchService = async (params: string) => {
+  try {
+   const results = await artsRepository.find(
+   { where: [
+    {artist:  Like(`%${params}%`)},
+    {technique: Like(`%${params}%`)},
+    {title: Like(`%${params}%`)},
+    {storageLocation: Like(`%${params}%`)},
+    {dimensions: Like(`%${params}%`)},
+    {notes: Like(`%${params}%`)}
+  ],
+  order: {
+    id: "DESC",
+},
+})
+  
+   return results
+  } catch {
+   throw new Error("Fetch failed!");
+   
+  }
+ };
 
  export const getCellsService = async (cell: string) => {
 
@@ -158,7 +183,6 @@ export const getArtsService = async (page: number) => {
       }
     })
 
-    
     return results
   } catch {
     throw new Error("Error getting free positions in the selected cell");

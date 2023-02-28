@@ -9,8 +9,8 @@ import SearchIcon from "@mui/icons-material/Search";
 import MyDialog from "./MyDialog";
 import { saveAs } from 'file-saver'
 import Message from "./Message";
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { yellow, green } from '@mui/material/colors';
+//import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+//import { yellow, green } from '@mui/material/colors';
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from "@mui/icons-material/Save";
@@ -34,6 +34,7 @@ const Artworks = () => {
     const [deletedSuccessful, setDeleteSuccessful] = useState(false);
     const [page, setPage] = useState(1)
     const [count, setCount] = useState(2)
+    const [params, setParams] = useState('')
 
     //GET entries
     const getAllEntries = async () => {
@@ -43,8 +44,6 @@ const Artworks = () => {
        
         if (res.status === 200) {
             setEntries(data)
-            setSearchResults(data)
-
             setLoading(false);
         } else {
             setError({error: true, message: ""})
@@ -57,22 +56,44 @@ const Artworks = () => {
     const handlePrefillEditableFields = (id) => {
         setIsEditMode(true);
         let copyOfEntry;
-        copyOfEntry = searchResults.find((art) => art.id === id);
-        const {id: copyId, artist, title, technique, dimensions, price, notes, storageLocation, cell, position, onWall, inExhibition} = copyOfEntry
-        setUpdatedEntry({
-            id: copyId,
-            artist,
-            title,
-            technique,
-            dimensions,
-            price,
-            notes,
-            storageLocation,
-            cell,
-            position,
-            onWall,
-            inExhibition
-        });
+
+        if (searchResults.length) {
+            copyOfEntry = searchResults.find((art) => art.id === id);
+            const {id: copyId, artist, title, technique, dimensions, price, notes, storageLocation, cell, position, onWall, inExhibition} = copyOfEntry
+            setUpdatedEntry({
+                id: copyId,
+                artist,
+                title,
+                technique,
+                dimensions,
+                price,
+                notes,
+                storageLocation,
+                cell,
+                position,
+                onWall,
+                inExhibition
+            });
+        }
+        else {
+            copyOfEntry = entries.find((art) => art.id === id);
+            const {id: copyId, artist, title, technique, dimensions, price, notes, storageLocation, cell, position, onWall, inExhibition} = copyOfEntry
+            setUpdatedEntry({
+                id: copyId,
+                artist,
+                title,
+                technique,
+                dimensions,
+                price,
+                notes,
+                storageLocation,
+                cell,
+                position,
+                onWall,
+                inExhibition
+            });
+        }
+       
     };
 
     //handle save edited info
@@ -112,18 +133,31 @@ const Artworks = () => {
         getAllEntries()
     }, [page]);
 
-    //handle search by all fields
-    const handleSearchByAllFields = (e) => {
-        const {value} = e.target
-        const resultsArray = entries.filter(art => {
-            if (
-                art.artist.toLowerCase().includes(value) || art.title.toLowerCase().includes(value) || art.image_key.toLowerCase().includes(value) || art.technique.toLowerCase().includes(value) ||
-                art.dimensions.toLowerCase().includes(value) || art.notes.toLowerCase().includes(value) || art.storageLocation.toLowerCase().includes(value) ||
-                art.cell.toLowerCase().includes(value) || art.position.toString().toLowerCase().includes(value)
-            ) return true;
-        })
+    const search = async () => {
+       
+        setLoading(true);
+        const res = await fetch(`http://localhost:5000/api/artworks/${params}`);
+        const data = await res.json();
+       
+        if (res.status === 200) {
+            setSearchResults(data)
+            setLoading(false);
+        } else {
+            setLoading(false);
+        }
+     
+    }
 
-        setSearchResults(resultsArray)
+    const triggerSearch = (e) => {
+        if (e.charCode === 13) {
+            e.preventDefault()
+            search()
+        }
+    }
+
+    const handleChangeSearchValue = (e) => {
+        setParams(e.target.value)
+        if (!e.target.value) setSearchResults([])
     }
 
     //handle open info modal
@@ -164,7 +198,6 @@ const Artworks = () => {
         
         if (response.status === 200) {
             getAllEntries()
-            setSearchResults(entries.filter((art) => art.id !== id));
             setIsDeleting(false);
             setDeleteSuccessful(true)
         }
@@ -298,9 +331,10 @@ const Artworks = () => {
                         sx={{ ml: 1, flex: 1 }}
                         placeholder="Search..."
                         inputProps={{ "aria-label": "search" }}
-                        onChange={handleSearchByAllFields}
+                        onChange={handleChangeSearchValue}
+                        onKeyPress={triggerSearch}
                     />
-                    <IconButton type="button" sx={{ p: "10px" }} aria-label="search">
+                    <IconButton type="button" sx={{ p: "10px" }} aria-label="search" onClick={search}>
                         <SearchIcon />
                     </IconButton>
                 </Paper>
@@ -310,31 +344,45 @@ const Artworks = () => {
                 <CircularProgress className="loader" color="primary" />
             ) : (
                 <><div className="gallery">
-                    {searchResults.map((art, id) => (
+                    {searchResults.length ? 
 
-                        <div className="galleryItem" key={id}>
-                            <span className="imagePositionLabel">{art.position}</span>
-                            <img
-                                className="galleryImage"
-                                src={art.image_url}
-                                onClick={() => handleOpenInfoModal(art)}
-                                alt="no preview" />
+                        searchResults.map((art, id) => (
 
-                            <div className="imageButtons">
-                                {art.onWall || art.inExhibition ?
-                                    <div>
-                                        <Tooltip title={art.onWall && "on a wall" || art.inExhibition && "in exhibition"} placement="top">
-                                            <span>
-                                                <IconButton disabled>
-                                                    <CheckCircleIcon sx={{ color: art.onWall && yellow[500] || art.inExhibition && green[500] }} />
-                                                </IconButton>
-                                            </span>
+                            <div className="galleryItem" key={id}>
+                                <span className="imagePositionLabel">{art.position}</span>
+                                <img
+                                    className="galleryImage"
+                                    src={art.image_url}
+                                    onClick={() => handleOpenInfoModal(art)}
+                                    alt="no preview" />
+                                {/* 
+        <div className="imageButtons">
+            {art.onWall || art.inExhibition ?
+                <div>
+                    <Tooltip title={art.onWall && "on a wall" || art.inExhibition && "in exhibition"} placement="top">
+                        <span>
+                            <IconButton disabled>
+                                <CheckCircleIcon sx={{ color: art.onWall && yellow[500] || art.inExhibition && green[500] }} />
+                            </IconButton>
+                        </span>
 
-                                        </Tooltip>
-                                    </div> : <></>}
+                    </Tooltip>
+                </div> : <></>}
+        </div> */}
                             </div>
-                        </div>
-                    ))}
+                        )) : 
+                        entries.map((art, id) => (
+
+                            <div className="galleryItem" key={id}>
+                                <span className="imagePositionLabel">{art.position}</span>
+                                <img
+                                    className="galleryImage"
+                                    src={art.image_url}
+                                    onClick={() => handleOpenInfoModal(art)}
+                                    alt="no preview" />
+                            </div>
+                        ))
+                    }
                 </div>
                 <Pagination
                     count={count}

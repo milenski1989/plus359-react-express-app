@@ -1,4 +1,4 @@
-import { deleteArtService, getArtsService, getCellsService, loginService, signupService, updateArtService, uploadService } from "../services/AdminServices";
+import { deleteArtService, getArtsService, getCellsService, loginService, searchService, signupService, updateArtService, uploadService } from "../services/AdminServices";
 import 'dotenv/config';
 import AWS from 'aws-sdk';
 
@@ -89,6 +89,19 @@ export const getArts = async (req, res) => {
    res.status(200).json(results);
   } catch (error) {
     res.status(400).json(error);
+  }
+}
+
+//search 
+export const searchArts = async (req, res) => {
+  const {param} = req.params
+  try {
+    const results = await searchService(param)
+    res.status(200).json(results);
+
+  } catch {
+    throw new Error("No entries found");
+    
   }
 }
 

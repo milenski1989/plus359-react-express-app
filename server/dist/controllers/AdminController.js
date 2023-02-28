@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateEntry = exports.deleteOriginalFromS3 = exports.deleteFromS3 = exports.getFreeCells = exports.getArts = exports.uploadEntry = exports.signup = exports.login = void 0;
+exports.updateEntry = exports.deleteOriginalFromS3 = exports.deleteFromS3 = exports.getFreeCells = exports.searchArts = exports.getArts = exports.uploadEntry = exports.signup = exports.login = void 0;
 const AdminServices_1 = require("../services/AdminServices");
 require("dotenv/config");
 const aws_sdk_1 = __importDefault(require("aws-sdk"));
@@ -74,6 +74,18 @@ const getArts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.getArts = getArts;
+//search 
+const searchArts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { param } = req.params;
+    try {
+        const results = yield (0, AdminServices_1.searchService)(param);
+        res.status(200).json(results);
+    }
+    catch (_c) {
+        throw new Error("No entries found");
+    }
+});
+exports.searchArts = searchArts;
 const getFreeCells = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { cell } = req.params;
     try {
