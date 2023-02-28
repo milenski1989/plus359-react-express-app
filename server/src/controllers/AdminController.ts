@@ -2,7 +2,6 @@ import { deleteArtService, getArtsService, getCellsService, loginService, signup
 import 'dotenv/config';
 import AWS from 'aws-sdk';
 
-
 const s3 = new AWS.S3({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -32,7 +31,6 @@ export const signup =  async (req, res) => {
 
 try {
  let results = await signupService(email, password, userName)
- console.log('results in controller', results)
   res.status(200).json(results);
 } catch {
   throw new Error("User with this email already exists");
@@ -86,7 +84,8 @@ try {
 //get all photos from S3 and details from database
 export const getArts = async (req, res) => {
   try {
-   const results = await getArtsService()
+   const results = await getArtsService(req.query.page)
+
    res.status(200).json(results);
   } catch (error) {
     res.status(400).json(error);
@@ -97,7 +96,10 @@ export const getFreeCells = async (req, res) => {
   const {cell} = req.params
 
   try {
+    
     const results = await getCellsService(cell)
+
+   
         res.status(200).json(results);
     
   } catch (error) {

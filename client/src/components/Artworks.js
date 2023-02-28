@@ -2,9 +2,8 @@ import React, {  useEffect, useState } from "react";
 import SecondaryNavbar from "./SecondaryNavbar";
 import "./Artworks.css";
 import "./App.css";
-import InfoIcon from "@mui/icons-material/Info";
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, InputBase, Paper, Tooltip } from "@mui/material";
+import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, InputBase, Paper, Tooltip, Pagination } from "@mui/material";
 import axios from "axios";
 import SearchIcon from "@mui/icons-material/Search";
 import MyDialog from "./MyDialog";
@@ -33,16 +32,19 @@ const Artworks = () => {
     const [currentImage, setCurrentImage] = useState(null)
     const [searchResults, setSearchResults] = useState([]);
     const [deletedSuccessful, setDeleteSuccessful] = useState(false);
+    const [page, setPage] = useState(1)
+    const [count, setCount] = useState(2)
 
     //GET entries
     const getAllEntries = async () => {
         setLoading(true);
-        const res = await fetch("http://localhost:5000/api/artworks");
+        const res = await fetch(`http://localhost:5000/api/artworks?page=${page}`);
         const data = await res.json();
        
         if (res.status === 200) {
             setEntries(data)
             setSearchResults(data)
+
             setLoading(false);
         } else {
             setError({error: true, message: ""})
@@ -108,7 +110,7 @@ const Artworks = () => {
 
     useEffect(() => {
         getAllEntries()
-    }, []);
+    }, [page]);
 
     //handle search by all fields
     const handleSearchByAllFields = (e) => {
@@ -175,6 +177,14 @@ const Artworks = () => {
         setIsDeleteConfOpen(false)
         setIsInfoModalOpen(false)
     };
+
+    //handle page change
+    const handlePageChange = (event, value) => {
+        setPage(Number(value))
+        if (entries.length > 1) {
+            setCount(value + 1)
+        }
+    }
 
     return (
         <>
@@ -299,57 +309,42 @@ const Artworks = () => {
             {loading || isDeleting ? (
                 <CircularProgress className="loader" color="primary" />
             ) : (
-                <div className="gallery">
-                    {searchResults.map((art, id) => ( 
-                        
+                <><div className="gallery">
+                    {searchResults.map((art, id) => (
+
                         <div className="galleryItem" key={id}>
                             <span className="imagePositionLabel">{art.position}</span>
                             <img
                                 className="galleryImage"
                                 src={art.image_url}
+                                onClick={() => handleOpenInfoModal(art)}
                                 alt="no preview" />
 
                             <div className="imageButtons">
-                                <div>
-                                    <Tooltip title="Show more">
-                                        <IconButton
-                                            variant="outlined"
-                                            onClick={() => handleOpenInfoModal(art)}
-                                            sx={{ marginTop: 0.75 }}
-                                        >
-                                            <InfoIcon fontSize="medium" color="primary" />
-                                        </IconButton>
-                                    </Tooltip>
-                                </div>
+                                {art.onWall || art.inExhibition ?
+                                    <div>
+                                        <Tooltip title={art.onWall && "on a wall" || art.inExhibition && "in exhibition"} placement="top">
+                                            <span>
+                                                <IconButton disabled>
+                                                    <CheckCircleIcon sx={{ color: art.onWall && yellow[500] || art.inExhibition && green[500] }} />
+                                                </IconButton>
+                                            </span>
 
-                                <div>
-                                    <Tooltip title="Download" placement="top">
-                                        <IconButton
-                                            variant="outlined"
-                                            onClick={() => downloadImage(art.download_url, art.download_key)}
-                                            sx={{ marginTop: 0.75 }}
-                                        >
-                                            <FileDownloadIcon fontSize="medium" color="primary" />
-                                        </IconButton>
-                                    </Tooltip>
-                                </div>
-                                {
-                                    art.onWall || art.inExhibition ?
-                                        <div>
-                                            <Tooltip title={art.onWall && "on a wall" || art.inExhibition && "in exhibition"} placement="top">
-                                                <span>
-                                                    <IconButton disabled>
-                                                        <CheckCircleIcon sx={{ color: art.onWall && yellow[500] || art.inExhibition && green[500] }} />
-                                                    </IconButton>
-                                                </span>
-                                               
-                                            </Tooltip>
-                                        </div> : <></>
-                                }
+                                        </Tooltip>
+                                    </div> : <></>}
                             </div>
                         </div>
                     ))}
                 </div>
+                <Pagination
+                    count={count}
+                    page={page}
+                    variant="outlined"
+                    showFirstButton
+                    showLastButton
+                    color="primary"
+                    sx={{ marginTop: "3rem", marginLeft: "5rem"}}
+                    onChange={handlePageChange} /></>
  
             )}
         </>

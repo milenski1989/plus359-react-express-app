@@ -40,7 +40,6 @@ const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password, userName } = req.body;
     try {
         let results = yield (0, AdminServices_1.signupService)(email, password, userName);
-        console.log('results in controller', results);
         res.status(200).json(results);
     }
     catch (_b) {
@@ -67,7 +66,7 @@ exports.uploadEntry = uploadEntry;
 //get all photos from S3 and details from database
 const getArts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const results = yield (0, AdminServices_1.getArtsService)();
+        const results = yield (0, AdminServices_1.getArtsService)(req.query.page);
         res.status(200).json(results);
     }
     catch (error) {

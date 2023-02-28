@@ -54,7 +54,6 @@ const signupService = (email, password, userName) => __awaiter(void 0, void 0, v
     let userFound = yield userRepository.findOneBy({
         email: email
     });
-    console.log(userFound);
     try {
         if (!userFound) {
             bcrypt_1.default.hash(password, saltRounds, (err, hash) => __awaiter(void 0, void 0, void 0, function* () {
@@ -111,14 +110,14 @@ const uploadService = (title, artist, technique, dimensions, price, notes, onWal
 });
 exports.uploadService = uploadService;
 //get all entries from database
-const getArtsService = () => __awaiter(void 0, void 0, void 0, function* () {
+const getArtsService = (page) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const results = yield artsRepository.find({
             order: {
                 id: "DESC"
             },
-            skip: 2,
-            take: 2
+            skip: page === 1 ? 1 : (page - 1) * 25,
+            take: 25
         });
         return results;
     }

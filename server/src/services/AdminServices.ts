@@ -47,8 +47,6 @@ export const loginService = async (email: string, password: string) => {
     email: email
   })
 
-  console.log(userFound)
-
   try {
      if (!userFound) {
     
@@ -132,13 +130,17 @@ export const uploadService = async (
     }
 
 //get all entries from database
-export const getArtsService = async () => {
+export const getArtsService = async (page: number) => {
  try {
   const results = await artsRepository.find({
     order: {
       id: "DESC"
-  }
+  },
+  skip: page === 1 ? 1 : (page -1) * 25,
+  take: 25
   })
+  
+
   return results
  } catch {
   throw new Error("Fetch failed!");
