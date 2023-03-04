@@ -6,9 +6,27 @@
   margin-top: 3rem;
 }
 
+.galleryItem {
+  margin-bottom: 1rem;
+  align-self: flex-start	;
+  box-shadow: 0.3rem 0.4rem 0.4rem rgba(0,0,0,0.4);
+  overflow: hidden;
+ }
+
+ .mainImageInfoContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0.5rem;
+ }
+
 @media screen and (max-width: 400px) {
   .gallery {
     column-count: 1;
+  }
+
+  .galleryItem {
+    margin-bottom: 2rem;
   }
 }
 
@@ -36,13 +54,6 @@
   }
 }
 
-.galleryItem {
- margin-bottom: 1rem;
- align-self: flex-start	;
- box-shadow: 0.3rem 0.4rem 0.4rem rgba(0,0,0,0.4);
- overflow: hidden;
-}
-
   .galleryImage {
     max-width: 100%;
     height: auto;
@@ -63,7 +74,7 @@
     position: absolute;
     top: 5px;
     left: 5px;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
 }
 
   .imagePositionLabel {

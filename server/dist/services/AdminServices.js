@@ -111,16 +111,16 @@ const uploadService = (title, artist, technique, dimensions, price, notes, onWal
 });
 exports.uploadService = uploadService;
 //get all entries from database
-const getArtsService = (page) => __awaiter(void 0, void 0, void 0, function* () {
+const getArtsService = (page, count) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const results = yield artsRepository.find({
+        const [arts, artsCount] = yield artsRepository.findAndCount({
             order: {
                 id: "DESC"
             },
-            skip: page === 1 ? 1 : (page - 1) * 25,
-            take: 25
+            take: parseInt(count),
+            skip: (parseInt(count) * parseInt(page)) - parseInt(count)
         });
-        return results;
+        return [arts, artsCount];
     }
     catch (_d) {
         throw new Error("Fetch failed!");

@@ -132,17 +132,18 @@ export const uploadService = async (
     }
 
 //get all entries from database
-export const getArtsService = async (page: number) => {
+export const getArtsService = async (page: string, count: string) => {
+  
  try {
-  const results = await artsRepository.find({
+  const [arts, artsCount] = await artsRepository.findAndCount({
     order: {
       id: "DESC"
   },
-  skip: page === 1 ? 1 : (page -1) * 25,
-  take: 25
+ take: parseInt(count),
+ skip: (parseInt(count) * parseInt(page)) - parseInt(count)
   })
 
-  return results
+  return [arts, artsCount]
  } catch {
   throw new Error("Fetch failed!");
   

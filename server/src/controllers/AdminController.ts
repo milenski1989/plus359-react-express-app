@@ -83,10 +83,11 @@ try {
 
 //get all photos from S3 and details from database
 export const getArts = async (req, res) => {
+  const {page, count} = req.query
   try {
-   const results = await getArtsService(req.query.page)
+   const [arts, artsCount] = await getArtsService(page, count)
 
-   res.status(200).json(results);
+   res.status(200).json({arts, artsCount});
   } catch (error) {
     res.status(400).json(error);
   }

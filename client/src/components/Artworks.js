@@ -1,9 +1,10 @@
-import React, {  useEffect, useState } from "react";
+/* eslint-disable indent */
+import React, { useEffect, useState } from "react";
 import SecondaryNavbar from "./SecondaryNavbar";
 import "./Artworks.css";
 import "./App.css";
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, InputBase, Paper, Tooltip, Pagination } from "@mui/material";
+import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Pagination, IconButton, InputBase, Paper, Tooltip } from "@mui/material";
 import axios from "axios";
 import SearchIcon from "@mui/icons-material/Search";
 import MyDialog from "./MyDialog";
@@ -15,6 +16,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Cancel";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 
 const Artworks = () => {
 
@@ -33,17 +36,22 @@ const Artworks = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [deletedSuccessful, setDeleteSuccessful] = useState(false);
     const [page, setPage] = useState(1)
-    const [count, setCount] = useState(2)
     const [params, setParams] = useState('')
+    const [totalCount, setTotalCount] = useState(0)
+    const [pagesCount, setPagesCount] = useState(0)
 
     //GET entries
     const getAllEntries = async () => {
         setLoading(true);
-        const res = await fetch(`http://localhost:5000/api/artworks?page=${page}`);
+        const res = await fetch(`http://localhost:5000/api/artworks?count=25&page=${page}`);
         const data = await res.json();
+        const {arts, artsCount} = data
+        console.log(arts, artsCount)
        
         if (res.status === 200) {
-            setEntries(data)
+            setEntries(arts)
+            setPagesCount(Math.ceil(artsCount / 25))
+            setTotalCount(artsCount)
             setLoading(false);
         } else {
             setError({error: true, message: ""})
@@ -184,7 +192,7 @@ const Artworks = () => {
 
 
     //DELETE thumbnail, original image and entry
-    const deleteImageAndEntry = async (originalFilename ,filename, id) => {
+    const deleteImageAndEntry = async (originalFilename, filename, id) => {
         setIsDeleting(true);
 
         await axios.delete(`http://localhost:5000/api/artworks/${originalFilename}`,
@@ -211,33 +219,30 @@ const Artworks = () => {
         setIsInfoModalOpen(false)
     };
 
-    //handle page change
-    const handlePageChange = (event, value) => {
-        setPage(Number(value))
-        if (entries.length > 1) {
-            setCount(value + 1)
-        }
+    const noNextPage = () => {
+        const currentPage = page + 1
+        const lastPage = Math.ceil(totalCount/25)
+        if (currentPage === lastPage) return true
+    }
+
+    const isTherePrevPage = () => {
+        return page !== 0
+
     }
 
     return (
         <>
-            {
-                <Message
-                    open={error.error}
-                    handleClose={() => setError({ error: false, message: "" })}
-                    message={error.message}
-                    severity="error"
-                />
-            }
+            {<Message
+                open={error.error}
+                handleClose={() => setError({ error: false, message: "" })}
+                message={error.message}
+                severity="error" />}
 
-            {
-                <Message
-                    open={deletedSuccessful}
-                    handleClose={() => setDeleteSuccessful(false)}
-                    message="Entry deleted successfully!"
-                    severity="success"
-                />
-            }
+            {<Message
+                open={deletedSuccessful}
+                handleClose={() => setDeleteSuccessful(false)}
+                message="Entry deleted successfully!"
+                severity="success" />}
             <MyDialog
                 isModalOpen={isInfoModalOpen}
                 handleCloseModal={handleCloseInfoModal}
@@ -253,7 +258,7 @@ const Artworks = () => {
                         <IconButton
                             variant="outlined"
                             onClick={() => setIsDeleteConfOpen(true)}
-                            sx={{ marginTop: 0.75}}
+                            sx={{ marginTop: 0.75 }}
                         >
                             <DeleteIcon />
                         </IconButton>
@@ -266,9 +271,9 @@ const Artworks = () => {
                             <EditIcon />
                         </IconButton>
                     </Tooltip>
-        
-                    {isEditMode && currentImage.id === updatedEntry.id && 
-                        
+
+                    {isEditMode && currentImage.id === updatedEntry.id &&
+
                         <><Tooltip title="Save" placement="top">
                             <IconButton
                                 onClick={() => handleSaveEditedInfo(updatedEntry.id)}
@@ -291,34 +296,32 @@ const Artworks = () => {
                             variant="outlined"
                             onClick={() => downloadImage(currentImage.download_url, currentImage.download_key)}
                         >
-                            <FileDownloadIcon fontSize="medium" sx={{marginBottom: "-0.5rem"}} />
+                            <FileDownloadIcon fontSize="medium" sx={{ marginBottom: "-0.5rem" }} />
                         </IconButton>
                     </Tooltip>
-                </div> 
-              
+                </div>
+
             </MyDialog>
 
-            {
-                <Dialog
-                    open={isDeleteConfOpen}
-                    onClose={() => setIsDeleteConfOpen(false)}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description"
-                >
-                    <DialogTitle id="alert-dialog-title">
-                        {"Are you sure you want to delete the entry ?"}
-                    </DialogTitle>
-                    <DialogContent>
-                        
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={() => hadleDeleteImageAndEntry(currentImage.download_key, currentImage.image_key, currentImage.id, )}>Yes</Button>
-                        <Button onClick={() => setIsDeleteConfOpen(false)} autoFocus>
-                      Cancel
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-            }
+            {<Dialog
+                open={isDeleteConfOpen}
+                onClose={() => setIsDeleteConfOpen(false)}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    {"Are you sure you want to delete the entry ?"}
+                </DialogTitle>
+                <DialogContent>
+
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => hadleDeleteImageAndEntry(currentImage.download_key, currentImage.image_key, currentImage.id)}>Yes</Button>
+                    <Button onClick={() => setIsDeleteConfOpen(false)} autoFocus>
+                        Cancel
+                    </Button>
+                </DialogActions>
+            </Dialog>}
 
             <SecondaryNavbar />
 
@@ -332,8 +335,7 @@ const Artworks = () => {
                         placeholder="Search..."
                         inputProps={{ "aria-label": "search" }}
                         onChange={handleChangeSearchValue}
-                        onKeyPress={triggerSearch}
-                    />
+                        onKeyPress={triggerSearch} />
                     <IconButton type="button" sx={{ p: "10px" }} aria-label="search" onClick={search}>
                         <SearchIcon />
                     </IconButton>
@@ -344,57 +346,76 @@ const Artworks = () => {
                 <CircularProgress className="loader" color="primary" />
             ) : (
                 <><div className="gallery">
-                    {searchResults.length ? 
+                    {searchResults.length ?
 
                         searchResults.map((art, id) => (
 
                             <div className="galleryItem" key={id}>
                                 <span className="imagePositionLabel">{art.position}</span>
-                                <img
+                                <LazyLoadImage
+                                    effect="blur"
                                     className="galleryImage"
                                     src={art.image_url}
+                                    maxWidth={"100%"}
+                                    height={"auto"}
                                     onClick={() => handleOpenInfoModal(art)}
                                     alt="no preview" />
-                                {/* 
-        <div className="imageButtons">
-            {art.onWall || art.inExhibition ?
-                <div>
-                    <Tooltip title={art.onWall && "on a wall" || art.inExhibition && "in exhibition"} placement="top">
-                        <span>
-                            <IconButton disabled>
-                                <CheckCircleIcon sx={{ color: art.onWall && yellow[500] || art.inExhibition && green[500] }} />
-                            </IconButton>
-                        </span>
+                                {/*
+<div className="imageButtons">
+    {art.onWall || art.inExhibition ?
+        <div>
+            <Tooltip title={art.onWall && "on a wall" || art.inExhibition && "in exhibition"} placement="top">
+                <span>
+                    <IconButton disabled>
+                        <CheckCircleIcon sx={{ color: art.onWall && yellow[500] || art.inExhibition && green[500] }} />
+                    </IconButton>
+                </span>
 
-                    </Tooltip>
-                </div> : <></>}
-        </div> */}
+            </Tooltip>
+        </div> : <></>}
+</div> */}
+                                <div className="mainImageInfoContainer">
+                                    <span>{art.artist}</span>
+                                    <span>{art.dimensions}</span>
+                                </div>
                             </div>
-                        )) : 
+                        )) :
                         entries.map((art, id) => (
 
                             <div className="galleryItem" key={id}>
                                 <span className="imagePositionLabel">{art.position}</span>
-                                <img
+                                <LazyLoadImage
+                                    effect="blur"
                                     className="galleryImage"
                                     src={art.image_url}
+                                    maxWidth={"100%"}
+                                    height={"auto"}
                                     onClick={() => handleOpenInfoModal(art)}
                                     alt="no preview" />
+
+
+
+                                <div className="mainImageInfoContainer">
+                                    <span>{art.artist}</span>
+                                    <span>{art.dimensions}</span>
+                                </div>
                             </div>
-                        ))
-                    }
+                        ))}
                 </div>
-                <Pagination
-                    count={count}
-                    page={page}
-                    variant="outlined"
-                    showFirstButton
-                    showLastButton
-                    color="primary"
-                    sx={{ marginTop: "3rem", marginLeft: "5rem"}}
-                    onChange={handlePageChange} /></>
- 
+
+                </>
             )}
+
+            <Pagination
+                count={pagesCount && pagesCount}
+                page={page}
+                variant="outlined"
+                color="primary"
+                sx={{ margin: "5rem"}}
+                onChange={(event, page) => setPage(page)}
+                showFirstButton={isTherePrevPage}
+                showLastButton={noNextPage}
+                />
         </>
     );
 };

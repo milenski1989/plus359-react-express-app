@@ -65,9 +65,10 @@ const uploadEntry = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 exports.uploadEntry = uploadEntry;
 //get all photos from S3 and details from database
 const getArts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { page, count } = req.query;
     try {
-        const results = yield (0, AdminServices_1.getArtsService)(req.query.page);
-        res.status(200).json(results);
+        const [arts, artsCount] = yield (0, AdminServices_1.getArtsService)(page, count);
+        res.status(200).json({ arts, artsCount });
     }
     catch (error) {
         res.status(400).json(error);

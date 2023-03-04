@@ -14,9 +14,9 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 const MyDialog = ({isModalOpen, handleCloseModal, children, image, editMode, updatedEntry, setUpdatedEntry, handleChangeEditableField}) => {
     if (image) {
 
-        const {artist, title, technique, dimensions, price, storageLocation, cell, position, notes,  by_user: user, image_url: url} = image
+        const {artist, title, technique, dimensions, price, storageLocation, cell, position, notes, image_url: url} = image
 
-        const textfields = Object.assign({}, {artist, title, technique, dimensions, price, notes, user})
+        const textfields = Object.assign({}, {artist, title, technique, dimensions, price, notes})
         const dropdowns = Object.assign({}, {storageLocation, cell, position})
 
         const allFields = Object.assign({}, {...textfields, ...dropdowns})
@@ -88,7 +88,7 @@ const MyDialog = ({isModalOpen, handleCloseModal, children, image, editMode, upd
                     <div className="infoTextField" key={key}>
                         <TextField
                             type="text"
-                            variant="outlined"
+                            variant="standard"
                             value={image.id === updatedEntry.id
                             && updatedEntry[key]}
                             disabled={!editMode}
