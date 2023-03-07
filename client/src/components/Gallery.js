@@ -182,8 +182,8 @@ const Gallery = () => {
                                     effect="blur"
                                     className="galleryImage"
                                     src={art.image_url}
-                                    maxWidth={"100%"}
-                                    height={"auto"}
+                                    width="100%"
+                                    height="auto"
                                     onClick={() => openInfoDialog(art)}
                                     alt="no preview" />
                                 {/*
@@ -221,8 +221,8 @@ const Gallery = () => {
              color="primary"
              sx={{ margin: "5rem"}}
              onChange={(event, page) => setPage(page)}
-             showFirstButton={isTherePrevPage}
-             showLastButton={noNextPage}
+             showFirstButton={isTherePrevPage && true}
+             showLastButton={noNextPage && true}
              /> : <></>}
            
         </>
