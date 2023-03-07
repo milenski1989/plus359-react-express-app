@@ -38,11 +38,11 @@ const Login = () => {
         const data = await response.json()
 
         if (response.status === 200) {
-            const {id, userName, userMail, superUser, createdAt} = data
+            const {id, userName, email, superUser, createdAt} = data
             myStorage.setItem('user', JSON.stringify({
                 id, 
                 userName, 
-                userMail, 
+                email, 
                 superUser, 
                 createdAt
             }))
