@@ -5,7 +5,7 @@ import IconsNavBar from './IconsNavBar'
 import { useHistory } from "react-router"
 import { Link } from 'react-router-dom'
 import Upload from './Upload'
-import Artworks from './Artworks'
+import Gallery from './Gallery'
 import Logout from './Logout'
 
 const icons = {
@@ -23,7 +23,7 @@ const Home = () => {
             switch (history.location.pathname) {
             case "/upload" : setActiveTab(<Upload/>)
                 break;
-            case "/artworks" : setActiveTab(<Artworks/>)
+            case "/artworks" : setActiveTab(<Gallery/>)
                 break;
             }
         }

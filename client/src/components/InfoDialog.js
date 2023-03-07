@@ -6,20 +6,19 @@ import LocationsDropdowns from "./LocationsDropdowns";
 import { useState } from "react";
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import Buttons from "./Buttons";
 // import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 // import { yellow, green } from '@mui/material/colors';
 
 
 
-const MyDialog = ({isModalOpen, handleCloseModal, children, image, editMode, updatedEntry, setUpdatedEntry, handleChangeEditableField}) => {
-    if (image) {
+const InfoDialog = ({isModalOpen, currentImage, setIsInfoModalOpen, searchResults, getAllEntries, setCurrentImage, setIsDeleteConfOpen}) => {
+    if (currentImage) {
 
-        const {artist, title, technique, dimensions, price, storageLocation, cell, position, notes, image_url: url} = image
-
+        const {artist, title, technique, dimensions, price, storageLocation, cell, position, notes, image_url: url} = currentImage
         const textfields = Object.assign({}, {artist, title, technique, dimensions, price, notes})
-        const dropdowns = Object.assign({}, {storageLocation, cell, position})
 
-        const allFields = Object.assign({}, {...textfields, ...dropdowns})
+        const allFields = Object.assign({}, {...textfields, storageLocation, cell, position})
 
         const [viewPrice, setViewPrice] = useState(false)
 
@@ -28,6 +27,26 @@ const MyDialog = ({isModalOpen, handleCloseModal, children, image, editMode, upd
             cell: "",
             position: 0
         });
+
+        const [isEditMode, setIsEditMode] = useState(false);
+        const [updatedEntry, setUpdatedEntry] = useState({});
+    
+
+        //handle close info modal
+        const closeInfoDialog = () => {
+            setIsInfoModalOpen(prev => !prev)
+            setIsEditMode(false)
+            setCurrentImage(null)
+        } 
+
+        //handle change editable field in modal
+        const onChange = (event) => {
+            const { name, value } = event.target;
+            setUpdatedEntry(prevState => ({
+                ...prevState,
+                [name]: value,
+            }));
+        };
 
         const renderInputProps = (key) => {
             let inputProps;
@@ -73,7 +92,7 @@ const MyDialog = ({isModalOpen, handleCloseModal, children, image, editMode, upd
                         InputProps={renderInputProps(key)}
                         variant="standard"
                         value={value}
-                        disabled={!editMode}
+                        disabled={!isEditMode}
                         name={key}
                         label={key} />
                 </div>
@@ -89,10 +108,10 @@ const MyDialog = ({isModalOpen, handleCloseModal, children, image, editMode, upd
                         <TextField
                             type="text"
                             variant="standard"
-                            value={image.id === updatedEntry.id
+                            value={currentImage.id === updatedEntry.id
                             && updatedEntry[key]}
-                            disabled={!editMode}
-                            onChange={(event) => handleChangeEditableField(event)}
+                            disabled={!isEditMode}
+                            onChange={(event) => onChange(event)}
                             name={key}
                             label={key}
                         />
@@ -109,11 +128,23 @@ const MyDialog = ({isModalOpen, handleCloseModal, children, image, editMode, upd
         return (
             <Dialog open={isModalOpen}>
                 <DialogContent>
-                    {children}
+
+                    <Buttons
+                        searchResults={searchResults} 
+                        getAllEntries={getAllEntries}
+                        setIsEditMode={setIsEditMode}
+                        updatedEntry={updatedEntry}
+                        setUpdatedEntry={setUpdatedEntry}
+                        setIsDeleteConfOpen={setIsDeleteConfOpen}
+                        setIsInfoModalOpen={setIsInfoModalOpen}
+                        currentImage={currentImage}
+                        isEditMode={isEditMode}
+                    />
+                  
                     <img className="infoDialogImage" src={url}/>
                 
                     <div className="infoContainer">
-                        {!editMode ?
+                        {!isEditMode ?
                             renderNonEditableFields() :
 
                             [renderEditableFields(),
@@ -128,7 +159,7 @@ const MyDialog = ({isModalOpen, handleCloseModal, children, image, editMode, upd
                 <Tooltip title="Close" placement="top">
                     <IconButton
                         aria-label="close"
-                        onClick={handleCloseModal}
+                        onClick={closeInfoDialog}
                         sx={{
                             position: "absolute",
                             right: 5,
@@ -144,4 +175,4 @@ const MyDialog = ({isModalOpen, handleCloseModal, children, image, editMode, upd
     }
 }
 
-export default MyDialog
+export default InfoDialog

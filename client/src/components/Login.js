@@ -39,7 +39,6 @@ const Login = () => {
 
         if (response.status === 200) {
             const {id, userName, userMail, superUser, createdAt} = data
-            console.log(data)
             myStorage.setItem('user', JSON.stringify({
                 id, 
                 userName, 

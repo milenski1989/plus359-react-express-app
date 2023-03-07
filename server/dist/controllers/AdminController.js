@@ -78,6 +78,7 @@ exports.getArts = getArts;
 //search 
 const searchArts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { param } = req.params;
+    console.log({ param });
     try {
         const results = yield (0, AdminServices_1.searchService)(param);
         res.status(200).json(results);

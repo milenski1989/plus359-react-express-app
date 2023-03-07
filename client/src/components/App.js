@@ -4,7 +4,7 @@ import './App.css'
 import PrivateRoute from './PrivateRoute'
 const Signup = lazy(() => import('./Signup'))
 const Login = lazy(() => import('./Login'))
-const Artworks = lazy(() => import('./Artworks'))
+const Gallery = lazy(() => import('./Gallery'))
 const Upload = lazy(() => import('./Upload'))
 const Account = lazy(() => import('./Account'))
 const Home = lazy(() => import('./Home'))
@@ -21,7 +21,7 @@ const App = () => {
                     <Route exact path="/signup" component={Signup} />
                     <PrivateRoute exact path="/" component={Home} />
                     <PrivateRoute exact path="/upload" component={Upload} />
-                    <PrivateRoute exact path="/artworks" component={Artworks} />
+                    <PrivateRoute exact path="/artworks" component={Gallery} />
                     <PrivateRoute exact path="/account" component={Account} />
                 </Suspense>
                 <Redirect exact path="/" to="/" />

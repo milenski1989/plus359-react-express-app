@@ -6,6 +6,13 @@
   margin-top: 3rem;
 }
 
+.nothingFound {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, 50%);
+}
+
 .galleryItem {
   margin-bottom: 1rem;
   align-self: flex-start	;
