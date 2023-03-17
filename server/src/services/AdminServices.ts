@@ -25,18 +25,18 @@ export const loginService = async (email: string, password: string) => {
   let authenticated: boolean
 
   try {
-    let userFound = await userRepository.findOneBy({
-      email: email
+    let userFound = await userRepository.findOne({
+      where: [{email: email}, {userName: email}]
     })
 
     if (userFound) {
      authenticated = await bcrypt.compare(password, userFound.password)
-    }
+     if (authenticated) return userFound
+    } else return userFound
 
-    if (authenticated) return userFound
-    else throw new Error("Invalid credentials");
-
-  } catch {
+   
+    
+  } catch(error) {
    throw new Error("Invalid credentials");
   }
   

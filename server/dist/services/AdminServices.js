@@ -33,18 +33,18 @@ const artsRepository = database_1.dbConnection.getRepository(Artworks_1.Artworks
 const loginService = (email, password) => __awaiter(void 0, void 0, void 0, function* () {
     let authenticated;
     try {
-        let userFound = yield userRepository.findOneBy({
-            email: email
+        let userFound = yield userRepository.findOne({
+            where: [{ email: email }, { userName: email }]
         });
         if (userFound) {
             authenticated = yield bcrypt_1.default.compare(password, userFound.password);
+            if (authenticated)
+                return userFound;
         }
-        if (authenticated)
-            return userFound;
         else
-            throw new Error("Invalid credentials");
+            return userFound;
     }
-    catch (_a) {
+    catch (error) {
         throw new Error("Invalid credentials");
     }
 });
@@ -74,7 +74,7 @@ const signupService = (email, password, userName) => __awaiter(void 0, void 0, v
             throw new Error("exists");
         }
     }
-    catch (_b) {
+    catch (_a) {
         throw new Error("Error occured while register");
     }
 });
@@ -104,7 +104,7 @@ const uploadService = (title, artist, technique, dimensions, price, notes, onWal
         const results = yield artsRepository.save(newEntry);
         return results;
     }
-    catch (_c) {
+    catch (_b) {
         throw new Error("Upload failed");
     }
 });
@@ -121,7 +121,7 @@ const getArtsService = (page, count) => __awaiter(void 0, void 0, void 0, functi
         });
         return [arts, artsCount];
     }
-    catch (_d) {
+    catch (_c) {
         throw new Error("Fetch failed!");
     }
 });
@@ -143,7 +143,7 @@ const searchService = (params) => __awaiter(void 0, void 0, void 0, function* ()
         });
         return results;
     }
-    catch (_e) {
+    catch (_d) {
         throw new Error("Fetch failed!");
     }
 });
@@ -157,7 +157,7 @@ const getCellsService = (cell) => __awaiter(void 0, void 0, void 0, function* ()
         });
         return results;
     }
-    catch (_f) {
+    catch (_e) {
         throw new Error("Error getting free positions in the selected cell");
     }
 });
@@ -168,7 +168,7 @@ const deleteArtService = (id) => __awaiter(void 0, void 0, void 0, function* () 
         const results = yield artsRepository.delete(id);
         return results;
     }
-    catch (_g) {
+    catch (_f) {
         throw new Error("Could not delete the entry!");
     }
 });
@@ -195,7 +195,7 @@ const updateArtService = (title, artist, technique, dimensions, price, notes, on
         const results = yield artsRepository.save(item);
         return results;
     }
-    catch (_h) {
+    catch (_g) {
         throw new Error("Could not update entry");
     }
 });

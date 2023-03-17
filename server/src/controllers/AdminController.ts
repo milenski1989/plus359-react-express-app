@@ -18,8 +18,10 @@ try {
   const userFound = await loginService(email, password)
   req.session.loggedin = true;
   //req.session.username = userName;
+
+  if (!userFound) res.status(400).send({error: "Invalid Username or Password"})
  
-  res.status(200).send(userFound);
+  else res.status(200).send(userFound);
 } catch  {
 throw new Error("Error");
 }

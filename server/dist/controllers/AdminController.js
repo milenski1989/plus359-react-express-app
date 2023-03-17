@@ -28,7 +28,10 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const userFound = yield (0, AdminServices_1.loginService)(email, password);
         req.session.loggedin = true;
         //req.session.username = userName;
-        res.status(200).send(userFound);
+        if (!userFound)
+            res.status(400).send({ error: "Invalid Username or Password" });
+        else
+            res.status(200).send(userFound);
     }
     catch (_a) {
         throw new Error("Error");
