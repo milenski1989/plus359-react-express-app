@@ -33,7 +33,6 @@ const Signup = () => {
             })
         })
         const data = await response
-        console.log(data)
         if (response.status === 200 || response.status === 201) {
             setLoading(false)
             setSignupSuccess({success: true, message: data.message})

@@ -78,7 +78,6 @@ exports.getArts = getArts;
 //search 
 const searchArts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { param } = req.params;
-    console.log({ param });
     try {
         const results = yield (0, AdminServices_1.searchService)(param);
         res.status(200).json(results);
@@ -127,7 +126,7 @@ const updateEntry = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         res.status(200).send(results);
     }
     catch (error) {
-        console.log(error);
+        throw new Error("Could not update entry!");
     }
 });
 exports.updateEntry = updateEntry;

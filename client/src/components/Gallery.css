@@ -89,6 +89,7 @@
     background: rgb(85, 84, 84, 0.4);
     color: white;
     padding: 0 0.3rem;
+    z-index: 1;
 
   }
 

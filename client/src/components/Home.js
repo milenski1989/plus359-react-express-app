@@ -29,14 +29,15 @@ const Home = () => {
         }
     },[])
 
-    return <div className="parent">
+    return <><div className="parent">
         <div className="bar">
-            <Link to='/'><img className="logo" alt="logo" src={icons.logo} /></Link> 
-            <Logout styles={{top: '25px', right: '3px'}}/>
+            <Link to='/'><img className="logo" alt="logo" src={icons.logo} /></Link>
+            <Logout styles={{ top: '25px', right: '3px' }} />
         </div>
-        <IconsNavBar/>
+        <IconsNavBar />
         {activeTab}
     </div>
+    </>
 }
 
 export default Home

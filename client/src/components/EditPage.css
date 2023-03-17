@@ -8,8 +8,8 @@
     width: 40vw;
 }
 
-@media screen and (max-width: 500px) {
-    .flexContainer {
-        width: 60vw;
-    }
-  }
+.buttonsFlexContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}

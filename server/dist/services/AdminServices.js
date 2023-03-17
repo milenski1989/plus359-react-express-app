@@ -66,7 +66,6 @@ const signupService = (email, password, userName) => __awaiter(void 0, void 0, v
                     userName: userName,
                     superUser: 1
                 });
-                console.log('user', user);
                 yield database_1.dbConnection.getRepository(User_1.User).save(user);
                 return user;
             }));
@@ -192,7 +191,6 @@ const updateArtService = (title, artist, technique, dimensions, price, notes, on
         const item = yield artsRepository.findOneBy({
             id: id
         });
-        console.log('item:', item);
         yield artsRepository.merge(item, updatedEntry);
         const results = yield artsRepository.save(item);
         return results;

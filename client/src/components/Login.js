@@ -68,7 +68,7 @@ const Login = () => {
     return <>
         {<Message open={loginError.error} handleClose={() => setLoginError({error: false, message: ""})} message={loginError.message} severity="error"
         /> }
-        <div className="mainSection">
+        <div className= "mainSection">
             <form className="loginSection">
                 { loading ? 
                     <CircularProgress className="loader" color="primary" /> 

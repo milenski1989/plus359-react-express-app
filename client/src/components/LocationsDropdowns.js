@@ -1,8 +1,11 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+import { ImageContext } from './App';
 import { locations, cellsData, createDropdownOptions } from "./constants/constants";
 
-function LocationsDropdowns({formControlData, setFormControlData, setUpdatedEntry = null, inputTouched, setInputTouched}) {
+function LocationsDropdowns({formControlData, setFormControlData, inputTouched, setInputTouched}) {
+
+    const {setUpdatedEntry, currentImage} = useContext(ImageContext)
 
     const [cells, setCells] = useState([]);
     const [stores, setStores] = useState([]);
@@ -11,6 +14,7 @@ function LocationsDropdowns({formControlData, setFormControlData, setUpdatedEntr
     useEffect(() => {
         setStores(locations);
     }, []);
+
 
     //select location
     const handleLocationSelect = (id) => {
@@ -57,7 +61,7 @@ function LocationsDropdowns({formControlData, setFormControlData, setUpdatedEntr
     return (
         <>
             <FormControl margin="normal" fullWidth>
-                <InputLabel required>locations</InputLabel>
+                <InputLabel required>{currentImage && currentImage.storageLocation || "locations" }</InputLabel>
                 <Select
                     sx={{
                         boxShadow: 1
@@ -96,7 +100,7 @@ function LocationsDropdowns({formControlData, setFormControlData, setUpdatedEntr
             </FormControl>
 
             <FormControl margin="normal" fullWidth>
-                <InputLabel>cells</InputLabel>
+                <InputLabel>{currentImage && currentImage.cell || "cells" }</InputLabel>
                 <Select
                     sx={{
                         boxShadow: 1
@@ -119,7 +123,7 @@ function LocationsDropdowns({formControlData, setFormControlData, setUpdatedEntr
             </FormControl>
                         
             <FormControl margin="normal" fullWidth>
-                <InputLabel>positions</InputLabel>
+                <InputLabel>{currentImage && currentImage.position || "position" }</InputLabel>
                 <Select
                     sx={{
                         boxShadow: 1

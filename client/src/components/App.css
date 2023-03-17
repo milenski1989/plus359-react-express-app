@@ -6,6 +6,15 @@ body {
     overflow-x: hidden;
 }
 
+.dark {
+  background-color: #191919;
+  color: #118AB2;
+  }
+  .light {
+  background-color: #fff;
+  color: #333;
+  }
+
 @keyframes spinner {
     0% {
       transform: rotate(0deg);

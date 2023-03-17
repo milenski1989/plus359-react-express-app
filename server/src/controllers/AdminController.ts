@@ -172,6 +172,7 @@ export const updateEntry = async (req, res) => {
         res.status(200).send(results)
 
       } catch (error){
-       console.log(error)        
+       throw new Error("Could not update entry!");
+       
       }
 }

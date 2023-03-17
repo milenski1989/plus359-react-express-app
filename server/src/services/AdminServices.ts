@@ -61,7 +61,6 @@ export const loginService = async (email: string, password: string) => {
           userName: userName,
           superUser: 1
         })
-        console.log('user',user)
         await dbConnection.getRepository(User).save(user)
       
         return user
@@ -235,8 +234,6 @@ export const updateArtService = async (
           const item = await artsRepository.findOneBy({
             id: id
         })
-
-        console.log('item:', item)
         await artsRepository.merge(item, updatedEntry)
         const results = await artsRepository.save(item)
         return results

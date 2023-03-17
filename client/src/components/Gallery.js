@@ -1,5 +1,5 @@
 /* eslint-disable indent */
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import SecondaryNavbar from "./SecondaryNavbar";
 import "./Gallery.css";
 import "./App.css";
@@ -14,8 +14,11 @@ import Message from "./Message";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import ConfirmationDialog from "./ConfirmationDialog";
+import {ImageContext} from "./App";
 
 const Gallery = () => {
+
+    const {currentImage, setCurrentImage, setIsInfoModalOpen} = useContext(ImageContext)
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState({
@@ -25,8 +28,6 @@ const Gallery = () => {
     const [results, setResults] = useState([])
     const [isDeleting, setIsDeleting] = useState(false);
     const [isDeleteConfOpen, setIsDeleteConfOpen] = useState(false)
-    const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
-    const [currentImage, setCurrentImage] = useState(null)
     const [searchResults, setSearchResults] = useState([]);
     const [deletedSuccessful, setDeleteSuccessful] = useState(false);
     const [page, setPage] = useState(1)
@@ -120,31 +121,25 @@ const Gallery = () => {
 
     return (
         <>
-            {<Message
+            <Message
                 open={error.error}
                 handleClose={() => setError({ error: false, message: "" })}
                 message={error.message}
-                severity="error" />}
+                severity="error" />
 
-            {<Message
+            <Message
                 open={deletedSuccessful}
                 handleClose={() => setDeleteSuccessful(false)}
                 message="Entry deleted successfully!"
-                severity="success" />}
-            <InfoDialog
-                isModalOpen={isInfoModalOpen}
-                setIsInfoModalOpen={setIsInfoModalOpen}
-                setIsDeleteConfOpen={setIsDeleteConfOpen}
-                currentImage={currentImage}
-                setCurrentImage={setCurrentImage}
-                searchResults={searchResults}
-                getAllEntries={getAll}
-            />
-
+                severity="success" />
+                {currentImage &&
+                 <InfoDialog
+                 setIsDeleteConfOpen={setIsDeleteConfOpen}
+                 searchResults={searchResults}
+                 getAllEntries={getAll}
+             />}
             <ConfirmationDialog 
             deleteImageAndEntry={deleteOne}
-            setIsInfoModalOpen={setIsInfoModalOpen}
-            currentImage={currentImage}
             isDeleteConfOpen={isDeleteConfOpen}
             setIsDeleteConfOpen={setIsDeleteConfOpen}
             />

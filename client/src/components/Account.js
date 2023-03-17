@@ -7,7 +7,6 @@ const Account = () => {
 
     let myStorage = window.localStorage
     let user = JSON.parse(myStorage.getItem('user'))
-    console.log(JSON.parse(myStorage.getItem('user')))
 
     return (
         <>

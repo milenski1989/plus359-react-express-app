@@ -1,0 +1,30 @@
+.infoTextField {
+    margin-top: 0.3rem;
+    margin-right: 0.5rem;
+}
+
+.prePrint {
+    height: auto !important;
+    max-width: 600px !important;
+}
+
+/*Print Dialog*/
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #DialogPrint,
+    #DialogPrint * {
+        visibility: visible;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .imageInfoModal {
+        width: 200px;
+    }
+  }
+
+
+
+

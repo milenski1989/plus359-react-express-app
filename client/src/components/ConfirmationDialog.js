@@ -1,10 +1,10 @@
 import { Dialog, DialogContent, DialogTitle, DialogActions, Button } from "@mui/material"
+import { useContext } from "react";
+import {ImageContext} from "./App";
 
 
-
-const ConfirmationDialog = ({deleteImageAndEntry, setIsInfoModalOpen, currentImage, isDeleteConfOpen, setIsDeleteConfOpen}) => {
-
-  
+const ConfirmationDialog = ({deleteImageAndEntry, isDeleteConfOpen, setIsDeleteConfOpen}) => {
+    const {currentImage, setIsInfoModalOpen} = useContext(ImageContext)
 
     //handle delete thumbnail, original image and entry
     const hadleDeleteImageAndEntry = (originalName, filename, id) => {
