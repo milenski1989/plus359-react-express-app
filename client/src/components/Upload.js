@@ -1,7 +1,6 @@
 import { useState } from "react";
 import "./Upload.css";
 import {
-    Button,
     CircularProgress,
     IconButton,
     InputAdornment,
@@ -15,6 +14,7 @@ import axios from "axios";
 import LocationsDropdowns from "./LocationsDropdowns";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { yellow } from '@mui/material/colors';
+import ActionButton from "./ActionButton";
 
 const Upload = () => {
 
@@ -245,13 +245,10 @@ const Upload = () => {
                         inputTouched={inputTouched}
                         setInputTouched={setInputTouched}
                     />
-
-                    <Button
+                    <ActionButton
+                        children="upload"
+                        handleOnclick={uploadFile}
                         disabled={disableUploadButton()}
-                        children="Upload"
-                        variant="outlined"
-                        onClick={uploadFile}
-                        sx={{ width: "100px", padding: "0.5rem", marginTop: "0.75rem", boxShadow: 1, marginLeft: "auto", marginRight: "auto"}}
                     />
                 </section>
             )}

@@ -1,6 +1,6 @@
-import { Button, TextField } from '@mui/material'
+import { TextField } from '@mui/material'
 import axios from 'axios'
-import React, { useContext } from 'react'
+import React, { useContext, useRef } from 'react'
 import { ImageContext } from './App'
 import SecondaryNavbar from './SecondaryNavbar'
 import "./App.css"
@@ -8,23 +8,34 @@ import "./EditPage.css"
 import { useState } from 'react'
 import LocationsDropdowns from './LocationsDropdowns'
 import { useHistory, useLocation } from "react-router-dom";
+import ActionButton from './ActionButton'
 
 const EditPage = () => {
-    
-    const {currentImage, updatedEntry, setUpdatedEntry, setIsEditMode, setIsInfoModalOpen} = useContext(ImageContext)
-    const {artist, title, technique, dimensions, price, notes, storageLocation, cell, position} = currentImage
-    const textfields = Object.assign({}, {artist, title, technique, dimensions, price, notes})
-    
+
+    const myStorage = window.localStorage
+
+    const {updatedEntry, setUpdatedEntry, setIsEditMode, setIsInfoModalOpen} = useContext(ImageContext)
+    // eslint-disable-next-line no-unused-vars
+    const selectedImage = useRef(JSON.parse(myStorage.getItem('image')))
+  
+    const textfields = Object.assign({}, 
+        {artist: selectedImage.current.artist,
+            title: selectedImage.current.title ,
+            technique: selectedImage.current.technique, 
+            dimensions: selectedImage.current.dimensions,
+            price: selectedImage.current.price, 
+            notes: selectedImage.current.notes})
+
     const history = useHistory()
     const location = useLocation()
     let { from } = location.state || { from: { pathname: '/artworks' } }
 
     const [formControlData, setFormControlData] = useState({
-        storageLocation: storageLocation,
-        cell: cell,
-        position: position
+        storageLocation: selectedImage.current.storageLocation,
+        cell: selectedImage.current.cell,
+        position: selectedImage.current.position
     });
-    
+
     const onChange = (event) => {
         const { name, value } = event.target;
         setUpdatedEntry(prevState => ({
@@ -35,9 +46,9 @@ const EditPage = () => {
 
     const saveUpdatedEntry = (id) => {
         updateEntry(id);
+        myStorage.removeItem('image')
     };
 
-    
     const cancelEditing = () => {
         setIsEditMode(false);
         setIsInfoModalOpen(true)
@@ -64,8 +75,12 @@ const EditPage = () => {
             <SecondaryNavbar />
 
             <section className="mainSection">
-                <div className="flexContainer">
+               
+                <img className='edit-page-image-preview' src={selectedImage.current.thumbnail}/>
+               
+                <div className="flex-container">
                     {Object.entries(textfields).map(([key, ]) => {
+                     
                         return (
                             <TextField
                                 key={key}
@@ -75,11 +90,11 @@ const EditPage = () => {
                                     boxShadow: 1
                                 }}
                                 variant="outlined"
-                                value={currentImage.id === updatedEntry.id
-                                        && updatedEntry[key]}
+                                value={updatedEntry[key] || selectedImage.current[key]}
                                 onChange={(event) => onChange(event)}
                                 name={key}
                                 label={key}
+                                defaultValue={selectedImage.current[key]}
                             />      
                         )
                     })}
@@ -89,20 +104,20 @@ const EditPage = () => {
                         setFormControlData={setFormControlData}
                     />
                     
-                    <div className='buttonsFlexContainer'>
-                        <Button
-                            variant="outlined"
-                            sx={{ width: "100px", padding: "0.5rem", marginTop: "0.75rem", boxShadow: 1, marginLeft: "auto", marginRight: "auto"}}
-                            onClick={() => saveUpdatedEntry(currentImage.id)}>
-                            Save & go back
-                        </Button>
-                        <Button
-                            variant="outlined"
-                            sx={{ width: "100px", padding: "0.5rem", marginTop: "0.75rem", boxShadow: 1, marginLeft: "auto", marginRight: "auto"}}
-                            onClick={cancelEditing}>
-                            Cancel
-                        </Button>
+                    <div className='buttons-flexContainer'>
+                        <ActionButton
+                            children="save"                    
+                            handleOnclick={() => saveUpdatedEntry(selectedImage.current.id)}
+                        />
+                        <ActionButton
+                            children="go back"               
+                            handleOnclick={cancelEditing}
+                        />
 
+                        <ActionButton
+                            children="pdf"                    
+                            handleOnclick={() => console.log('pdf')}
+                        />
                     </div>
                 </div>
             </section>

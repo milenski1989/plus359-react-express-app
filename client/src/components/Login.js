@@ -1,10 +1,11 @@
-import { Button, CircularProgress, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField } from "@mui/material"
+import { CircularProgress, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField } from "@mui/material"
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useState } from "react"
 import './App.css'
 import Message from "./Message"
 import { Link,  useHistory, useLocation } from "react-router-dom";
+import ActionButton from "./ActionButton";
 
 const linkStyle = {
     textDecoration: "none",
@@ -113,12 +114,11 @@ const Login = () => {
                             </FormControl>
                         </div>
                         <div className="loginButton">
-                            <Button
-                                className="actionButton loginButton"
-                                children="Log in"
-                                variant="outlined"
-                                onClick={handleSubmit}
-                                disabled={!email || !password} />
+                            <ActionButton
+                                children="log in"
+                                handleOnclick={handleSubmit}
+                                disabled={!email || !password}
+                            />
                         </div>
 
                         <div className="loginSignupTextContainer">

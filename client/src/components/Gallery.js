@@ -19,6 +19,7 @@ import {ImageContext} from "./App";
 const Gallery = () => {
 
     const {currentImage, setCurrentImage, setIsInfoModalOpen} = useContext(ImageContext)
+    const myStorage = window.localStorage
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState({
@@ -38,6 +39,25 @@ const Gallery = () => {
     useEffect(() => {
         getAll()
     }, [page]);
+
+    useEffect(() => {
+        if (currentImage) {
+            myStorage.setItem('image', JSON.stringify(
+                {  id: currentImage.id,
+                   thumbnail: currentImage.image_url,
+                   artist: currentImage.artist, 
+                   title: currentImage.title, 
+                   technique: currentImage.technique, 
+                   dimensions: currentImage.dimensions, 
+                   price: currentImage.price,
+                   notes: currentImage.notes,
+                   storageLocation: currentImage.storageLocation,
+                   cell: currentImage.cell,
+                   position: currentImage.position
+                }
+            ))
+        }
+    }, [currentImage])
 
     const getAll = async () => {
         setLoading(true);

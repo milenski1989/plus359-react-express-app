@@ -3,7 +3,7 @@
     margin-right: 0.5rem;
 }
 
-.prePrint {
+.pre-print {
     height: auto !important;
     max-width: 600px !important;
 }
@@ -17,6 +17,17 @@
     #DialogPrint * {
         visibility: visible;
     }
+}
+
+.non-editable-fields-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    padding: 0.3rem;
+    margin-top: 1rem;
+}
+
+.dialog-title {
+    cursor: move
 }
 
 @media screen and (max-width: 400px) {

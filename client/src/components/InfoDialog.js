@@ -44,6 +44,7 @@ const InfoDialog = ({searchResults, getAllEntries, setIsDeleteConfOpen}) => {
     const [viewPrice, setViewPrice] = useState(false)
     
     const [showMore, setShowMore] = useState(false)
+    const myStorage = window.localStorage
 
 
     const history = useHistory()
@@ -56,13 +57,14 @@ const InfoDialog = ({searchResults, getAllEntries, setIsDeleteConfOpen}) => {
             setIsInfoModalOpen(false)   
         }
     },[isEditMode])
-        
+
     //handle close info modal
     const closeInfoDialog = (e) => {
             
         setIsInfoModalOpen(prev => !prev)
         setIsEditMode(false)
         setCurrentImage(null)
+        myStorage.removeItem('image')
     } 
     
     const renderInputProps = (key) => {
@@ -124,10 +126,17 @@ const InfoDialog = ({searchResults, getAllEntries, setIsDeleteConfOpen}) => {
     
     return <>
     
-        <Dialog classes={{paperFullScreen: "prePrint"}} TransitionComponent={Transition} fullScreen={fullScreen} open={isInfoModalOpen} onClose={closeInfoDialog} PaperComponent={PaperComponent} aria-labelledby="draggable-dialog-title"
+        <Dialog 
+            classes={{paperFullScreen: "pre-print"}} 
+            TransitionComponent={Transition} 
+            fullScreen={fullScreen} 
+            open={isInfoModalOpen} 
+            onClose={closeInfoDialog}
+            PaperComponent={PaperComponent}
+            aria-labelledby="draggable-dialog-title"
         >  
     
-            <DialogTitle style={{ cursor: "move" }} id="draggable-dialog-title">
+            <DialogTitle className="dialog-title" id="draggable-dialog-title">
                    
             </DialogTitle>
                     
@@ -143,7 +152,7 @@ const InfoDialog = ({searchResults, getAllEntries, setIsDeleteConfOpen}) => {
                     setIsInfoModalOpen={setIsInfoModalOpen}
                 />
     
-                <div id="DialogPrint" style={{display: "grid", gridTemplateColumns: "1fr 1fr 1fr", padding: "0.3rem", marginTop: "1rem"}}>
+                <div className="non-editable-fields-container" id="DialogPrint">
                     {showMore && 
                                 renderNonEditableFields()}
                 </div>

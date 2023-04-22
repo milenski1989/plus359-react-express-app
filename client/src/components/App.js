@@ -10,6 +10,8 @@ const Upload = lazy(() => import('./Upload'))
 const Account = lazy(() => import('./Account'))
 const Home = lazy(() => import('./Home'))
 
+
+
 export const ImageContext = createContext()
 export const ThemeContext = createContext()
 const App = () => {

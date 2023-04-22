@@ -1,15 +1,21 @@
-.flexContainer {
+.flex-container {
     display: flex;
     flex-direction: column;
-    margin-left: auto;
-    margin-right: auto;
+    margin-left: 4rem;
     margin-top: 4rem;
     margin-bottom: 4rem;
     width: 40vw;
 }
 
-.buttonsFlexContainer {
+.buttons-flexContainer {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+}
+
+.edit-page-image-preview {
+    position: absolute;
+    width: 200px;
+    height: auto; 
+    right: 4rem;
 }

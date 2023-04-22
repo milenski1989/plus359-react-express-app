@@ -1,6 +1,7 @@
-import { Button, CircularProgress, TextField } from "@mui/material"
+import { CircularProgress, TextField } from "@mui/material"
 import { useState } from "react"
 import { Link } from "react-router-dom"
+import ActionButton from "./ActionButton"
 import './App.css'
 import Message from "./Message"
 import './Signup.css'
@@ -89,11 +90,11 @@ const Signup = () => {
                         </div>
 
                     </div><div className="signupButton">
-                        <Button
-                            children="Sign up"
-                            variant="outlined"
-                            onClick={handleSubmit}
-                            disabled={!email || !password} />
+                        <ActionButton
+                            children="sign up"
+                            handleOnclick={handleSubmit}
+                            disabled={!email || !password}
+                        />
                     </div>
                     <div className="loginSignupTextContainer">
                         Have an account? Go back to <Link to='/login' style={linkStyle}>login</Link>
