@@ -2,7 +2,6 @@ import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import {React, Suspense, lazy, createContext, useState} from 'react'
 import './App.css'
 import PrivateRoute from './PrivateRoute'
-import EditPage from './EditPage'
 const Signup = lazy(() => import('./Signup'))
 const Login = lazy(() => import('./Login'))
 const Gallery = lazy(() => import('./Gallery'))
@@ -54,14 +53,12 @@ const App = () => {
                         }}>
                             <PrivateRoute exact path="/upload" component={Upload} />
                             <PrivateRoute exact path="/artworks" component={Gallery} />
-                            <PrivateRoute exact path="/edit" component={EditPage} />
                         </ImageContext.Provider>
                         <PrivateRoute exact path="/account" component={Account} />
                     </ThemeContext.Provider>
                 </Suspense>
                 <Redirect exact path="/" to="/" />
                 <Redirect exact path="/logout" to="/login" />
-                <Redirect exact path="/edit" to="/edit"/> 
             </Switch>
         </BrowserRouter>
     </>

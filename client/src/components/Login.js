@@ -1,15 +1,14 @@
-import { CircularProgress, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField } from "@mui/material"
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { CircularProgress} from "@mui/material"
 import { useState } from "react"
 import './App.css'
 import Message from "./Message"
 import { Link,  useHistory, useLocation } from "react-router-dom";
-import ActionButton from "./ActionButton";
+import InvalidInputText from "./InvalidInputText";
+
 
 const linkStyle = {
     textDecoration: "none",
-    color: "blue",
+    color: "#6ec1e4",
     display: "inline"
 };
 
@@ -19,8 +18,6 @@ const Login = () => {
     const [password, setPassword] = useState('')
     const [loading, setLoading] = useState(false)
     const [loginError, setLoginError] = useState({error: false, message: ''})
-    const [inputTouched, setInputTouched] = useState(false)
-    const [viewPassword, setViewPassword] = useState(false)
 
     const history = useHistory()
     let myStorage = window.localStorage
@@ -62,72 +59,62 @@ const Login = () => {
         handleLogin()
     }
 
-    const handleViewPassword = () => {
-        setViewPassword(!viewPassword)
-    }
-
     return <>
-        {<Message open={loginError.error} handleClose={() => setLoginError({error: false, message: ""})} message={loginError.message} severity="error"
-        /> }
-        <div className= "mainSection">
-            <form className="loginSection">
-                { loading ? 
-                    <CircularProgress className="loader" color="primary" /> 
-                    : 
-                    <>
-                        <div className="loginField">
-                            <TextField
-                                id="email"
-                                label="Email"
-                                required
-                                variant="outlined"
-                                margin="normal"
-                                onBlur={() => setInputTouched(true)}
-                                error={inputTouched && !email}
-                                onChange={event => setEmail(event.target.value)}
-                            />
-                        </div>
-                        <div className="loginField">
-                            <FormControl sx={{width: '210.400px', marginTop: "0.5rem" }} variant="outlined">
-                                <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
-                                <OutlinedInput
-                                    id="outlined-adornment-password"
-                                    type={viewPassword ? 'text' : 'password'}
-                                    value={password}
-                                    onBlur={() => setInputTouched(true)}
-                                    error={inputTouched && !password}
-                                    onChange={event => setPassword(event.target.value)}
-                                    endAdornment={
-                                        <InputAdornment position="end">
-                                            <IconButton
-                                                aria-label="toggle password visibility"
-                                                onClick={handleViewPassword}
-                                               
-                                                edge="end"
-                                            >
-                                                {viewPassword ? <VisibilityOff /> : <Visibility />}
-                                            </IconButton>
-                                        </InputAdornment>
-                                    }
-                                    label="Password" />
-                            
-                            </FormControl>
-                        </div>
-                        <div className="loginButton">
-                            <ActionButton
-                                children="log in"
-                                handleOnclick={handleSubmit}
-                                disabled={!email || !password}
-                            />
-                        </div>
+        <div className="md:container md:mx-auto">
 
-                        <div className="loginSignupTextContainer">
-                            Not registered yet? Go to <Link to='/signup' style={linkStyle}>signup</Link>
-                        </div>
-                    </>
-                }
+            {<Message open={loginError.error} handleClose={() => setLoginError({error: false, message: ""})} message={loginError.message} severity="error"
+            /> }
+               
+            { loading ? 
+                <CircularProgress className="loader" color="primary" /> 
+                : 
+                <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+                    <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+                        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Sign in</h2>
+                    </div>
+
+                    <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+                        <form className="space-y-6" onSubmit={handleSubmit}>
+                            <div>
+                                <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">*Email</label>
+                                <div className="mt-2">
+                                    <input onChange={(e) => setEmail(e.target.value)} id="email" name="email" type="email" autoComplete="email" required className="peer block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
+                                    <InvalidInputText
+                                        text='Please enter valid email: example@mail.com'
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <div className="flex items-center justify-between">
+                                    <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">*Password</label>
+                                    <div className="text-sm">
+                                        <a href="#" className="font-semibold text-main ">Forgot password?</a>
+                                    </div>
+                                </div>
+                                <div className="mt-2">
+                                    <input onChange={(e) => setPassword(e.target.value)} id="password" name="password" type="password" autoComplete="current-password" required className="peer block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
+                                    <InvalidInputText
+                                        text='This field cannot be empty'
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <button type="submit" disabled={!email || !password} className={!email || !password ? "flex w-full justify-center rounded-md bg-white text-black px-3 py-1.5 text-sm leading-6 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" : "flex w-full justify-center rounded-md bg-main text-white px-3 py-1.5 text-sm leading-6 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"}>Sign in</button>
+                            </div>
+                        </form>
+
+                        <p className="mt-10 text-center text-sm text-gray-500">
+      Not a member?
+      Not registered yet? Go to <Link to='/signup' style={linkStyle}>signup</Link>
+                        </p>
+                    </div>
+                </div>
+            }
                 
-            </form>
+            
+            
         </div>
     </>
 }

@@ -32,9 +32,10 @@ const Home = () => {
     return <><div className="parent">
         <div className="bar">
             <Link to='/'><img className="logo" alt="logo" src={icons.logo} /></Link>
-            <Logout styles={{ top: '25px', right: '3px' }} />
+            <div style={{position: 'absolute', top: '50%', transform:' translateY(-50%)', right: '20px'}}><Logout/></div>
         </div>
         <IconsNavBar />
+
         {activeTab}
     </div>
     </>

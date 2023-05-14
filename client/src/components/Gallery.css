@@ -1,10 +1,3 @@
-.gallery {
-  padding: 10px;
-  width: 80%;
-  margin-right: auto;
-  margin-left: auto;
-  margin-top: 3rem;
-}
 
 .nothingFound {
   position: absolute;
@@ -13,11 +6,17 @@
   transform: translate(-50%, 50%);
 }
 
+.editable {
+  display: block;
+}
+
 .galleryItem {
   margin-bottom: 1rem;
-  align-self: flex-start	;
   box-shadow: 0.3rem 0.4rem 0.4rem rgba(0,0,0,0.4);
   overflow: hidden;
+  width:40%;
+  margin-left: auto;
+  margin-right: auto;
  }
 
  .mainImageInfoContainer {
@@ -27,72 +26,8 @@
   padding: 0.5rem;
  }
 
-@media screen and (max-width: 400px) {
-  .gallery {
-    column-count: 1;
-  }
-
+@media screen and (max-width: 900px) {
   .galleryItem {
-    margin-bottom: 2rem;
+    width:100%;
   }
 }
-
-@media screen and (min-width: 900px) {
-  .gallery {
-    column-count: 2;
-  }
-}
-
-@media screen and (min-width: 901px) {
-  .gallery {
-    column-count: 3;
-  }
-}
-
-@media screen and (min-width: 1201px) {
-  .gallery {
-    column-count: 4;
-  }
-}
-
-@media screen and (min-width: 1500px) {
-  .gallery {
-    column-count: 6;
-  }
-}
-
-  .galleryImage {
-    max-width: 100%;
-    height: auto;
-    align-self: center;
-    object-fit: contain;
-    cursor: pointer;
-  }
-
-  .imageButtons {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: baseline;
-
-  }
-
-  .buttonsContainer {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    margin-bottom: 2rem;
-}
-
-  .imagePositionLabel {
-    position: absolute;
-    background: rgb(85, 84, 84, 0.4);
-    color: white;
-    padding: 0 0.3rem;
-    z-index: 1;
-
-  }
-
-  .searchBar {
-    margin-top: 4rem;
-  }

@@ -50,7 +50,7 @@ const upload = (0, multer_1.default)({
                     cb(null, { fieldName: file.fieldname });
                 },
                 transform: function (req, file, cb) {
-                    cb(null, (0, sharp_1.default)().resize(500, 500, {
+                    cb(null, (0, sharp_1.default)().resize(300, 300, {
                         fit: 'inside',
                     }).jpeg());
                 }

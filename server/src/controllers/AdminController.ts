@@ -32,8 +32,9 @@ export const signup =  async (req, res) => {
   const {email, password, userName} = req.body
 
 try {
- let results = await signupService(email, password, userName)
-  res.status(200).json(results);
+ await signupService(email, password, userName)
+
+  res.status(200).send({message: 'You\'ve signed up successfuly!'});
 } catch {
   throw new Error("User with this email already exists");
   

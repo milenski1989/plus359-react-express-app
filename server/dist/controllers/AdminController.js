@@ -42,8 +42,8 @@ exports.login = login;
 const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password, userName } = req.body;
     try {
-        let results = yield (0, AdminServices_1.signupService)(email, password, userName);
-        res.status(200).json(results);
+        yield (0, AdminServices_1.signupService)(email, password, userName);
+        res.status(200).send({ message: 'You\'ve signed up successfuly!' });
     }
     catch (_b) {
         throw new Error("User with this email already exists");

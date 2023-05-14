@@ -1,38 +1,107 @@
+
 export const locations = [
-    {id: 1, name: "Vasil Levski"},
-    {id: 2, name: "Charta"},
-    {id: 3, name: "Lozenets"},
-    {id: 4, name: "Other"},
-    {id: 5, name: "Collect"},
-    {id: 6, name: "Bojurishte"},
-    {id: 7, name: "Elin Pelin"},
-    {id: 8, name: "Vasil Levski Folders"}
-]
-
-export const cellsData = [
     {
-        id: 1,
-        locationNameId: 1,
-        cellNumbers:
-         [
-             "1-1", "1-2", "1-3", "1-4",
-             "2-1", "2-2", "2-3", "2-4",
-             "3-1", "3-2", "3-3", "3-4"
-         ],
+        name: "Vasil Levski",
+        cells: [
+            {name: "1-1"},
+            {name: "1-2"},
+            {name: "1-3"},
+            {name: "1-4"},
+            {name: "2-1"},
+            {name: "2-2"},
+            {name: "2-3"},
+            {name: "2-4"},
+            {name: "3-1"},
+            {name: "3-2"},
+            {name: "3-3"},
+            {name: "3-4"},
+        ] 
     },
-    {id: 2, locationNameId: 2, cellNumbers: ["charta1", "charta2", "charta3", "charta4"]},
-    {id: 3, locationNameId: 3, cellNumbers: ["lozenets1", "lozenets2", "lozenets3", "lozenets4"]},
-    {id: 4, locationNameId: 4, cellNumbers: ["other1", "other2", "other3", "other4", "other5", "other6"]},
-    {id: 5, locationNameId: 5, cellNumbers: ["collect1", "collect2", "collect3", "collect4"]},
-    {id: 6, locationNameId: 6, cellNumbers: ["bojurishte1", "bojurishte2", "bojurishte3", "bojurishte4"]},
-    {id: 7, locationNameId: 7, cellNumbers: ["elinpelin1", "elinpelin2", "elinpelin3", "elinpelin4"]},
-    {id: 8, locationNameId: 8, cellNumbers:   [
-        "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-        "11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
-    ]},
+    {
+        name: "Charta",
+        cells: [
+            {name: "charta1"},
+            {name: "charta2"},
+            {name: "charta3"},
+            {name: "charta4"},
+        ]
+    },
+    {
+        name: "Lozenets",
+        cells: [
+            {name: "lozenets1"},
+            {name: "lozenets2"},
+            {name: "lozenets3"},
+            {name: "lozenets4"},
+        ]
+    },
+    {
+        name: "Collect",
+        cells: [
+            {name: "collect1"},
+            {name: "collect2"},
+            {name: "collect3"},
+            {name: "collect4"},
+        ]
+    },
+    {
+        name: "Bojurishte",
+        cells: [
+            {name: "bojurishte1"},
+            {name: "bojurishte2"},
+            {name: "bojurishte3"},
+            {name: "bojurishte4"},
+        ]
+    },
+    {
+        name: "Elin Pelin",
+        cells: [
+            {name: "elinpelin1"},
+            {name: "elinpelin2"},
+            {name: "elinpelin3"},
+            {name: "elinpelin4"},
+        ]
+    },
+    {
+        name: "Vasil Levski Folders",
+        cells: [
+            {name: "1"},
+            {name: "2"},
+            {name: "3"},
+            {name: "4"},
+            {name: "5"},
+            {name: "6"},
+            {name: "7"},
+            {name: "8"},
+            {name: "9"},
+            {name: "10"},
+            {name: "11"},
+            {name: "12"},
+            {name: "13"},
+            {name: "14"},
+            {name: "15"},
+            {name: "16"},
+            {name: "17"},
+            {name: "18"},
+            {name: "19"},
+            {name: "20"},
+        ]
+    },
+    {
+        name: "Other",
+        cells: [
+            {name: "other1"},
+            {name: "other2"},
+            {name: "other3"},
+            {name: "other4"},
+            {name: "other5"},
+            {name: "other6"},
+        ]
+    },
+    
 ]
 
-export const createDropdownOptions = async (selectedCell, locationNameId = null) => {
+export const findAvailablePositions = async (selectedCell, location = null) => {
     let i;
     let newArray;
     let dropdownOptions
@@ -98,10 +167,11 @@ export const createDropdownOptions = async (selectedCell, locationNameId = null)
         newArray = Array.from(Array(50), () => i++)
         dropdownOptions = newArray.filter(post => storageEntries.every(pos => {return post !== pos.position} ))   
     }
-    else if (locationNameId === 8) {
+    else if (location === 'Vasil Levski Folders') {
         i = 1
         newArray = Array.from(Array(100), () => i++)
         dropdownOptions = newArray.filter(post => storageEntries.every(pos => {return post !== pos.position} ))   
     }
+   
     return dropdownOptions
 }

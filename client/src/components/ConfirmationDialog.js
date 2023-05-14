@@ -9,6 +9,7 @@ const ConfirmationDialog = ({deleteImageAndEntry, isDeleteConfOpen, setIsDeleteC
 
     //handle delete thumbnail, original image and entry
     const hadleDeleteImageAndEntry = (originalName, filename, id) => {
+        console.log(originalName, filename, id)
         deleteImageAndEntry(originalName, filename, id)
         setIsDeleteConfOpen(false)
         setIsInfoModalOpen(false)

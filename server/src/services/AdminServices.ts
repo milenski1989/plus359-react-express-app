@@ -55,15 +55,14 @@ export const loginService = async (email: string, password: string) => {
       bcrypt.hash(password, saltRounds, async (err, hash) => {
         if (err) throw new Error("Signup failed!");
         
-        user = await userRepository.create({
+        user = userRepository.create({
           email: email,
           password: hash,
           userName: userName,
           superUser: 1
         })
         await dbConnection.getRepository(User).save(user)
-      
-        return user
+       
       })
      } else {
       throw new Error("exists");

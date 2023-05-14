@@ -49,7 +49,7 @@ const s3 = new AWS.S3({
           cb(null, { fieldName: file.fieldname });
         },
         transform: function (req, file, cb) {
-          cb(null, sharp().resize(500, 500, {
+          cb(null, sharp().resize(300, 300, {
             fit: 'inside',
         }).jpeg())
         }

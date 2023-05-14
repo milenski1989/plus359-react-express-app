@@ -11,6 +11,7 @@ const NavUnlisted = styled.ul`
   justify-content: space-around;
   padding: 1rem;
   margin: 0;
+  width: 100vw
 `;
 
 const linkStyle = {
@@ -26,8 +27,8 @@ const SecondaryNavbar = () => {
             <Link to='/upload' style={linkStyle}>Upload</Link>
             <Link to='/artworks' style={linkStyle}>Gallery</Link>
             <Link to='/account' style={linkStyle}>Account</Link>
+            <Logout style={{marginRight: "50px"}}/>
         </NavUnlisted>
-        <Logout styles={{top: '5px', right: '-3px'}}/>
     </>
 }
 

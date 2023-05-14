@@ -60,14 +60,13 @@ const signupService = (email, password, userName) => __awaiter(void 0, void 0, v
             bcrypt_1.default.hash(password, saltRounds, (err, hash) => __awaiter(void 0, void 0, void 0, function* () {
                 if (err)
                     throw new Error("Signup failed!");
-                user = yield userRepository.create({
+                user = userRepository.create({
                     email: email,
                     password: hash,
                     userName: userName,
                     superUser: 1
                 });
                 yield database_1.dbConnection.getRepository(User_1.User).save(user);
-                return user;
             }));
         }
         else {
