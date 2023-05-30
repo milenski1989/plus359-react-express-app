@@ -3,7 +3,7 @@ import "./Upload.css";
 import {CircularProgress} from "@mui/material";
 import "./App.css";
 import Message from "./Message";
-import SecondaryNavbar from "./SecondaryNavbar";
+import Navbar from "./Navbar";
 import axios from "axios";
 import CascadingDropdowns from "./CascadingDropdowns";
 
@@ -106,7 +106,7 @@ const Upload = () => {
             handleClose={() => setUploadSuccessful(false)}
             message="Entry uploaded successfully!"
             severity="success" />
-        <SecondaryNavbar />
+        <Navbar />
 
         {uploading ? 
             <CircularProgress variant="determinate" value={progress} className="loader" color="primary" />

@@ -9,15 +9,12 @@ const s3 = new AWS.S3({
 });
 
 
-
-//login
 export const login = async (req, res) => {
   const {email, password} = req.body
 
 try {
   const userFound = await loginService(email, password)
   req.session.loggedin = true;
-  //req.session.username = userName;
 
   if (!userFound) res.status(400).send({error: "Invalid Username or Password"})
  
@@ -27,7 +24,6 @@ throw new Error("Error");
 }
 };
 
-//signup
 export const signup =  async (req, res) => {
   const {email, password, userName} = req.body
 
@@ -41,7 +37,6 @@ try {
 }
 }
 
-//upload a photo with details to S3 Bucket and MySQL Database tables Artworks and Storage
 export const uploadEntry = async (req, res) => {
 
   const {title, artist, technique, dimensions, price, notes, onWall,
@@ -79,11 +74,7 @@ try {
 
 }
 
-  
-
-
-//get all photos from S3 and details from database
-export const getArts = async (req, res) => {
+  export const getArts = async (req, res) => {
   const {page, count} = req.query
   try {
    const [arts, artsCount] = await getArtsService(page, count)
@@ -118,7 +109,6 @@ export const updateBio = async (req, res) => {
   }
 }
 
-//search 
 export const searchArts = async (req, res) => {
   const {param} = req.params
   try {
@@ -146,7 +136,6 @@ export const getFreeCells = async (req, res) => {
 
 }
 
-//delete single entry from s3, then from db
 export const deleteFromS3 = async (req, res) => {
   const filename = req.params.filename
   try {
@@ -158,13 +147,11 @@ export const deleteFromS3 = async (req, res) => {
   }
 }
 
-//deleteOriginal
 export const deleteOriginalFromS3 =  async (req, res) => {
   const originalFilename = req.params.originalFilename
   await s3.deleteObject({Bucket: process.env.AWS_BUCKET_NAME, Key: originalFilename}).promise();
 }
 
-//update single entry in database
 export const updateEntry = async (req, res) => {
   const {title,
     artist,

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import SecondaryNavbar from "./SecondaryNavbar";
+import Navbar from "./Navbar";
 import "./Gallery.css";
 import "./App.css";
 import {Checkbox, CircularProgress, Pagination} from "@mui/material";
@@ -17,8 +17,8 @@ import Icon277Exit from "./icons as components/IconExit";
 import IconSave from "./icons as components/IconSave";
 import IconEdit from "./icons as components/IconEdit";
 import IconDelete from "./icons as components/IconDelete";
-import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { blue } from '@mui/material/colors';
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -33,9 +33,7 @@ const Gallery = () => {
     } = useContext(ImageContext);
     const myStorage = window.localStorage;
 
-    const history = useHistory()
-    const location = useLocation()
-    let { from } = location.state || { from: { pathname: '/pdf' } }
+    let navigate = useNavigate();
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState({
@@ -273,7 +271,7 @@ const Gallery = () => {
                 setIsDeleteConfOpen={setIsDeleteConfOpen}
             />
 
-            <SecondaryNavbar />
+            <Navbar />
 
             <SearchBar
                 onChange={onChange}
@@ -290,7 +288,7 @@ const Gallery = () => {
                             onClick={handleSelectImages}>Select images</button>
                         {currentImages.length ?
                             <><button className='flex bg-main text-white rounded mr-4 max-sm:mr-0 max-sm:mb-3 max-sm:w-2/4 justify-center px-3 py-1.5 text-md leading-6 text-grey focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2'
-                                onClick={() => history.replace(from)}>Generate PDF</button>
+                                onClick={() => navigate("/pdf")}>Generate PDF</button>
                             <button className='flex bg-main text-white rounded mr-4 max-sm:mr-0 max-sm:mb-3 max-sm:w-2/4 justify-center px-3 py-1.5 text-md leading-6 text-grey focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2'
                                 onClick={() => setIsDeleteConfOpen(true)}>Delete selected</button>
                             <button className='flex bg-main text-white rounded mr-4 max-sm:mr-0 max-sm:w-2/4 justify-center px-3 py-1.5 text-md leading-6 text-grey focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2'

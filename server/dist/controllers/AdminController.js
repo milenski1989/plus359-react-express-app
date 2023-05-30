@@ -21,13 +21,11 @@ const s3 = new aws_sdk_1.default.S3({
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     region: process.env.AWS_REGION,
 });
-//login
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
     try {
         const userFound = yield (0, AdminServices_1.loginService)(email, password);
         req.session.loggedin = true;
-        //req.session.username = userName;
         if (!userFound)
             res.status(400).send({ error: "Invalid Username or Password" });
         else
@@ -38,7 +36,6 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.login = login;
-//signup
 const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password, userName } = req.body;
     try {
@@ -50,7 +47,6 @@ const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.signup = signup;
-//upload a photo with details to S3 Bucket and MySQL Database tables Artworks and Storage
 const uploadEntry = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { title, artist, technique, dimensions, price, notes, onWall, inExhibition, storageLocation, cell, position, by_user } = req.body;
     const image_url = req.file.transforms[0].location;
@@ -66,7 +62,6 @@ const uploadEntry = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.uploadEntry = uploadEntry;
-//get all photos from S3 and details from database
 const getArts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { page, count } = req.query;
     try {
@@ -101,7 +96,6 @@ const updateBio = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.updateBio = updateBio;
-//search 
 const searchArts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { param } = req.params;
     try {
@@ -124,7 +118,6 @@ const getFreeCells = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.getFreeCells = getFreeCells;
-//delete single entry from s3, then from db
 const deleteFromS3 = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const filename = req.params.filename;
     try {
@@ -137,13 +130,11 @@ const deleteFromS3 = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.deleteFromS3 = deleteFromS3;
-//deleteOriginal
 const deleteOriginalFromS3 = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const originalFilename = req.params.originalFilename;
     yield s3.deleteObject({ Bucket: process.env.AWS_BUCKET_NAME, Key: originalFilename }).promise();
 });
 exports.deleteOriginalFromS3 = deleteOriginalFromS3;
-//update single entry in database
 const updateEntry = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { title, artist, technique, dimensions, price, notes, onWall, inExhibition, storageLocation, cell, position, by_user } = req.body;
     const { id } = req.params;

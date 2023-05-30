@@ -22,8 +22,6 @@ dbConnection
     const artistsRepository = dbConnection.getRepository(Artists)
     const biosRepository = dbConnection.getRepository(ArtistsBios)
 
-
-  //login
 export const loginService = async (email: string, password: string) => {
   let authenticated: boolean
 
@@ -45,7 +43,6 @@ export const loginService = async (email: string, password: string) => {
   
 };
 
-//signup
  export const signupService = async (email: string, password: string, userName: string) => {
   let user: object
   let userFound = await userRepository.findOneBy({
@@ -72,14 +69,11 @@ export const loginService = async (email: string, password: string) => {
       
      }
 
-    
   } catch {
-    throw new Error("Error occured while register");
+    throw new Error("Error occured while registering!");
   }
 
 };
-
-//upload to Artworks after object is created in the S3 Bucket
 
 export const uploadService = async (
     title: string,
@@ -132,7 +126,6 @@ export const uploadService = async (
 
     }
 
-//get all entries from database
 export const getArtsService = async (page: string, count: string) => {
   
  try {
@@ -162,7 +155,6 @@ export const getBioService = async(name: string) => {
         artist: name
       }
     })
-    console.log(name)
 
     if (!artist) {
       throw new Error('Artist not found!')
@@ -171,7 +163,6 @@ export const getBioService = async(name: string) => {
         where: {
           id: artist.id,
       },
-        
     })
     }
 
@@ -201,8 +192,6 @@ export const updateBioService = async(id: number, bio: string) => {
 
 }
 
-
-//search
 export const searchService = async (params: string) => {
   try {
    const results = await artsRepository.find(
@@ -243,7 +232,6 @@ export const searchService = async (params: string) => {
   }
 };
 
-//delete one from database
 export const deleteArtService = async (id) => {
   try {
     const results = await artsRepository.delete(id)
@@ -254,7 +242,6 @@ export const deleteArtService = async (id) => {
   }
 };
 
-//update in database
 export const updateArtService = async (
     title: string,
     artist: string,

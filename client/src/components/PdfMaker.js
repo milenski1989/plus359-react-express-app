@@ -3,29 +3,26 @@ import React, { useContext, useEffect, useState } from 'react'
 import pdfMake from 'pdfmake/build/pdfmake'
 import pdfFonts from "pdfmake/build/vfs_fonts";
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
-import SecondaryNavbar from './SecondaryNavbar';
+import Navbar from './Navbar';
 import { ImageContext } from './App';
-import { useHistory, useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 import IconEdit from './icons as components/IconEdit';
 import IconSave from './icons as components/IconSave';
 import axios from 'axios';
 import Icon277Exit from './icons as components/IconExit';
+import { useNavigate } from 'react-router-dom';
 
 const PdfMaker = () => {
-
-    const history = useHistory()
-    const location = useLocation()
-    let { from } = location.state || { from: { pathname: '/artworks' } }
 
     const {
         currentImages,
         setCurrentImages
     } = useContext(ImageContext);
 
+    let navigate = useNavigate();
+
     const myStorage = window.localStorage;
     const [urls, setUrls] = useState('')
     const [inputsData, setInputsData] = useState({
-        paragraph: "",
         notes: ""
     });
     const [bio, setBio] = useState('')
@@ -135,8 +132,6 @@ const PdfMaker = () => {
         }
     };
 
-    console.log(bio)
-
     const createCertificate = async () => {
 
         const docDefinition = {
@@ -205,7 +200,7 @@ const PdfMaker = () => {
     }
 
     return <>
-        <SecondaryNavbar/>
+        <Navbar/>
         <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-sm">
             </div>
@@ -271,7 +266,7 @@ const PdfMaker = () => {
                     </button>
                     <button
                         className='flex bg-main text-white rounded mr-4 max-sm:mr-0 max-sm:mb-3 max-sm:w-4/5 justify-center px-2 py-2 text-sm leading-6 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2'
-                        onClick={() => {setCurrentImages([]); history.replace(from)}}>Cancel
+                        onClick={() => {setCurrentImages([]); navigate('/gallery')}}>Cancel
                     </button>
                 </div> :
                 <div>Please wait...</div>

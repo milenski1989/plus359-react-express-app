@@ -33,7 +33,6 @@ const userRepository = database_1.dbConnection.getRepository(User_1.User);
 const artsRepository = database_1.dbConnection.getRepository(Artworks_1.Artworks);
 const artistsRepository = database_1.dbConnection.getRepository(Artists_1.Artists);
 const biosRepository = database_1.dbConnection.getRepository(ArtistsBios_1.ArtistsBios);
-//login
 const loginService = (email, password) => __awaiter(void 0, void 0, void 0, function* () {
     let authenticated;
     try {
@@ -53,7 +52,6 @@ const loginService = (email, password) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.loginService = loginService;
-//signup
 const signupService = (email, password, userName) => __awaiter(void 0, void 0, void 0, function* () {
     let user;
     let userFound = yield userRepository.findOneBy({
@@ -78,11 +76,10 @@ const signupService = (email, password, userName) => __awaiter(void 0, void 0, v
         }
     }
     catch (_a) {
-        throw new Error("Error occured while register");
+        throw new Error("Error occured while registering!");
     }
 });
 exports.signupService = signupService;
-//upload to Artworks after object is created in the S3 Bucket
 const uploadService = (title, artist, technique, dimensions, price, notes, onWall, inExhibition, storageLocation, cell, position, image_url, image_key, download_url, download_key, by_user) => __awaiter(void 0, void 0, void 0, function* () {
     let newEntry;
     try {
@@ -112,7 +109,6 @@ const uploadService = (title, artist, technique, dimensions, price, notes, onWal
     }
 });
 exports.uploadService = uploadService;
-//get all entries from database
 const getArtsService = (page, count) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const [arts, artsCount] = yield artsRepository.findAndCount({
@@ -137,7 +133,6 @@ const getBioService = (name) => __awaiter(void 0, void 0, void 0, function* () {
                 artist: name
             }
         });
-        console.log(name);
         if (!artist) {
             throw new Error('Artist not found!');
         }
@@ -170,7 +165,6 @@ const updateBioService = (id, bio) => __awaiter(void 0, void 0, void 0, function
     }
 });
 exports.updateBioService = updateBioService;
-//search
 const searchService = (params) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const results = yield artsRepository.find({ where: [
@@ -206,7 +200,6 @@ const getCellsService = (cell) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.getCellsService = getCellsService;
-//delete one from database
 const deleteArtService = (id) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const results = yield artsRepository.delete(id);
@@ -217,7 +210,6 @@ const deleteArtService = (id) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.deleteArtService = deleteArtService;
-//update in database
 const updateArtService = (title, artist, technique, dimensions, price, notes, onWall, inExhibition, storageLocation, cell, position, by_user, id) => __awaiter(void 0, void 0, void 0, function* () {
     const updatedEntry = { title,
         artist,

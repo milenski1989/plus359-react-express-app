@@ -19,18 +19,17 @@ const linkStyle = {
     color: "white",
 };
 
-const SecondaryNavbar = () => {
+const Navbar = () => {
 
     return  <>
         <NavUnlisted>
             <Link to='/' style={linkStyle}>Home</Link>
             <Link to='/upload' style={linkStyle}>Upload</Link>
-            <Link to='/artworks' style={linkStyle}>Gallery</Link>
-            <Link to='/pdf' style={linkStyle}>Pdf</Link>
+            <Link to='/gallery' style={linkStyle}>Gallery</Link>
             <Link to='/account' style={linkStyle}>Account</Link>
             <Logout style={{marginRight: "50px"}}/>
         </NavUnlisted>
     </>
 }
 
-export default SecondaryNavbar
+export default Navbar

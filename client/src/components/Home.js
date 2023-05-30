@@ -2,8 +2,7 @@
 import React, {  useEffect, useState } from 'react'
 import './App.css'
 import IconsNavBar from './IconsNavBar'
-import { useHistory } from "react-router"
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import Upload from './Upload'
 import Gallery from './Gallery'
 import Logout from './Logout'
@@ -14,16 +13,16 @@ const icons = {
 
 const Home = () => {
 
-    const history = useHistory()
+    let location = useLocation();
 
     const [activeTab, setActiveTab] = useState()
 
     useEffect(() => {
         if (history) {
-            switch (history.location.pathname) {
+            switch (location) {
             case "/upload" : setActiveTab(<Upload/>)
                 break;
-            case "/artworks" : setActiveTab(<Gallery/>)
+            case "/gallery" : setActiveTab(<Gallery/>)
                 break;
             }
         }

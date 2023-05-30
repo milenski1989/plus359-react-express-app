@@ -2,7 +2,7 @@ import { CircularProgress} from "@mui/material"
 import { useState } from "react"
 import './App.css'
 import Message from "./Message"
-import { Link,  useHistory, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const linkStyle = {
     textDecoration: "none",
@@ -17,10 +17,10 @@ const Login = () => {
     const [loading, setLoading] = useState(false)
     const [loginError, setLoginError] = useState({error: false, message: ''})
 
-    const history = useHistory()
     let myStorage = window.localStorage
-    const location = useLocation()
-    let { from } = location.state || { from: { pathname: '/' } }
+
+    let navigate = useNavigate();
+
 
     const handleLogin = async () => {
         const response = await fetch("http://localhost:5000/api/login", {
@@ -44,7 +44,7 @@ const Login = () => {
             }))
             setLoading(false)
             setLoginError({error: false, message: ''})
-            history.replace(from)
+            navigate('/')
         } else {
             setLoginError({error: true, message: data.error})
             setLoading(false)
