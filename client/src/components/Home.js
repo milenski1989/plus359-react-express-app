@@ -2,20 +2,33 @@
 import React, {  useEffect, useState } from 'react'
 import './App.css'
 import IconsNavBar from './IconsNavBar'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Upload from './Upload'
 import Gallery from './Gallery'
-import Logout from './Logout'
 
 const icons = {
     logo: require('./assets/logo359 gallery-white1.png')
 }
+
+const linkStyle = {
+    textDecoration: "none",
+    color: "white"
+};
 
 const Home = () => {
 
     let location = useLocation();
 
     const [activeTab, setActiveTab] = useState()
+
+    let navigate = useNavigate();
+
+
+    const handleLogout = () => {
+        window.localStorage.clear()
+        window.sessionStorage.clear()
+        navigate('/login')
+    }
 
     useEffect(() => {
         if (history) {
@@ -29,9 +42,9 @@ const Home = () => {
     },[])
 
     return <><div className="parent">
-        <div className="bar">
+        <div className={`bg-black flex justify-between p-4`}>
             <Link to='/'><img className="logo" alt="logo" src={icons.logo} /></Link>
-            <div style={{position: 'absolute', top: '50%', transform:' translateY(-50%)', right: '20px'}}><Logout/></div>
+            <Link className="self-center"  to='/login' onClick={handleLogout} style={linkStyle}>Log out</Link>
         </div>
         <IconsNavBar />
 

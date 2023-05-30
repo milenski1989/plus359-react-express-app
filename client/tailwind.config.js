@@ -15,6 +15,7 @@ export const theme = {
     screens: {
         'sm': '600px',
         // => @media (min-width: 640px) { ... }
+        'lg': '900px'
     }
 };
 export const plugins = [];
