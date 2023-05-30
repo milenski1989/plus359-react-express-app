@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateEntry = exports.deleteOriginalFromS3 = exports.deleteFromS3 = exports.getFreeCells = exports.searchArts = exports.getArts = exports.uploadEntry = exports.signup = exports.login = void 0;
+exports.updateEntry = exports.deleteOriginalFromS3 = exports.deleteFromS3 = exports.getFreeCells = exports.searchArts = exports.updateBio = exports.getBio = exports.getArts = exports.uploadEntry = exports.signup = exports.login = void 0;
 const AdminServices_1 = require("../services/AdminServices");
 require("dotenv/config");
 const aws_sdk_1 = __importDefault(require("aws-sdk"));
@@ -78,6 +78,29 @@ const getArts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.getArts = getArts;
+const getBio = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { name } = req.params;
+    try {
+        const bio = yield (0, AdminServices_1.getBioService)(name);
+        res.status(200).json(bio);
+    }
+    catch (error) {
+        res.status(400).json(error);
+    }
+});
+exports.getBio = getBio;
+const updateBio = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { bio } = req.body;
+    const { id } = req.params;
+    try {
+        const result = yield (0, AdminServices_1.updateBioService)(id, bio);
+        res.status(200).json(result);
+    }
+    catch (error) {
+        res.status(400).json(error);
+    }
+});
+exports.updateBio = updateBio;
 //search 
 const searchArts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { param } = req.params;

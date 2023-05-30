@@ -8,13 +8,14 @@ const Gallery = lazy(() => import('./Gallery'))
 const Upload = lazy(() => import('./Upload'))
 const Account = lazy(() => import('./Account'))
 const Home = lazy(() => import('./Home'))
+const PdfMaker = lazy(() => import('./PdfMaker'))
 
 
 
 export const ImageContext = createContext()
 export const ThemeContext = createContext()
 const App = () => {
-    const [currentImage, setCurrentImage] = useState(null)
+    const [currentImages, setCurrentImages] = useState([])
     const [updatedEntry, setUpdatedEntry] = useState({});
     const [isEditMode, setIsEditMode] = useState(false)
     const [isInfoModalOpen, setIsInfoModalOpen] = useState(false)
@@ -40,8 +41,8 @@ const App = () => {
                         <Route exact path="/signup" component={Signup} />
                         <PrivateRoute exact path="/" component={Home} />
                         <ImageContext.Provider value={{
-                            currentImage,
-                            setCurrentImage,
+                            currentImages,
+                            setCurrentImages,
                             updatedEntry,
                             setUpdatedEntry,
                             isEditMode,
@@ -53,6 +54,7 @@ const App = () => {
                         }}>
                             <PrivateRoute exact path="/upload" component={Upload} />
                             <PrivateRoute exact path="/artworks" component={Gallery} />
+                            <PrivateRoute exact path="/pdf" component={PdfMaker} />
                         </ImageContext.Provider>
                         <PrivateRoute exact path="/account" component={Account} />
                     </ThemeContext.Provider>

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useContext, useState } from 'react'
 import { ImageContext } from './App';
 import { locations, findAvailablePositions } from "./constants/constants";
@@ -5,15 +6,12 @@ import { locations, findAvailablePositions } from "./constants/constants";
 function CascadingDropdowns({formControlData, setFormControlData}) {
 
     const {setUpdatedEntry, currentImage} = useContext(ImageContext)
-    console.log(currentImage)
 
     const [location, setLocation] = useState('--Location--')
     const [cell, setCell] = useState('--Cell--')
     const [cells, setCells] = useState([])
     const [position, setPosition] = useState('--Position--')
     const [positions, setPositions] = useState([])
-
-    console.log(formControlData)
 
     const changeLocation = (event) => {
         const {value} = event.target
@@ -75,7 +73,7 @@ function CascadingDropdowns({formControlData, setFormControlData}) {
             {/* Locations*/}   
             <select
                 className='mt-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'
-                value={location || currentImage.storageLocation}
+                value={location || currentImage[0].storageLocation}
                 onChange={changeLocation}>
                 <option>--Location--</option>
                 {locations.map(location => (
@@ -86,7 +84,7 @@ function CascadingDropdowns({formControlData, setFormControlData}) {
             {/*Cells*/}
             <select 
                 className='mt-6 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'
-                value={cell || currentImage.cell} 
+                value={cell || currentImage[0].cell} 
                 onChange={changeCell}>
                 <option>--Cell--</option>
                 {cells.map(cell => (
@@ -97,7 +95,7 @@ function CascadingDropdowns({formControlData, setFormControlData}) {
             {/*Positions*/}
             <select
                 className='mt-6 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'
-                value={position || currentImage.position}
+                value={position || currentImage[0].position}
                 onChange={changePosition}>
                 <option>--Position--</option>
                 {positions.map(position => (

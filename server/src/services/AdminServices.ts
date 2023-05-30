@@ -1,9 +1,10 @@
-import express from "express";
 import bcrypt from "bcrypt"
 import { User } from "../entities/User";
 import { dbConnection } from "../database";
 import { Artworks } from "../entities/Artworks";
 import { Like } from "typeorm"
+import { Artists } from "../entities/Artists";
+import { ArtistsBios } from "../entities/ArtistsBios";
 
 const saltRounds = 10
 
@@ -18,6 +19,8 @@ dbConnection
 
     const userRepository = dbConnection.getRepository(User);
     const artsRepository = dbConnection.getRepository(Artworks);
+    const artistsRepository = dbConnection.getRepository(Artists)
+    const biosRepository = dbConnection.getRepository(ArtistsBios)
 
 
   //login
@@ -147,6 +150,57 @@ export const getArtsService = async (page: string, count: string) => {
   
  }
 };
+
+export const getBioService = async(name: string) => {
+
+  try {
+
+    let bio: ArtistsBios
+
+    const artist = await artistsRepository.findOne({
+      where: {
+        artist: name
+      }
+    })
+    console.log(name)
+
+    if (!artist) {
+      throw new Error('Artist not found!')
+    } else {
+      bio = await biosRepository.findOne({
+        where: {
+          id: artist.id,
+      },
+        
+    })
+    }
+
+  return bio
+
+  } catch {
+    throw new Error('No bio for this artist found!')
+  }
+
+}
+
+export const updateBioService = async(id: number, bio: string) => {
+
+  try {
+    const bioFound = await biosRepository.findOneBy({
+      id: id
+  })
+
+  await biosRepository.merge(bioFound, {...bioFound, bio: bio})
+
+  const results = await biosRepository.save(bioFound)
+  return results
+  } catch (error) {
+    console.log({error})
+  throw new Error("Could not update entry")
+  }
+
+}
+
 
 //search
 export const searchService = async (params: string) => {

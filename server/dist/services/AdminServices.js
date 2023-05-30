@@ -12,12 +12,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateArtService = exports.deleteArtService = exports.getCellsService = exports.searchService = exports.getArtsService = exports.uploadService = exports.signupService = exports.loginService = void 0;
+exports.updateArtService = exports.deleteArtService = exports.getCellsService = exports.searchService = exports.updateBioService = exports.getBioService = exports.getArtsService = exports.uploadService = exports.signupService = exports.loginService = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const User_1 = require("../entities/User");
 const database_1 = require("../database");
 const Artworks_1 = require("../entities/Artworks");
 const typeorm_1 = require("typeorm");
+const Artists_1 = require("../entities/Artists");
+const ArtistsBios_1 = require("../entities/ArtistsBios");
 const saltRounds = 10;
 database_1.dbConnection
     .initialize()
@@ -29,6 +31,8 @@ database_1.dbConnection
 });
 const userRepository = database_1.dbConnection.getRepository(User_1.User);
 const artsRepository = database_1.dbConnection.getRepository(Artworks_1.Artworks);
+const artistsRepository = database_1.dbConnection.getRepository(Artists_1.Artists);
+const biosRepository = database_1.dbConnection.getRepository(ArtistsBios_1.ArtistsBios);
 //login
 const loginService = (email, password) => __awaiter(void 0, void 0, void 0, function* () {
     let authenticated;
@@ -125,6 +129,47 @@ const getArtsService = (page, count) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.getArtsService = getArtsService;
+const getBioService = (name) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        let bio;
+        const artist = yield artistsRepository.findOne({
+            where: {
+                artist: name
+            }
+        });
+        console.log(name);
+        if (!artist) {
+            throw new Error('Artist not found!');
+        }
+        else {
+            bio = yield biosRepository.findOne({
+                where: {
+                    id: artist.id,
+                },
+            });
+        }
+        return bio;
+    }
+    catch (_d) {
+        throw new Error('No bio for this artist found!');
+    }
+});
+exports.getBioService = getBioService;
+const updateBioService = (id, bio) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const bioFound = yield biosRepository.findOneBy({
+            id: id
+        });
+        yield biosRepository.merge(bioFound, Object.assign(Object.assign({}, bioFound), { bio: bio }));
+        const results = yield biosRepository.save(bioFound);
+        return results;
+    }
+    catch (error) {
+        console.log({ error });
+        throw new Error("Could not update entry");
+    }
+});
+exports.updateBioService = updateBioService;
 //search
 const searchService = (params) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -142,7 +187,7 @@ const searchService = (params) => __awaiter(void 0, void 0, void 0, function* ()
         });
         return results;
     }
-    catch (_d) {
+    catch (_e) {
         throw new Error("Fetch failed!");
     }
 });
@@ -156,7 +201,7 @@ const getCellsService = (cell) => __awaiter(void 0, void 0, void 0, function* ()
         });
         return results;
     }
-    catch (_e) {
+    catch (_f) {
         throw new Error("Error getting free positions in the selected cell");
     }
 });
@@ -167,7 +212,7 @@ const deleteArtService = (id) => __awaiter(void 0, void 0, void 0, function* () 
         const results = yield artsRepository.delete(id);
         return results;
     }
-    catch (_f) {
+    catch (_g) {
         throw new Error("Could not delete the entry!");
     }
 });
@@ -194,7 +239,7 @@ const updateArtService = (title, artist, technique, dimensions, price, notes, on
         const results = yield artsRepository.save(item);
         return results;
     }
-    catch (_g) {
+    catch (_h) {
         throw new Error("Could not update entry");
     }
 });

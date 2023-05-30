@@ -1,4 +1,4 @@
-import { deleteArtService, getArtsService, getCellsService, loginService, searchService, signupService, updateArtService, uploadService } from "../services/AdminServices";
+import { deleteArtService, getArtsService, getBioService, getCellsService, loginService, searchService, signupService, updateArtService, updateBioService, uploadService } from "../services/AdminServices";
 import 'dotenv/config';
 import AWS from 'aws-sdk';
 
@@ -40,8 +40,6 @@ try {
   
 }
 }
-
-
 
 //upload a photo with details to S3 Bucket and MySQL Database tables Artworks and Storage
 export const uploadEntry = async (req, res) => {
@@ -96,6 +94,30 @@ export const getArts = async (req, res) => {
   }
 }
 
+export const getBio = async (req, res) => {
+  const {name} = req.params
+  try {
+   const bio = await getBioService(name)
+
+   res.status(200).json(bio);
+  } catch (error) {
+    res.status(400).json(error);
+  }
+}
+
+export const updateBio = async (req, res) => {
+  const {bio} = req.body
+  const {id} = req.params
+
+  try {
+   const result = await updateBioService(id, bio)
+
+   res.status(200).json(result);
+  } catch (error) {
+    res.status(400).json(error);
+  }
+}
+
 //search 
 export const searchArts = async (req, res) => {
   const {param} = req.params
@@ -116,7 +138,6 @@ export const getFreeCells = async (req, res) => {
     
     const results = await getCellsService(cell)
 
-   
         res.status(200).json(results);
     
   } catch (error) {

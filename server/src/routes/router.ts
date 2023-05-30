@@ -1,5 +1,5 @@
 import express from "express"
-import { deleteFromS3, deleteOriginalFromS3, getArts, getFreeCells, login, searchArts, signup, updateEntry, uploadEntry } from "../controllers/AdminController"
+import { deleteFromS3, deleteOriginalFromS3, getArts, getBio, getFreeCells, login, searchArts, signup, updateBio, updateEntry, uploadEntry } from "../controllers/AdminController"
 import AWS from 'aws-sdk';
 import multerS3 from 'multer-s3-transform';
 import multer from 'multer';
@@ -68,6 +68,8 @@ const s3 = new AWS.S3({
 
 
 router.get('/artworks', getArts)
+router.get('/bio/:name', getBio)
+router.put('/bio/:id', updateBio)
 router.get('/artworks/:param', searchArts)
 router.get('/storage/:cell', getFreeCells)
 router.post('/login', login)

@@ -6,7 +6,6 @@ import Message from "./Message";
 import SecondaryNavbar from "./SecondaryNavbar";
 import axios from "axios";
 import CascadingDropdowns from "./CascadingDropdowns";
-import InvalidInputText from "./InvalidInputText";
 
 const Upload = () => {
 
@@ -78,22 +77,22 @@ const Upload = () => {
         setProgress(0)
         setUploading(false);
         setUploadSuccessful(true);
-        // setInputsData({
-        //     artist: "",
-        //     title: "",
-        //     technique: "",
-        //     dimensions: "",
-        //     price: 0,
-        //     notes: "",
-        //     onWall: 0,
-        //     inExhibition: 0
-        // })
+        setInputsData({
+            artist: "",
+            title: "",
+            technique: "",
+            dimensions: "",
+            price: 0,
+            notes: "",
+            onWall: 0,
+            inExhibition: 0
+        })
     
-        // setFormControlData({
-        //     storageLocation: "",
-        //     cell: "",
-        //     position: 0
-        // })
+        setFormControlData({
+            storageLocation: "",
+            cell: "",
+            position: 0
+        })
         setInputTouched(false)
     };
  
@@ -125,10 +124,14 @@ const Upload = () => {
                             </div>
                             <div className="mt-2">
                                 <input
-                                    onChange={imageSelectHandler} id="textField" type="file" autoComplete="current-password" required className="peer cursor-pointer block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
-                                <InvalidInputText
-                                    text='Please upload an image'
-                                />
+                                    onChange={imageSelectHandler} 
+                                    id="textField" type="file" 
+                                    autoComplete="current-password" 
+                                    required 
+                                    className="peer cursor-pointer block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
+                                <p className="invisible peer-invalid:visible text-red-400">
+                                    Please upload an image
+                                </p>
                             </div>
                         </div>
 
@@ -136,7 +139,9 @@ const Upload = () => {
                             return (
                                 <div key={key}>
                                     <div className="flex items-center justify-between">
-                                        <label htmlFor="textField" className="block text-sm font-medium leading-6 text-gray-900">{key === 'artist' || key === 'technique' ? `*${key}` : key}</label>
+                                        <label htmlFor="textField" 
+                                            className="block text-sm font-medium leading-6 text-gray-900">{key === 'artist' || key === 'technique' ? `*${key}` : key}
+                                        </label>
                                     </div>
                                     <div className="mt-1">
                                         <input value={value} 
@@ -146,9 +151,9 @@ const Upload = () => {
                                                     [key]: event.target.value,
                                                 }))
                                             } id="textField" name={key} type="text" autoComplete="current-password" required={key === 'artist' || key === "technique"} className="peer block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
-                                        <InvalidInputText
-                                            text= {`Please enter ${key}`}
-                                        />
+                                        <p className="invisible peer-invalid:visible text-red-400">
+                                            {`Please enter ${key}`}
+                                        </p>
                                     </div>
                                 </div>
                             )
