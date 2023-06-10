@@ -63,7 +63,7 @@ const Upload = () => {
             data.append("position", formControlData.position)
             data.append("by_user", user.userName)
     
-            await axios.post("http://localhost:3000/api/upload", data, {
+            await axios.post("http://localhost:5000/api/upload", data, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -150,10 +150,8 @@ const Upload = () => {
                                                     ...prevState,
                                                     [key]: event.target.value,
                                                 }))
-                                            } id="textField" name={key} type="text" autoComplete="current-password" required={key === 'artist' || key === 'technique' || key === 'title'} className="peer block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
-                                        <p className="invisible peer-invalid:visible text-red-400">
-                                            {`Please enter ${key}`}
-                                        </p>
+                                            } id="textField" name={key} type="text" autoComplete="current-password" required={key === 'artist' || key === 'technique' || key === 'title'}
+                                            className="placeholder-shown:border-gray-500block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 invalid:border-pink-500 invalid:text-pink-600 focus:invalid:border-pink-500 focus:invalid:ring-pink-500 sm:text-sm sm:leading-6"/>
                                     </div>
                                 </div>
                             )

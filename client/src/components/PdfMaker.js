@@ -38,7 +38,7 @@ const PdfMaker = () => {
     },[])
 
     const getBioOfArtist = async (name) => {
-        const res = await fetch(`http://localhost:3000/api/bio/${name}`)
+        const res = await fetch(`http://localhost:5000/api/bio/${name}`)
         const data = await res.json()
         return data
     };
@@ -54,7 +54,7 @@ const PdfMaker = () => {
 
     const updateBio = async (bio, id) => {
         const response = await axios.put(
-            `http://localhost:3000/api/bio/${id}`,
+            `http://localhost:5000/api/bio/${id}`,
             bio
         );
 
@@ -66,8 +66,6 @@ const PdfMaker = () => {
             setIsEditMode(false);
         }
     };
-
-    //https://plus359gallery.nyc3.cdn.digitaloceanspaces.com/Baila-29_1686396984812%20thumbnail.jpg
 
     const getUrlAsBlob = async () => {
         setLoading(true)
@@ -198,6 +196,7 @@ const PdfMaker = () => {
             
         const pdfGenerator = pdfMake.createPdf(docDefinition)
         pdfGenerator.download()
+        setCurrentImages([])
         
     }
 

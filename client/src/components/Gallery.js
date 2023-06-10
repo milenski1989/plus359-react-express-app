@@ -95,7 +95,7 @@ const Gallery = () => {
     const getAll = async () => {
         setLoading(true);
         const res = await fetch(
-            `http://localhost:3000/api/artworks?count=25&page=${page}`
+            `http://localhost:5000/api/artworks?count=25&page=${page}`
         );
         const data = await res.json();
         const { arts, artsCount } = data;
@@ -121,7 +121,7 @@ const Gallery = () => {
 
     const searchByKeyword = async () => {
         setLoading(true);
-        const res = await fetch(`http://localhost:3000/api/artworks/${keyword}`);
+        const res = await fetch(`http://localhost:5000/api/artworks/${keyword}`);
         const data = await res.json();
 
         if (res.status === 200) {
@@ -141,15 +141,15 @@ const Gallery = () => {
         setIsDeleting(true);
 
         await axios.delete(
-            `http://localhost:3000/api/artworks/${originalFilename}`,
+            `http://localhost:5000/api/artworks/${originalFilename}`,
             { originalFilename }
         );
 
-        await axios.delete(`http://localhost:3000/api/artworks/${filename}`, {
+        await axios.delete(`http://localhost:5000/api/artworks/${filename}`, {
             filename,
         });
         const response = await axios.delete(
-            `http://localhost:3000/api/artworks/${id}`,
+            `http://localhost:5000/api/artworks/${id}`,
             { id }
         );
 
@@ -218,11 +218,13 @@ const Gallery = () => {
     const saveUpdatedEntry = (id) => {
         updateEntry(id);
         myStorage.removeItem("image");
+        setCurrentImages([])
+        setMultiSelectMode(false)
     };
 
     const updateEntry = async (id) => {
         const response = await axios.put(
-            `http://localhost:3000/api/artworks/${id}`,
+            `http://localhost:5000/api/artworks/${id}`,
             updatedEntry
         );
         if (response.status === 200) {
@@ -283,7 +285,7 @@ const Gallery = () => {
                 <CircularProgress className="loader" color="primary" />
             ) : (
                 <>
-                    <div className="flex max-sm:flex-col items-center justify-center mt-32">
+                    <div className="flex max-sm:flex-col items-center justify-center mt-16 max-sm:mb-8 max-sm:mb-8">
                         <button className='flex bg-main text-white rounded mr-4 max-sm:mr-0 max-sm:mb-3 max-sm:w-2/4 justify-center px-3 py-1.5 text-md leading-6 text-grey focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2'
                             onClick={handleSelectImages}>Select images</button>
                         {currentImages.length ?
@@ -299,7 +301,7 @@ const Gallery = () => {
                        
                     </div>
             
-                    <div className="grid grid-cols-4 gap-x-3 max-sm:grid-cols-1 max-sm:p-0 p-20 mt-8">
+                    <div className="grid grid-cols-4 gap-x-3 max-sm:grid-cols-1 max-sm:p-0 p-20">
                         {searchResults.length ? (
                             searchResults.map((art, id) => (
                                 <><div
@@ -327,7 +329,7 @@ const Gallery = () => {
                                     <div className="flex justify-between p-4">
                                         <IconBxsDownload
                                             onClick={() => downloadOriginalImage(art.download_url, art.download_key)} />
-                                        {isEditMode && currentImages && currentImages[0].id === art.id &&
+                                        {isEditMode && currentImages.length && currentImages[0].id === art.id &&
                                             <>
                                                 <Icon277Exit onClick={cancelEditing} />
                                                 <IconSave onClick={() => saveUpdatedEntry(art.id)} />

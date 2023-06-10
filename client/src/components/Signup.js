@@ -21,7 +21,7 @@ const Signup = () => {
     const [signupSuccess, setSignupSuccess] = useState({success: false, message: ''})
 
     const handleSignup = async () => {
-        const res = await fetch("http://localhost:3000/api/signup", {
+        const res = await fetch("http://localhost:5000/api/signup", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -77,8 +77,7 @@ const Signup = () => {
                                 <div className="mt-2">
                                     <input onChange={(e) => setEmail(e.target.value)} id="email" name="email" type="email" autoComplete="email" required 
                                         placeholder="example@email.com"
-                                        className="placeholder-shown:border-gray-500block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 invalid:border-pink-500 invalid:text-pink-600
-                                        focus:invalid:border-pink-500 focus:invalid:ring-pink-500 sm:text-sm sm:leading-6"/>
+                                        className="placeholder-shown:border-gray-500block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 invalid:border-pink-500 invalid:text-pink-600 focus:invalid:border-pink-500 focus:invalid:ring-pink-500 sm:text-sm sm:leading-6"/>
                 
                                 </div>
                             </div>
