@@ -13,14 +13,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateEntry = exports.deleteOriginalFromS3 = exports.deleteFromS3 = exports.getFreeCells = exports.searchArts = exports.updateBio = exports.getBio = exports.getArts = exports.uploadEntry = exports.signup = exports.login = void 0;
+const s3Client_1 = __importDefault(require("../s3Client/s3Client"));
 const AdminServices_1 = require("../services/AdminServices");
 require("dotenv/config");
-const aws_sdk_1 = __importDefault(require("aws-sdk"));
-const s3 = new aws_sdk_1.default.S3({
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    region: process.env.AWS_REGION,
-});
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
     try {
@@ -121,7 +116,7 @@ exports.getFreeCells = getFreeCells;
 const deleteFromS3 = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const filename = req.params.filename;
     try {
-        yield s3.deleteObject({ Bucket: process.env.AWS_BUCKET_NAME, Key: filename }).promise();
+        yield s3Client_1.default.deleteObject({ Bucket: process.env.AWS_BUCKET_NAME, Key: filename }).promise();
         const results = yield (0, AdminServices_1.deleteArtService)(filename);
         res.send(results);
     }
@@ -132,7 +127,7 @@ const deleteFromS3 = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 exports.deleteFromS3 = deleteFromS3;
 const deleteOriginalFromS3 = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const originalFilename = req.params.originalFilename;
-    yield s3.deleteObject({ Bucket: process.env.AWS_BUCKET_NAME, Key: originalFilename }).promise();
+    yield s3Client_1.default.deleteObject({ Bucket: process.env.AWS_BUCKET_NAME, Key: originalFilename }).promise();
 });
 exports.deleteOriginalFromS3 = deleteOriginalFromS3;
 const updateEntry = (req, res) => __awaiter(void 0, void 0, void 0, function* () {

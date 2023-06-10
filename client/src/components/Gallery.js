@@ -95,7 +95,7 @@ const Gallery = () => {
     const getAll = async () => {
         setLoading(true);
         const res = await fetch(
-            `http://localhost:5000/api/artworks?count=25&page=${page}`
+            `http://localhost:3000/api/artworks?count=25&page=${page}`
         );
         const data = await res.json();
         const { arts, artsCount } = data;
@@ -121,7 +121,7 @@ const Gallery = () => {
 
     const searchByKeyword = async () => {
         setLoading(true);
-        const res = await fetch(`http://localhost:5000/api/artworks/${keyword}`);
+        const res = await fetch(`http://localhost:3000/api/artworks/${keyword}`);
         const data = await res.json();
 
         if (res.status === 200) {
@@ -141,15 +141,15 @@ const Gallery = () => {
         setIsDeleting(true);
 
         await axios.delete(
-            `http://localhost:5000/api/artworks/${originalFilename}`,
+            `http://localhost:3000/api/artworks/${originalFilename}`,
             { originalFilename }
         );
 
-        await axios.delete(`http://localhost:5000/api/artworks/${filename}`, {
+        await axios.delete(`http://localhost:3000/api/artworks/${filename}`, {
             filename,
         });
         const response = await axios.delete(
-            `http://localhost:5000/api/artworks/${id}`,
+            `http://localhost:3000/api/artworks/${id}`,
             { id }
         );
 
@@ -222,7 +222,7 @@ const Gallery = () => {
 
     const updateEntry = async (id) => {
         const response = await axios.put(
-            `http://localhost:5000/api/artworks/${id}`,
+            `http://localhost:3000/api/artworks/${id}`,
             updatedEntry
         );
         if (response.status === 200) {

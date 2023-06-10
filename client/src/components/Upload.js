@@ -63,7 +63,7 @@ const Upload = () => {
             data.append("position", formControlData.position)
             data.append("by_user", user.userName)
     
-            await axios.post("http://localhost:5000/api/upload", data, {
+            await axios.post("http://localhost:3000/api/upload", data, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -140,7 +140,7 @@ const Upload = () => {
                                 <div key={key}>
                                     <div className="flex items-center justify-between">
                                         <label htmlFor="textField" 
-                                            className="block text-sm font-medium leading-6 text-gray-900">{key === 'artist' || key === 'technique' ? `*${key}` : key}
+                                            className="block text-sm font-medium leading-6 text-gray-900">{key === 'artist' || key === 'technique' || key === 'title' ? `*${key}` : key}
                                         </label>
                                     </div>
                                     <div className="mt-1">
@@ -150,7 +150,7 @@ const Upload = () => {
                                                     ...prevState,
                                                     [key]: event.target.value,
                                                 }))
-                                            } id="textField" name={key} type="text" autoComplete="current-password" required={key === 'artist' || key === "technique"} className="peer block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
+                                            } id="textField" name={key} type="text" autoComplete="current-password" required={key === 'artist' || key === 'technique' || key === 'title'} className="peer block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
                                         <p className="invisible peer-invalid:visible text-red-400">
                                             {`Please enter ${key}`}
                                         </p>

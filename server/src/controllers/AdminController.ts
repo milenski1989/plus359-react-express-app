@@ -1,13 +1,6 @@
+import s3Client from "../s3Client/s3Client";
 import { deleteArtService, getArtsService, getBioService, getCellsService, loginService, searchService, signupService, updateArtService, updateBioService, uploadService } from "../services/AdminServices";
 import 'dotenv/config';
-import AWS from 'aws-sdk';
-
-const s3 = new AWS.S3({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: process.env.AWS_REGION,
-});
-
 
 export const login = async (req, res) => {
   const {email, password} = req.body
@@ -139,7 +132,7 @@ export const getFreeCells = async (req, res) => {
 export const deleteFromS3 = async (req, res) => {
   const filename = req.params.filename
   try {
-    await s3.deleteObject({Bucket: process.env.AWS_BUCKET_NAME, Key: filename}).promise();
+    await s3Client.deleteObject({Bucket: process.env.AWS_BUCKET_NAME, Key: filename}).promise();
     const results = await deleteArtService(filename)
     res.send(results)
   } catch (error) {
@@ -149,7 +142,7 @@ export const deleteFromS3 = async (req, res) => {
 
 export const deleteOriginalFromS3 =  async (req, res) => {
   const originalFilename = req.params.originalFilename
-  await s3.deleteObject({Bucket: process.env.AWS_BUCKET_NAME, Key: originalFilename}).promise();
+  await s3Client.deleteObject({Bucket: process.env.AWS_BUCKET_NAME, Key: originalFilename}).promise();
 }
 
 export const updateEntry = async (req, res) => {

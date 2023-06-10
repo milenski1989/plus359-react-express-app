@@ -21,7 +21,7 @@ const Signup = () => {
     const [signupSuccess, setSignupSuccess] = useState({success: false, message: ''})
 
     const handleSignup = async () => {
-        const res = await fetch("http://localhost:5000/api/signup", {
+        const res = await fetch("http://localhost:3000/api/signup", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
