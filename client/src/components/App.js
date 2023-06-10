@@ -1,13 +1,13 @@
 import { BrowserRouter, Routes, Route, Navigate, } from 'react-router-dom'
-import {React, createContext, useState} from 'react'
+import {React, createContext, useState, lazy, Suspense} from 'react'
 import './App.css'
 import Login from './Login'
-import Home from './Home'
-import PdfMaker from './PdfMaker'
-import Account from './Account'
-import Gallery from './Gallery'
-import Upload from './Upload'
-import Signup from './Signup'
+const Home = lazy(() => import('./Home'))
+const Upload = lazy(() => import('./Upload'))
+const Gallery = lazy(() => import('./Gallery'))
+const PdfMaker = lazy(() => import('./PdfMaker'))
+const Account = lazy(() => import('./Account'))
+const Signup = lazy(() => import('./Signup'))
 import ProtectedRoute from './ProtectedRoute'
 
 export const ImageContext = createContext()
@@ -35,13 +35,13 @@ const App = () => {
             }}>
                 <Routes>
                     <Route exact path="/login" element={<Login/>} />
-                    <Route exact path="/signup" element={<Signup/>} />
+                    <Route exact path="/signup" element={<Suspense fallback=''><Signup/></Suspense>} />
                     <Route element={<ProtectedRoute/>}>
-                        <Route path="/" element={<Home/>}></Route>
-                        <Route path="/upload" element={<Upload/>}></Route>
-                        <Route path="/gallery" element={<Gallery/>}></Route>
-                        <Route path='/pdf' element={<PdfMaker/>}></Route>
-                        <Route path='/account' element={<Account/>}></Route>
+                        <Route path="/" element={<Suspense fallback=''><Home/></Suspense>}></Route>
+                        <Route path="/upload" element={<Suspense fallback=''><Upload/></Suspense>}></Route>
+                        <Route path="/gallery" element={<Suspense fallback=''><Gallery/></Suspense>}></Route>
+                        <Route path='/pdf' element={<Suspense fallback=''><PdfMaker/></Suspense>}></Route>
+                        <Route path='/account' element={<Suspense fallback=''><Account/></Suspense>}></Route>
                     </Route>
                     <Route path="/" element={<Navigate to="/" replace />} />
                     <Route path="/logout" element={<Navigate to="/login" replace />} />

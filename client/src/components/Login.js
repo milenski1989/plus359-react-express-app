@@ -76,11 +76,11 @@ const Login = () => {
                             <div>
                                 <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">*Email</label>
                                 <div className="mt-2">
-                                    <input onChange={(e) => setEmail(e.target.value)} id="email" name="email" type="email" autoComplete="email" required className="peer block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
+                                    <input onChange={(e) => setEmail(e.target.value)} id="email" name="email" type="email" autoComplete="email" required 
+                                        placeholder="example@email.com"
+                                        className="placeholder-shown:border-gray-500block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 invalid:border-pink-500 invalid:text-pink-600
+                                    focus:invalid:border-pink-500 focus:invalid:ring-pink-500 sm:text-sm sm:leading-6" />
 
-                                    <p className="invisible peer-invalid:visible text-red-400">
-                                        Please enter valid email: example@mail.com
-                                    </p>
                                 </div>
                             </div>
 
@@ -92,10 +92,9 @@ const Login = () => {
                                     </div>
                                 </div>
                                 <div className="mt-2">
-                                    <input onChange={(e) => setPassword(e.target.value)} id="password" name="password" type="password" autoComplete="current-password" required className="peer block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
-                                    <p className="invisible peer-invalid:visible text-red-400">
-                                    This field cannot be empty
-                                    </p>
+                                    <input onChange={(e) => setPassword(e.target.value)} id="password" name="password" type="password" autoComplete="current-password" required
+                                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500   invalid:border-pink-500 invalid:text-pink-600
+                                    focus:invalid:border-pink-500 focus:invalid:ring-pink-500 sm:text-sm sm:leading-6"/>
                                 </div>
                             </div>
 
@@ -104,10 +103,10 @@ const Login = () => {
                             </div>
                         </form>
 
-                        <p className="mt-10 text-center text-sm text-gray-500">
+                        <div className="mt-10 text-center text-sm text-gray-500">
       Not a member?
       Not registered yet? Go to <Link to='/signup' style={linkStyle}>signup</Link>
-                        </p>
+                        </div>
                     </div>
                 </div>
             }
