@@ -1,68 +1,53 @@
-import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
-import {React, Suspense, lazy, createContext, useState} from 'react'
+import { BrowserRouter, Routes, Route, Navigate, } from 'react-router-dom'
+import {React, createContext, useState, lazy, Suspense} from 'react'
 import './App.css'
-import PrivateRoute from './PrivateRoute'
-import EditPage from './EditPage'
-const Signup = lazy(() => import('./Signup'))
-const Login = lazy(() => import('./Login'))
-const Gallery = lazy(() => import('./Gallery'))
-const Upload = lazy(() => import('./Upload'))
-const Account = lazy(() => import('./Account'))
+import Login from './Login'
 const Home = lazy(() => import('./Home'))
-
-
+const Upload = lazy(() => import('./Upload'))
+const Gallery = lazy(() => import('./Gallery'))
+const PdfMaker = lazy(() => import('./PdfMaker'))
+const Account = lazy(() => import('./Account'))
+const Signup = lazy(() => import('./Signup'))
+import ProtectedRoute from './ProtectedRoute'
 
 export const ImageContext = createContext()
 export const ThemeContext = createContext()
 const App = () => {
-    const [currentImage, setCurrentImage] = useState(null)
+    const [currentImages, setCurrentImages] = useState([])
     const [updatedEntry, setUpdatedEntry] = useState({});
     const [isEditMode, setIsEditMode] = useState(false)
     const [isInfoModalOpen, setIsInfoModalOpen] = useState(false)
     const [imageHeight, setImageHeight] = useState(0)
 
-    const [theme, setTheme] = useState('light')
-
-    // useEffect(() => {
-    //     if (theme === 'light') {
-    //         document.body.className = "dark";
-    //     } else {
-    //         document.body.className = "light";
-    //     }
-        
-    // }, [theme]);
-
     return <>
         <BrowserRouter>
-            <Switch>
-                <Suspense>
-                    <ThemeContext.Provider value={{theme, setTheme}}>
-                        <Route exact path="/login" component={Login} />
-                        <Route exact path="/signup" component={Signup} />
-                        <PrivateRoute exact path="/" component={Home} />
-                        <ImageContext.Provider value={{
-                            currentImage,
-                            setCurrentImage,
-                            updatedEntry,
-                            setUpdatedEntry,
-                            isEditMode,
-                            setIsEditMode,
-                            isInfoModalOpen,
-                            setIsInfoModalOpen,
-                            imageHeight,
-                            setImageHeight
-                        }}>
-                            <PrivateRoute exact path="/upload" component={Upload} />
-                            <PrivateRoute exact path="/artworks" component={Gallery} />
-                            <PrivateRoute exact path="/edit" component={EditPage} />
-                        </ImageContext.Provider>
-                        <PrivateRoute exact path="/account" component={Account} />
-                    </ThemeContext.Provider>
-                </Suspense>
-                <Redirect exact path="/" to="/" />
-                <Redirect exact path="/logout" to="/login" />
-                <Redirect exact path="/edit" to="/edit"/> 
-            </Switch>
+            <ImageContext.Provider value={{
+                currentImages,
+                setCurrentImages,
+                updatedEntry,
+                setUpdatedEntry,
+                isEditMode,
+                setIsEditMode,
+                isInfoModalOpen,
+                setIsInfoModalOpen,
+                imageHeight,
+                setImageHeight
+            }}>
+                <Routes>
+                    <Route exact path="/login" element={<Login/>} />
+                    <Route exact path="/signup" element={<Suspense fallback=''><Signup/></Suspense>} />
+                    <Route element={<ProtectedRoute/>}>
+                        <Route path="/" element={<Suspense fallback=''><Home/></Suspense>}></Route>
+                        <Route path="/upload" element={<Suspense fallback=''><Upload/></Suspense>}></Route>
+                        <Route path="/gallery" element={<Suspense fallback=''><Gallery/></Suspense>}></Route>
+                        <Route path='/pdf' element={<Suspense fallback=''><PdfMaker/></Suspense>}></Route>
+                        <Route path='/account' element={<Suspense fallback=''><Account/></Suspense>}></Route>
+                    </Route>
+                    <Route path="/" element={<Navigate to="/" replace />} />
+                    <Route path="/logout" element={<Navigate to="/login" replace />} />
+                    <Route path="*" element={<p className='flex justify-center mt-'>Page not found: 404!</p>} />
+                </Routes>
+            </ImageContext.Provider>
         </BrowserRouter>
     </>
 }

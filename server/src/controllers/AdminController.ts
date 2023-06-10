@@ -1,23 +1,13 @@
-import { deleteArtService, getArtsService, getCellsService, loginService, searchService, signupService, updateArtService, uploadService } from "../services/AdminServices";
+import s3Client from "../s3Client/s3Client";
+import { deleteArtService, getArtsService, getBioService, getCellsService, loginService, searchService, signupService, updateArtService, updateBioService, uploadService } from "../services/AdminServices";
 import 'dotenv/config';
-import AWS from 'aws-sdk';
 
-const s3 = new AWS.S3({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: process.env.AWS_REGION,
-});
-
-
-
-//login
 export const login = async (req, res) => {
   const {email, password} = req.body
 
 try {
   const userFound = await loginService(email, password)
   req.session.loggedin = true;
-  //req.session.username = userName;
 
   if (!userFound) res.status(400).send({error: "Invalid Username or Password"})
  
@@ -27,22 +17,19 @@ throw new Error("Error");
 }
 };
 
-//signup
 export const signup =  async (req, res) => {
   const {email, password, userName} = req.body
 
 try {
- let results = await signupService(email, password, userName)
-  res.status(200).json(results);
+ await signupService(email, password, userName)
+
+  res.status(200).send({message: 'You\'ve signed up successfuly!'});
 } catch {
   throw new Error("User with this email already exists");
   
 }
 }
 
-
-
-//upload a photo with details to S3 Bucket and MySQL Database tables Artworks and Storage
 export const uploadEntry = async (req, res) => {
 
   const {title, artist, technique, dimensions, price, notes, onWall,
@@ -80,11 +67,7 @@ try {
 
 }
 
-  
-
-
-//get all photos from S3 and details from database
-export const getArts = async (req, res) => {
+  export const getArts = async (req, res) => {
   const {page, count} = req.query
   try {
    const [arts, artsCount] = await getArtsService(page, count)
@@ -95,7 +78,30 @@ export const getArts = async (req, res) => {
   }
 }
 
-//search 
+export const getBio = async (req, res) => {
+  const {name} = req.params
+  try {
+   const bio = await getBioService(name)
+
+   res.status(200).json(bio);
+  } catch (error) {
+    res.status(400).json(error);
+  }
+}
+
+export const updateBio = async (req, res) => {
+  const {bio} = req.body
+  const {id} = req.params
+
+  try {
+   const result = await updateBioService(id, bio)
+
+   res.status(200).json(result);
+  } catch (error) {
+    res.status(400).json(error);
+  }
+}
+
 export const searchArts = async (req, res) => {
   const {param} = req.params
   try {
@@ -115,7 +121,6 @@ export const getFreeCells = async (req, res) => {
     
     const results = await getCellsService(cell)
 
-   
         res.status(200).json(results);
     
   } catch (error) {
@@ -124,11 +129,10 @@ export const getFreeCells = async (req, res) => {
 
 }
 
-//delete single entry from s3, then from db
 export const deleteFromS3 = async (req, res) => {
   const filename = req.params.filename
   try {
-    await s3.deleteObject({Bucket: process.env.AWS_BUCKET_NAME, Key: filename}).promise();
+    await s3Client.deleteObject({Bucket: process.env.AWS_BUCKET_NAME, Key: filename}).promise();
     const results = await deleteArtService(filename)
     res.send(results)
   } catch (error) {
@@ -136,13 +140,11 @@ export const deleteFromS3 = async (req, res) => {
   }
 }
 
-//deleteOriginal
 export const deleteOriginalFromS3 =  async (req, res) => {
   const originalFilename = req.params.originalFilename
-  await s3.deleteObject({Bucket: process.env.AWS_BUCKET_NAME, Key: originalFilename}).promise();
+  await s3Client.deleteObject({Bucket: process.env.AWS_BUCKET_NAME, Key: originalFilename}).promise();
 }
 
-//update single entry in database
 export const updateEntry = async (req, res) => {
   const {title,
     artist,

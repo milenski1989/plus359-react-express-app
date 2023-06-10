@@ -1,9 +1,10 @@
-import express from "express";
 import bcrypt from "bcrypt"
 import { User } from "../entities/User";
 import { dbConnection } from "../database";
 import { Artworks } from "../entities/Artworks";
 import { Like } from "typeorm"
+import { Artists } from "../entities/Artists";
+import { ArtistsBios } from "../entities/ArtistsBios";
 
 const saltRounds = 10
 
@@ -18,9 +19,9 @@ dbConnection
 
     const userRepository = dbConnection.getRepository(User);
     const artsRepository = dbConnection.getRepository(Artworks);
+    const artistsRepository = dbConnection.getRepository(Artists)
+    const biosRepository = dbConnection.getRepository(ArtistsBios)
 
-
-  //login
 export const loginService = async (email: string, password: string) => {
   let authenticated: boolean
 
@@ -42,7 +43,6 @@ export const loginService = async (email: string, password: string) => {
   
 };
 
-//signup
  export const signupService = async (email: string, password: string, userName: string) => {
   let user: object
   let userFound = await userRepository.findOneBy({
@@ -55,29 +55,25 @@ export const loginService = async (email: string, password: string) => {
       bcrypt.hash(password, saltRounds, async (err, hash) => {
         if (err) throw new Error("Signup failed!");
         
-        user = await userRepository.create({
+        user = userRepository.create({
           email: email,
           password: hash,
           userName: userName,
           superUser: 1
         })
         await dbConnection.getRepository(User).save(user)
-      
-        return user
+       
       })
      } else {
       throw new Error("exists");
       
      }
 
-    
   } catch {
-    throw new Error("Error occured while register");
+    throw new Error("Error occured while registering!");
   }
 
 };
-
-//upload to Artworks after object is created in the S3 Bucket
 
 export const uploadService = async (
     title: string,
@@ -130,7 +126,6 @@ export const uploadService = async (
 
     }
 
-//get all entries from database
 export const getArtsService = async (page: string, count: string) => {
   
  try {
@@ -149,7 +144,54 @@ export const getArtsService = async (page: string, count: string) => {
  }
 };
 
-//search
+export const getBioService = async(name: string) => {
+
+  try {
+
+    let bio: ArtistsBios
+
+    const artist = await artistsRepository.findOne({
+      where: {
+        artist: name
+      }
+    })
+
+    if (!artist) {
+      throw new Error('Artist not found!')
+    } else {
+      bio = await biosRepository.findOne({
+        where: {
+          id: artist.id,
+      },
+    })
+    }
+
+  return bio
+
+  } catch {
+    throw new Error('No bio for this artist found!')
+  }
+
+}
+
+export const updateBioService = async(id: number, bio: string) => {
+
+  try {
+    const bioFound = await biosRepository.findOneBy({
+      id: id
+  })
+
+  await biosRepository.merge(bioFound, {...bioFound, bio: bio})
+
+  const results = await biosRepository.save(bioFound)
+  return results
+  } catch (error) {
+    console.log({error})
+  throw new Error("Could not update entry")
+  }
+
+}
+
 export const searchService = async (params: string) => {
   try {
    const results = await artsRepository.find(
@@ -190,7 +232,6 @@ export const searchService = async (params: string) => {
   }
 };
 
-//delete one from database
 export const deleteArtService = async (id) => {
   try {
     const results = await artsRepository.delete(id)
@@ -201,7 +242,6 @@ export const deleteArtService = async (id) => {
   }
 };
 
-//update in database
 export const updateArtService = async (
     title: string,
     artist: string,

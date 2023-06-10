@@ -5,23 +5,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const AdminController_1 = require("../controllers/AdminController");
-const aws_sdk_1 = __importDefault(require("aws-sdk"));
 const multer_s3_transform_1 = __importDefault(require("multer-s3-transform"));
 const multer_1 = __importDefault(require("multer"));
 const sharp_1 = __importDefault(require("sharp"));
 const path_1 = __importDefault(require("path"));
 require("dotenv/config");
+const s3Client_1 = __importDefault(require("../s3Client/s3Client"));
 const router = express_1.default.Router();
-//resize
-const s3 = new aws_sdk_1.default.S3({
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    region: process.env.AWS_REGION,
-});
 const upload = (0, multer_1.default)({
     storage: (0, multer_s3_transform_1.default)({
-        s3,
-        bucket: process.env.AWS_BUCKET_NAME,
+        s3: s3Client_1.default,
+        bucket: process.env.SPACES_BUCKET,
         shouldTransform: function (req, file, cb) {
             cb(null, /^image/i.test(file.mimetype));
         },
@@ -50,7 +44,7 @@ const upload = (0, multer_1.default)({
                     cb(null, { fieldName: file.fieldname });
                 },
                 transform: function (req, file, cb) {
-                    cb(null, (0, sharp_1.default)().resize(500, 500, {
+                    cb(null, (0, sharp_1.default)().resize(300, 300, {
                         fit: 'inside',
                     }).jpeg());
                 }
@@ -64,10 +58,12 @@ const upload = (0, multer_1.default)({
         metadata: (req, file, cb) => {
             cb(null, { fieldName: file.fieldname });
         },
-        acl: "bucket-owner-full-control",
+        acl: "public-read-write",
     }),
 });
 router.get('/artworks', AdminController_1.getArts);
+router.get('/bio/:name', AdminController_1.getBio);
+router.put('/bio/:id', AdminController_1.updateBio);
 router.get('/artworks/:param', AdminController_1.searchArts);
 router.get('/storage/:cell', AdminController_1.getFreeCells);
 router.post('/login', AdminController_1.login);

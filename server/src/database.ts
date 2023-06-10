@@ -2,6 +2,8 @@ import { DataSource } from "typeorm"
 import dotenv from "dotenv"
 import { User } from "./entities/User";
 import { Artworks } from "./entities/Artworks";
+import { ArtistsBios } from "./entities/ArtistsBios";
+import { Artists } from "./entities/Artists";
 dotenv.config()
 
 export const dbConnection = new DataSource({
@@ -12,8 +14,8 @@ export const dbConnection = new DataSource({
         password: process.env.MYSQL_PASSWORD,
         database: process.env.MYSQL_DATABASE,
         logging: true,
-        synchronize: true,
+        synchronize: false,
         entities: [
-            User, Artworks
+            User, Artworks, Artists, ArtistsBios
         ]
     })

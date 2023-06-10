@@ -1,20 +1,11 @@
 import { useState } from "react";
 import "./Upload.css";
-import {
-    CircularProgress,
-    IconButton,
-    InputAdornment,
-    TextField,
-    Tooltip,
-} from "@mui/material";
+import {CircularProgress} from "@mui/material";
 import "./App.css";
 import Message from "./Message";
-import SecondaryNavbar from "./SecondaryNavbar";
+import Navbar from "./Navbar";
 import axios from "axios";
-import LocationsDropdowns from "./LocationsDropdowns";
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { yellow } from '@mui/material/colors';
-import ActionButton from "./ActionButton";
+import CascadingDropdowns from "./CascadingDropdowns";
 
 const Upload = () => {
 
@@ -27,9 +18,7 @@ const Upload = () => {
         technique: "",
         dimensions: "",
         price: 0,
-        notes: "",
-        onWall: 0,
-        inExhibition: 0
+        notes: ""
     });
 
     const [formControlData, setFormControlData] = useState({
@@ -49,34 +38,12 @@ const Upload = () => {
     const [uploading, setUploading] = useState(false);
     const [uploadSuccessful, setUploadSuccessful] = useState(false);
 
-    const disableUploadButton = () => {
-        let disabled;
-        if (
-            inputsData.artist === "" || 
-            inputsData.dimensions === "" || 
-            formControlData.storageLocation === "" ||
-            !file
-        ) {
-            disabled = true
-        }
-
-        return disabled
-    }
-
-    const setRequiredFields = (label) => {
-        let required;
-        if (label === "artist" || label === "dimensions") {
-            required = true
-        }
-        return required
-    }
-
     const imageSelectHandler = (e) => {
         const file = e.target.files[0];
         setFile(file);
     }
 
-    const uploadFile = async () => {
+    const handleSubmit = async () => {
         try {
             const onUploadProgress = (event) => {
                 const percentage = Math.round((100 * event.loaded) / event.total);
@@ -91,9 +58,7 @@ const Upload = () => {
             data.append("dimensions", inputsData.dimensions);
             data.append("price", inputsData.price);
             data.append("notes", inputsData.notes);
-            data.append("onWall", inputsData.onWall);
-            data.append("inExhibition", inputsData.inExhibition);
-            data.append("storageLocation", formControlData.storageLocation.name);
+            data.append("storageLocation", formControlData.storageLocation);
             data.append("cell", formControlData.cell);
             data.append("position", formControlData.position)
             data.append("by_user", user.userName)
@@ -104,157 +69,107 @@ const Upload = () => {
                 },
                 onUploadProgress
             });
-    
-            setProgress(0)
-            setUploading(false);
-            setUploadSuccessful(true);
-            setInputsData({
-                artist: "",
-                title: "",
-                technique: "",
-                dimensions: "",
-                price: 0,
-                notes: "",
-                onWall: 0,
-                inExhibition: 0
-            })
-    
-            setFormControlData({
-                storageLocation: "",
-                cell: "",
-                position: 0
-            })
-            setInputTouched(false)
             
         } catch (error) {
-            setProgress(0)
-            setUploading(false);
-            setUploadingError({ error: true, message: error.message});
-            setInputsData({
-                artist: "",
-                title: "",
-                technique: "",
-                dimensions: "",
-                price: 0,
-                notes: "",
-                onWall: 0,
-                inExhibition: 0
-            })
-    
-            setFormControlData({
-                storageLocation: "",
-                cell: "",
-                position: 0
-            })
-            setInputTouched(false)
+            console.log(error)
         }
+
+        setProgress(0)
+        setUploading(false);
+        setUploadSuccessful(true);
+        setInputsData({
+            artist: "",
+            title: "",
+            technique: "",
+            dimensions: "",
+            price: 0,
+            notes: "",
+            onWall: 0,
+            inExhibition: 0
+        })
+    
+        setFormControlData({
+            storageLocation: "",
+            cell: "",
+            position: 0
+        })
+        setInputTouched(false)
     };
  
-    return (
-        <>
-            <Message
-                open={uploadingError.error}
-                handleClose={() => setUploadingError({ error: false, message: "" })}
-                message={uploadingError.message}
-                severity="error"
-            />
-            
-            <Message
-                open={uploadSuccessful}
-                handleClose={() => setUploadSuccessful(false)}
-                message="Entry uploaded successfully!"
-                severity="success"
-            />
-            
-            <SecondaryNavbar />
+    return <>
+        <Message
+            open={uploadingError.error}
+            handleClose={() => setUploadingError({ error: false, message: "" })}
+            message={uploadingError.message}
+            severity="error" /><Message
+            open={uploadSuccessful}
+            handleClose={() => setUploadSuccessful(false)}
+            message="Entry uploaded successfully!"
+            severity="success" />
+        <Navbar />
 
-            
-            
-            {uploading ? (
-                <CircularProgress variant="determinate" value={progress} className="loader" color="primary" />
-            ) : (
-                <section className="flexContainer mainSection">
-                           
-                    <TextField
-                        sx={{
-                            boxShadow: 1
-                        }}                          
-                        type="file"
-                        onChange={imageSelectHandler}
-                    />
+        {uploading ? 
+            <CircularProgress variant="determinate" value={progress} className="loader" color="primary" />
+            : 
 
-                    {Object.entries(inputsData).map(([key, value]) => {
-                        return (
-                            key !== "onWall" && key !== "inExhibition" &&
-                            <TextField
-                                key={key}
-                                onBlur={() => key === "artist" || key === "dimensions" && setInputTouched(true)}
-                                value={value || ""}
-                                error={(key === "artist" || key === "dimensions") && inputTouched && !value}
-                                label={key}
-                                InputProps={key === "notes" ? {endAdornment: <><InputAdornment position="end">
-                                    <Tooltip title="on a wall" placement="top">
-                                        <IconButton
-                                            aria-label="toggle password visibility"
-                                            onClick={() =>  
+            <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+                <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+                </div>
+
+                <div className="mt-10 w-2/5 sm:mx-auto max-sm:w-4/5 max-sm:mr-auto max-sm:ml-auto">
+                    <form className="space-y-6" onSubmit={handleSubmit}>
+
+                        <div>
+                            <div className="flex items-center justify-between">
+                            </div>
+                            <div className="mt-2">
+                                <input
+                                    onChange={imageSelectHandler} 
+                                    id="textField" type="file" 
+                                    autoComplete="current-password" 
+                                    required 
+                                    className="peer cursor-pointer block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
+                                <p className="invisible peer-invalid:visible text-red-400">
+                                    Please upload an image
+                                </p>
+                            </div>
+                        </div>
+
+                        {Object.entries(inputsData).map(([key, value]) => {
+                            return (
+                                <div key={key}>
+                                    <div className="flex items-center justify-between">
+                                        <label htmlFor="textField" 
+                                            className="block text-sm font-medium leading-6 text-gray-900">{key === 'artist' || key === 'technique' || key === 'title' ? `*${key}` : key}
+                                        </label>
+                                    </div>
+                                    <div className="mt-1">
+                                        <input value={value} 
+                                            onChange={(event) =>
                                                 setInputsData((prevState) => ({
                                                     ...prevState,
-                                                    onWall: 1,
-                                                }))}
-                                            edge="end"
-                                        >
-                                            <CheckCircleIcon sx={{ color: yellow[500]}} />
-                                        </IconButton>
-                                    </Tooltip>
-                                </InputAdornment>
-                                <InputAdornment position="end">
-                                    <Tooltip title="in exhibition" placement="top">
-                                        <IconButton
-                                            aria-label="toggle password visibility"
-                                            onClick={() =>  
-                                                setInputsData((prevState) => ({
-                                                    ...prevState,
-                                                    inExhibition: 1,
-                                                }))}
-                                            edge="end"
-                                        >
-                                            <CheckCircleIcon color="success" />
-                                        </IconButton>
-                                    </Tooltip>
-                                </InputAdornment></>} : null}
-                                required={setRequiredFields(key)}
-                                variant="outlined"
-                                margin="normal"
-                                type="text"
-                                sx={{
-                                    boxShadow: 1
-                                }}
-                                onChange={(event) =>
-                                    setInputsData((prevState) => ({
-                                        ...prevState,
-                                        [key]: event.target.value,
-                                    }))
-                                }
-                            />
-                        );
-                    })}
+                                                    [key]: event.target.value,
+                                                }))
+                                            } id="textField" name={key} type="text" autoComplete="current-password" required={key === 'artist' || key === 'technique' || key === 'title'}
+                                            className="placeholder-shown:border-gray-500block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 invalid:border-pink-500 invalid:text-pink-600 focus:invalid:border-pink-500 focus:invalid:ring-pink-500 sm:text-sm sm:leading-6"/>
+                                    </div>
+                                </div>
+                            )
+                        })}
+                        <CascadingDropdowns
+                            formControlData={formControlData}
+                            setFormControlData={setFormControlData}
+                            inputTouched={inputTouched}
+                            setInputTouched={setInputTouched}
+                        />
 
-                    <LocationsDropdowns
-                        formControlData={formControlData}
-                        setFormControlData={setFormControlData}
-                        inputTouched={inputTouched}
-                        setInputTouched={setInputTouched}
-                    />
-                    <ActionButton
-                        children="upload"
-                        handleOnclick={uploadFile}
-                        disabled={disableUploadButton()}
-                    />
-                </section>
-            )}
-          
-        </>
-    );
+                        <div>
+                            <button type="submit" disabled={!file || !inputsData.artist || !inputsData.technique || !formControlData.storageLocation} className={!file || !inputsData.artist || !inputsData.technique || !formControlData.storageLocation ? "flex w-full justify-center rounded-md bg-white px-3 py-1.5 text-sm leading-6 text-grey shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2" : "flex w-full justify-center rounded-md bg-main px-3 py-1.5 text-sm leading-6 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"}>Upload</button>
+                        </div>
+                    </form>
+                </div>
+            </div>}
+    </>          
 };
 
 export default Upload;

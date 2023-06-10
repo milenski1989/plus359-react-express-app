@@ -24,10 +24,10 @@ export class Artworks extends BaseEntity{
     @Column()
     notes: string;
 
-    @Column()
+    @Column({default: 0})
     onWall: number;
 
-    @Column()
+    @Column({default: 0})
     inExhibition: number;
 
     @Column()

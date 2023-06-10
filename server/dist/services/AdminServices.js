@@ -12,12 +12,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateArtService = exports.deleteArtService = exports.getCellsService = exports.searchService = exports.getArtsService = exports.uploadService = exports.signupService = exports.loginService = void 0;
+exports.updateArtService = exports.deleteArtService = exports.getCellsService = exports.searchService = exports.updateBioService = exports.getBioService = exports.getArtsService = exports.uploadService = exports.signupService = exports.loginService = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const User_1 = require("../entities/User");
 const database_1 = require("../database");
 const Artworks_1 = require("../entities/Artworks");
 const typeorm_1 = require("typeorm");
+const Artists_1 = require("../entities/Artists");
+const ArtistsBios_1 = require("../entities/ArtistsBios");
 const saltRounds = 10;
 database_1.dbConnection
     .initialize()
@@ -29,7 +31,8 @@ database_1.dbConnection
 });
 const userRepository = database_1.dbConnection.getRepository(User_1.User);
 const artsRepository = database_1.dbConnection.getRepository(Artworks_1.Artworks);
-//login
+const artistsRepository = database_1.dbConnection.getRepository(Artists_1.Artists);
+const biosRepository = database_1.dbConnection.getRepository(ArtistsBios_1.ArtistsBios);
 const loginService = (email, password) => __awaiter(void 0, void 0, void 0, function* () {
     let authenticated;
     try {
@@ -49,7 +52,6 @@ const loginService = (email, password) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.loginService = loginService;
-//signup
 const signupService = (email, password, userName) => __awaiter(void 0, void 0, void 0, function* () {
     let user;
     let userFound = yield userRepository.findOneBy({
@@ -60,14 +62,13 @@ const signupService = (email, password, userName) => __awaiter(void 0, void 0, v
             bcrypt_1.default.hash(password, saltRounds, (err, hash) => __awaiter(void 0, void 0, void 0, function* () {
                 if (err)
                     throw new Error("Signup failed!");
-                user = yield userRepository.create({
+                user = userRepository.create({
                     email: email,
                     password: hash,
                     userName: userName,
                     superUser: 1
                 });
                 yield database_1.dbConnection.getRepository(User_1.User).save(user);
-                return user;
             }));
         }
         else {
@@ -75,11 +76,10 @@ const signupService = (email, password, userName) => __awaiter(void 0, void 0, v
         }
     }
     catch (_a) {
-        throw new Error("Error occured while register");
+        throw new Error("Error occured while registering!");
     }
 });
 exports.signupService = signupService;
-//upload to Artworks after object is created in the S3 Bucket
 const uploadService = (title, artist, technique, dimensions, price, notes, onWall, inExhibition, storageLocation, cell, position, image_url, image_key, download_url, download_key, by_user) => __awaiter(void 0, void 0, void 0, function* () {
     let newEntry;
     try {
@@ -109,7 +109,6 @@ const uploadService = (title, artist, technique, dimensions, price, notes, onWal
     }
 });
 exports.uploadService = uploadService;
-//get all entries from database
 const getArtsService = (page, count) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const [arts, artsCount] = yield artsRepository.findAndCount({
@@ -126,7 +125,46 @@ const getArtsService = (page, count) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.getArtsService = getArtsService;
-//search
+const getBioService = (name) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        let bio;
+        const artist = yield artistsRepository.findOne({
+            where: {
+                artist: name
+            }
+        });
+        if (!artist) {
+            throw new Error('Artist not found!');
+        }
+        else {
+            bio = yield biosRepository.findOne({
+                where: {
+                    id: artist.id,
+                },
+            });
+        }
+        return bio;
+    }
+    catch (_d) {
+        throw new Error('No bio for this artist found!');
+    }
+});
+exports.getBioService = getBioService;
+const updateBioService = (id, bio) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const bioFound = yield biosRepository.findOneBy({
+            id: id
+        });
+        yield biosRepository.merge(bioFound, Object.assign(Object.assign({}, bioFound), { bio: bio }));
+        const results = yield biosRepository.save(bioFound);
+        return results;
+    }
+    catch (error) {
+        console.log({ error });
+        throw new Error("Could not update entry");
+    }
+});
+exports.updateBioService = updateBioService;
 const searchService = (params) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const results = yield artsRepository.find({ where: [
@@ -143,7 +181,7 @@ const searchService = (params) => __awaiter(void 0, void 0, void 0, function* ()
         });
         return results;
     }
-    catch (_d) {
+    catch (_e) {
         throw new Error("Fetch failed!");
     }
 });
@@ -157,23 +195,21 @@ const getCellsService = (cell) => __awaiter(void 0, void 0, void 0, function* ()
         });
         return results;
     }
-    catch (_e) {
+    catch (_f) {
         throw new Error("Error getting free positions in the selected cell");
     }
 });
 exports.getCellsService = getCellsService;
-//delete one from database
 const deleteArtService = (id) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const results = yield artsRepository.delete(id);
         return results;
     }
-    catch (_f) {
+    catch (_g) {
         throw new Error("Could not delete the entry!");
     }
 });
 exports.deleteArtService = deleteArtService;
-//update in database
 const updateArtService = (title, artist, technique, dimensions, price, notes, onWall, inExhibition, storageLocation, cell, position, by_user, id) => __awaiter(void 0, void 0, void 0, function* () {
     const updatedEntry = { title,
         artist,
@@ -195,7 +231,7 @@ const updateArtService = (title, artist, technique, dimensions, price, notes, on
         const results = yield artsRepository.save(item);
         return results;
     }
-    catch (_g) {
+    catch (_h) {
         throw new Error("Could not update entry");
     }
 });
