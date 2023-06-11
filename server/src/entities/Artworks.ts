@@ -24,12 +24,6 @@ export class Artworks extends BaseEntity{
     @Column()
     notes: string;
 
-    @Column({default: 0})
-    onWall: number;
-
-    @Column({default: 0})
-    inExhibition: number;
-
     @Column()
     storageLocation: string;
 

@@ -1,91 +1,34 @@
 /* eslint-disable no-undef */
-import React, {  useEffect, useState } from 'react'
+import React from 'react'
 import './App.css'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
-import Upload from './Upload'
-import Gallery from './Gallery'
-import styled from "styled-components";
-import { Button } from "@mui/material"
-import UploadIcon from '@mui/icons-material/Upload';
-import CollectionsIcon from '@mui/icons-material/Collections';
-import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import Navbar from "./Navbar";
+import { useNavigate } from "react-router-dom";
 
-const NavUnlisted = styled.ul`
-  position: absolute;
-  top: 50%;
-left: 50%;
-transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  flex-direction: column;
-  padding:0;
-  
-`;
+const storages = [
+    'Vasil Levski', 'Vasil Levski Folders', 'Charta', 'Lozenets',
+    'Bojurishte', 'Elin Pelin', 'Collect', 'Other'
+]
 
-const icons = {
-    logo: require('./assets/logo359 gallery-white1.png')
-}
 
 const Home = () => {
-
-    let location = useLocation();
-
-    const [activeTab, setActiveTab] = useState()
 
     let navigate = useNavigate();
 
 
-    const handleLogout = () => {
-        window.localStorage.clear()
-        window.sessionStorage.clear()
-        navigate('/login')
+    const handleStorageSelect = (name) => {
+        navigate(`/gallery/:${name}`)
     }
 
-    useEffect(() => {
-        if (history) {
-            switch (location) {
-            case "/upload" : setActiveTab(<Upload/>)
-                break;
-            case "/gallery" : setActiveTab(<Gallery/>)
-                break;
-            }
-        }
-    },[])
-
-    return <><div className="parent">
-        <div className={`bg-black flex justify-between p-4`}>
-            <Link to='/'><img className="max-sm:w-16 w-24 mt-2 mr-12 max-sm:ml-1 ml-2" alt="logo" src={icons.logo} /></Link>
-            <Link className="self-center no-underline text-white"  to='/login' onClick={handleLogout}>Log out</Link>
+    return <>
+        <Navbar/>
+        <div className="grid grid-cols-4 gap-x-6 gap-y-6 max-sm:gap-y-1 max-sm:grid-cols-1 md:grid-cols-4 max-sm:p-0 p-20 mt-4 max-sm:mt-8">
+            {storages.map(storage => (
+                <div key={storage} 
+                    onClick={() => handleStorageSelect(storage)} 
+                    className="my-7 border border shadow-lg shadow-grey rounded-md cursor-pointer dark max-sm:mr-8 max-sm:ml-8 max-sm:mb-8 w-200px h-100px p-16 text-center">{storage}</div>
+            ))}
+            
         </div>
-        <NavUnlisted>
-            <Link to='/upload' className='mt-8'>{
-                <Button 
-                    variant="outlined"
-                    sx={{ width: 100, padding: 0.5, marginTop: 0.75 }} 
-                    startIcon={<UploadIcon />}>
-                        Upload
-                </Button>
-            }</Link>
-            <Link to='/gallery' className='mt-8'>{
-                <Button 
-                    variant="outlined"
-                    sx={{ width: 100, padding: 0.5, marginTop: 0.75 }} 
-                    startIcon={<CollectionsIcon />}>
-                        Gallery
-                </Button>
-            }</Link>
-            <Link to='/account' className='mt-8'>{
-                <Button 
-                    variant="outlined"
-                    sx={{ width: 100, padding: 0.5, marginTop: 0.75 }} 
-                    startIcon={<AccountBoxIcon />}>
-                        Account
-                </Button>
-            }</Link>
-        </NavUnlisted>
-
-        {activeTab}
-    </div>
     </>
 }
 

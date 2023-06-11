@@ -82,8 +82,6 @@ export const uploadService = async (
     dimensions: string,
     price: number,
     notes: string,
-    onWall: number,
-    inExhibition: number,
     storageLocation: string,
     cell: string,
     position: number,
@@ -104,8 +102,6 @@ export const uploadService = async (
           dimensions,
           price,
           notes,
-          onWall,
-          inExhibition,
           storageLocation,
           cell,
           position,
@@ -126,10 +122,11 @@ export const uploadService = async (
 
     }
 
-export const getArtsService = async (page: string, count: string) => {
+export const getArtsService = async (name: string, page: string, count: string) => {
   
  try {
   const [arts, artsCount] = await artsRepository.findAndCount({
+    where:{storageLocation: name},
     order: {
       id: "DESC"
   },
@@ -249,8 +246,6 @@ export const updateArtService = async (
     dimensions: string,
     price: number,
     notes: string,
-    onWall: number,
-    inExhibition: number,
     storageLocation: string,
     cell: string,
     position: number,
@@ -264,8 +259,6 @@ export const updateArtService = async (
           dimensions,
           price,
           notes,
-          onWall,
-          inExhibition,
           storageLocation,
           cell,
           position,

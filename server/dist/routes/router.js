@@ -61,10 +61,10 @@ const upload = (0, multer_1.default)({
         acl: "public-read-write",
     }),
 });
-router.get('/artworks', AdminController_1.getArts);
+router.get('/artworks/:name', AdminController_1.getArts);
 router.get('/bio/:name', AdminController_1.getBio);
 router.put('/bio/:id', AdminController_1.updateBio);
-router.get('/artworks/:param', AdminController_1.searchArts);
+router.get('/artworksByKeyword/:param', AdminController_1.searchArts);
 router.get('/storage/:cell', AdminController_1.getFreeCells);
 router.post('/login', AdminController_1.login);
 router.post('/signup', AdminController_1.signup);

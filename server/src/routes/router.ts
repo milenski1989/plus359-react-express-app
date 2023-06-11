@@ -61,10 +61,10 @@ const router = express.Router()
   });
 
 
-router.get('/artworks', getArts)
+router.get('/artworks/:name', getArts)
 router.get('/bio/:name', getBio)
 router.put('/bio/:id', updateBio)
-router.get('/artworks/:param', searchArts)
+router.get('/artworksByKeyword/:param', searchArts)
 router.get('/storage/:cell', getFreeCells)
 router.post('/login', login)
 router.post('/signup', signup)

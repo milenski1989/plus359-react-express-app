@@ -18,7 +18,7 @@ import IconSave from "./icons as components/IconSave";
 import IconEdit from "./icons as components/IconEdit";
 import IconDelete from "./icons as components/IconDelete";
 import { blue } from '@mui/material/colors';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 
 
@@ -32,6 +32,7 @@ const Gallery = () => {
         isEditMode,
     } = useContext(ImageContext);
     const myStorage = window.localStorage;
+    const {name} = useParams()
 
     let navigate = useNavigate();
 
@@ -95,7 +96,7 @@ const Gallery = () => {
     const getAll = async () => {
         setLoading(true);
         const res = await fetch(
-            `http://localhost:5000/api/artworks?count=25&page=${page}`
+            `http://localhost:5000/api/artworks/${name.split(':')[1]}?count=25&page=${page}`
         );
         const data = await res.json();
         const { arts, artsCount } = data;
@@ -121,7 +122,7 @@ const Gallery = () => {
 
     const searchByKeyword = async () => {
         setLoading(true);
-        const res = await fetch(`http://localhost:5000/api/artworks/${keyword}`);
+        const res = await fetch(`http://localhost:5000/api/artworksByKeyword/${keyword}`);
         const data = await res.json();
 
         if (res.status === 200) {
@@ -190,9 +191,7 @@ const Gallery = () => {
             notes,
             storageLocation,
             cell,
-            position,
-            onWall,
-            inExhibition,
+            position
         } = copyOfEntry;
         setUpdatedEntry({
             id: copyId,
@@ -204,9 +203,7 @@ const Gallery = () => {
             notes,
             storageLocation,
             cell,
-            position,
-            onWall,
-            inExhibition,
+            position
         });
     };
 
@@ -302,18 +299,17 @@ const Gallery = () => {
                     </div>
             
                     <div className="grid grid-cols-4 gap-x-3 max-sm:grid-cols-1 max-sm:p-0 p-20">
-                        {searchResults.length ? (
-                            searchResults.map((art, id) => (
-                                <><div
-                                    key={id}
-                                    className="bg-white my-7 border border shadow-lg shadow-grey rounded-md h-max max-2xl:w-3/4">
-                                    <div className="flex items-center p-4">
+                        {searchResults.map((art, id) => (
+                            <><div
+                                key={id}
+                                className="bg-white my-7 border border shadow-lg shadow-grey rounded-md h-max max-2xl:w-3/4">
+                                <div className="flex items-center p-4">
 
-                                        <p className="flex-1 text-sm font-semibold">{art.artist}</p>
-                                        <IconMoreHorizontal className="h-5" />
-                                    </div>
+                                    <p className="flex-1 text-sm font-semibold">{art.artist}</p>
+                                    <IconMoreHorizontal className="h-5" />
+                                </div>
 
-                                    {multiSelectMode &&
+                                {multiSelectMode &&
                                     <Checkbox
                                         style={{position: "absolute"}} onChange={(e) => checkBoxHandler(e,art.id)} 
                                         sx={{
@@ -324,101 +320,103 @@ const Gallery = () => {
                                     
                                     />
 
-                                    }
-                                    <img className="w-full" src={art.image_url} />
-                                    <div className="flex justify-between p-4">
-                                        <IconBxsDownload
-                                            onClick={() => downloadOriginalImage(art.download_url, art.download_key)} />
-                                        {isEditMode && currentImages.length && currentImages[0].id === art.id &&
+                                }
+                                <img className="w-full" src={art.image_url} />
+                                <div className="flex justify-between p-4">
+                                    <IconBxsDownload
+                                        onClick={() => downloadOriginalImage(art.download_url, art.download_key)} />
+                                    {isEditMode && currentImages.length && currentImages[0].id === art.id &&
                                             <>
                                                 <Icon277Exit onClick={cancelEditing} />
                                                 <IconSave onClick={() => saveUpdatedEntry(art.id)} />
                                             </>}
 
-                                        <IconEdit
-                                            onClick={() => {
-                                                setCurrentImages([art]);
-                                                setIsEditMode(true);
-                                                prefillEditableFields(art.id);
-                                            } } />
+                                    <IconEdit
+                                        onClick={() => {
+                                            setCurrentImages([art]);
+                                            setIsEditMode(true);
+                                            prefillEditableFields(art.id);
+                                        } } />
 
-                                        <IconDelete
-                                            onClick={() => {
-                                                setCurrentImages([art]);
-                                                setIsDeleteConfOpen(true);
-                                            } } />
-                                    </div>
-                                    <div>
-                                        <p className="px-4 mb-4">
-                                            {isEditMode && currentImages.length && currentImages[0].id === art.id ? (
-                                                <div>
-                                                    <input
-                                                        name="artist"
-                                                        onChange={(event) => onChangeEditableInput(event)}
-                                                        className="text-lg editable"
-                                                        disabled={!isEditMode}
-                                                        value={isEditMode ? updatedEntry.artist : currentImages[0].artist} />
-                                                    <input
-                                                        name="title"
-                                                        onChange={(event) => onChangeEditableInput(event)}
-                                                        className="text-lg editable"
-                                                        disabled={!isEditMode}
-                                                        value={isEditMode ? updatedEntry.title : currentImages[0].title} />
-                                                    <input
-                                                        name="technique"
-                                                        onChange={(event) => onChangeEditableInput(event)}
-                                                        className="text-lg editable"
-                                                        disabled={!isEditMode}
-                                                        value={updatedEntry.technique || currentImages[0].technique} />
-                                                    <input
-                                                        name="dimensions"
-                                                        onChange={(event) => onChangeEditableInput(event)}
-                                                        className="text-lg editable"
-                                                        disabled={!isEditMode}
-                                                        value={updatedEntry.dimensions || currentImages[0].dimensions} />
-                                                    <input
-                                                        name="price"
-                                                        onChange={(event) => onChangeEditableInput(event)}
-                                                        className="text-lg editable"
-                                                        disabled={!isEditMode}
-                                                        value={updatedEntry.price || currentImages[0].price} />
-
-                                                    <input
-                                                        name="notes"
-                                                        onChange={(event) => onChangeEditableInput(event)}
-                                                        className="text-lg editable"
-                                                        disabled={!isEditMode}
-                                                        value={updatedEntry.notes || currentImages[0].notes} />
-                                                </div>
-                                            ) : (
-                                                <>
-                                                    <p>
-                                                        {`${art.title ? art.title : "No title"} made with ${art.technique} with dimensions ${art.dimensions}
-                                                  and price of ${art.price}EU`}
-                                                    </p>
-                                                    <p>
-                                                        {`Notes: ${art.notes}`}
-                                                    </p>
-                                                </>
-                                            )}
-                                            {isEditMode && currentImages.length && currentImages[0].id === art.id ? (
-                                                <CascadingDropdowns
-                                                    formControlData={formControlData}
-                                                    setFormControlData={setFormControlData} />
-                                            ) : (
-                                                <>
-                                                    <p>{`Located in: ${art.storageLocation} - ${art.cell} - ${art.position}`}</p>
-                                                </>
-                                            )}
-                                        </p>
-                                    </div>
+                                    <IconDelete
+                                        onClick={() => {
+                                            setCurrentImages([art]);
+                                            setIsDeleteConfOpen(true);
+                                        } } />
                                 </div>
-                                </>
-                            ))
-                        ) : (
-                            <h3 className="nothingFound">Nothing was found!</h3>
-                        )}
-                    </div></>
+                                <div>
+                                    <p className="px-4 mb-4">
+                                        {isEditMode && currentImages.length && currentImages[0].id === art.id ? (
+                                            <div>
+                                                <input
+                                                    name="artist"
+                                                    onChange={(event) => onChangeEditableInput(event)}
+                                                    className="text-lg editable"
+                                                    disabled={!isEditMode}
+                                                    value={isEditMode ? updatedEntry.artist : currentImages[0].artist} />
+                                                <input
+                                                    name="title"
+                                                    onChange={(event) => onChangeEditableInput(event)}
+                                                    className="text-lg editable"
+                                                    disabled={!isEditMode}
+                                                    value={isEditMode ? updatedEntry.title : currentImages[0].title} />
+                                                <input
+                                                    name="technique"
+                                                    onChange={(event) => onChangeEditableInput(event)}
+                                                    className="text-lg editable"
+                                                    disabled={!isEditMode}
+                                                    value={updatedEntry.technique || currentImages[0].technique} />
+                                                <input
+                                                    name="dimensions"
+                                                    onChange={(event) => onChangeEditableInput(event)}
+                                                    className="text-lg editable"
+                                                    disabled={!isEditMode}
+                                                    value={updatedEntry.dimensions || currentImages[0].dimensions} />
+                                                <input
+                                                    name="price"
+                                                    onChange={(event) => onChangeEditableInput(event)}
+                                                    className="text-lg editable"
+                                                    disabled={!isEditMode}
+                                                    value={updatedEntry.price || currentImages[0].price} />
+
+                                                <input
+                                                    name="notes"
+                                                    onChange={(event) => onChangeEditableInput(event)}
+                                                    className="text-lg editable"
+                                                    disabled={!isEditMode}
+                                                    value={updatedEntry.notes || currentImages[0].notes} />
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <p>
+                                                    {`${art.title ? art.title : "No title"} made with ${art.technique} with dimensions ${art.dimensions}
+                                                  and price of ${art.price}EU`}
+                                                </p>
+                                                <p>
+                                                    {`Notes: ${art.notes}`}
+                                                </p>
+                                            </>
+                                        )}
+                                        {isEditMode && currentImages.length && currentImages[0].id === art.id ? (
+                                            <CascadingDropdowns
+                                                formControlData={formControlData}
+                                                setFormControlData={setFormControlData} />
+                                        ) : (
+                                            <>
+                                                <p>{`Located in: ${art.storageLocation} - ${art.cell} - ${art.position}`}</p>
+                                            </>
+                                        )}
+                                    </p>
+                                </div>
+                            </div>
+                            </>
+                        ))}
+                            
+                    </div>
+
+                    {!searchResults.length && <div className="flex flex-row justify-center content-center max-sm:ml-20 max-sm:mr-20">Nothing was found!</div>}
+                    
+                </>
             )}
 
             {searchResults.length ? (

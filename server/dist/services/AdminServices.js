@@ -80,7 +80,7 @@ const signupService = (email, password, userName) => __awaiter(void 0, void 0, v
     }
 });
 exports.signupService = signupService;
-const uploadService = (title, artist, technique, dimensions, price, notes, onWall, inExhibition, storageLocation, cell, position, image_url, image_key, download_url, download_key, by_user) => __awaiter(void 0, void 0, void 0, function* () {
+const uploadService = (title, artist, technique, dimensions, price, notes, storageLocation, cell, position, image_url, image_key, download_url, download_key, by_user) => __awaiter(void 0, void 0, void 0, function* () {
     let newEntry;
     try {
         newEntry = yield artsRepository.create({
@@ -90,8 +90,6 @@ const uploadService = (title, artist, technique, dimensions, price, notes, onWal
             dimensions,
             price,
             notes,
-            onWall,
-            inExhibition,
             storageLocation,
             cell,
             position,
@@ -109,9 +107,10 @@ const uploadService = (title, artist, technique, dimensions, price, notes, onWal
     }
 });
 exports.uploadService = uploadService;
-const getArtsService = (page, count) => __awaiter(void 0, void 0, void 0, function* () {
+const getArtsService = (name, page, count) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const [arts, artsCount] = yield artsRepository.findAndCount({
+            where: { storageLocation: name },
             order: {
                 id: "DESC"
             },
@@ -210,15 +209,13 @@ const deleteArtService = (id) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.deleteArtService = deleteArtService;
-const updateArtService = (title, artist, technique, dimensions, price, notes, onWall, inExhibition, storageLocation, cell, position, by_user, id) => __awaiter(void 0, void 0, void 0, function* () {
+const updateArtService = (title, artist, technique, dimensions, price, notes, storageLocation, cell, position, by_user, id) => __awaiter(void 0, void 0, void 0, function* () {
     const updatedEntry = { title,
         artist,
         technique,
         dimensions,
         price,
         notes,
-        onWall,
-        inExhibition,
         storageLocation,
         cell,
         position,

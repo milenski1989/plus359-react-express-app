@@ -39,7 +39,7 @@ const App = () => {
                     <Route element={<ProtectedRoute/>}>
                         <Route path="/" element={<Suspense fallback=''><Home/></Suspense>}></Route>
                         <Route path="/upload" element={<Suspense fallback=''><Upload/></Suspense>}></Route>
-                        <Route path="/gallery" element={<Suspense fallback=''><Gallery/></Suspense>}></Route>
+                        <Route path="/gallery/:name" element={<Suspense fallback=''><Gallery/></Suspense>}/>
                         <Route path='/pdf' element={<Suspense fallback=''><PdfMaker/></Suspense>}></Route>
                         <Route path='/account' element={<Suspense fallback=''><Account/></Suspense>}></Route>
                     </Route>

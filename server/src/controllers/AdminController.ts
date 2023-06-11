@@ -32,8 +32,7 @@ try {
 
 export const uploadEntry = async (req, res) => {
 
-  const {title, artist, technique, dimensions, price, notes, onWall,
-    inExhibition, storageLocation, cell, position, by_user} = req.body
+  const {title, artist, technique, dimensions, price, notes, storageLocation, cell, position, by_user} = req.body
 
   const image_url = req.file.transforms[0].location
   const image_key = req.file.transforms[0].key
@@ -49,8 +48,6 @@ try {
     dimensions,
     price,
     notes,
-    onWall,
-    inExhibition,
     storageLocation,
     cell,
     position,
@@ -69,8 +66,9 @@ try {
 
   export const getArts = async (req, res) => {
   const {page, count} = req.query
+  const {name} = req.params
   try {
-   const [arts, artsCount] = await getArtsService(page, count)
+   const [arts, artsCount] = await getArtsService(name, page, count)
 
    res.status(200).json({arts, artsCount});
   } catch (error) {
@@ -152,8 +150,6 @@ export const updateEntry = async (req, res) => {
     dimensions,
     price,
     notes,
-    onWall,
-    inExhibition,
     storageLocation,
     cell,
     position,
@@ -166,8 +162,6 @@ export const updateEntry = async (req, res) => {
           dimensions,
           price,
           notes,
-          onWall,
-          inExhibition,
           storageLocation,
           cell,
           position,
