@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateEntry = exports.deleteOriginalFromS3 = exports.deleteFromS3 = exports.getFreeCells = exports.searchArts = exports.updateBio = exports.getBio = exports.getArts = exports.uploadEntry = exports.signup = exports.login = void 0;
+exports.updateLocation = exports.updateEntry = exports.deleteOriginalFromS3 = exports.deleteFromS3 = exports.getFreeCells = exports.searchArts = exports.updateBio = exports.getBio = exports.getArts = exports.uploadEntry = exports.signup = exports.login = void 0;
 const s3Client_1 = __importDefault(require("../s3Client/s3Client"));
 const AdminServices_1 = require("../services/AdminServices");
 require("dotenv/config");
@@ -58,10 +58,10 @@ const uploadEntry = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 });
 exports.uploadEntry = uploadEntry;
 const getArts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { page, count } = req.query;
+    const { page, count, sortField, sortOrder } = req.query;
     const { name } = req.params;
     try {
-        const [arts, artsCount] = yield (0, AdminServices_1.getArtsService)(name, page, count);
+        const [arts, artsCount] = yield (0, AdminServices_1.getArtsService)(name, page, count, sortField, sortOrder);
         res.status(200).json({ arts, artsCount });
     }
     catch (error) {
@@ -143,3 +143,14 @@ const updateEntry = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.updateEntry = updateEntry;
+const updateLocation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { ids, formControlData } = req.body;
+    try {
+        const results = yield (0, AdminServices_1.updateLocationService)(ids, formControlData);
+        res.status(200).send(results);
+    }
+    catch (error) {
+        throw new Error("Could not update locations!");
+    }
+});
+exports.updateLocation = updateLocation;

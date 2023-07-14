@@ -6,14 +6,13 @@ import { useNavigate } from "react-router-dom";
 
 const storages = [
     'Vasil Levski', 'Vasil Levski Folders', 'Charta', 'Lozenets',
-    'Bojurishte', 'Elin Pelin', 'Collect', 'Other'
+    'South Park', 'Vasil Levski Rooms', 'Collect', 'Other'
 ]
 
 
 const Home = () => {
 
     let navigate = useNavigate();
-
 
     const handleStorageSelect = (name) => {
         navigate(`/gallery/:${name}`)

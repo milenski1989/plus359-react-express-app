@@ -1,5 +1,5 @@
 import s3Client from "../s3Client/s3Client";
-import { deleteArtService, getArtsService, getBioService, getCellsService, loginService, searchService, signupService, updateArtService, updateBioService, uploadService } from "../services/AdminServices";
+import { deleteArtService, getArtsService, getBioService, getCellsService, loginService, searchService, signupService, updateArtService, updateBioService, updateLocationService, uploadService } from "../services/AdminServices";
 import 'dotenv/config';
 
 export const login = async (req, res) => {
@@ -65,10 +65,10 @@ try {
 }
 
   export const getArts = async (req, res) => {
-  const {page, count} = req.query
+  const {page, count, sortField, sortOrder} = req.query
   const {name} = req.params
   try {
-   const [arts, artsCount] = await getArtsService(name, page, count)
+   const [arts, artsCount] = await getArtsService(name, page, count, sortField, sortOrder)
 
    res.status(200).json({arts, artsCount});
   } catch (error) {
@@ -173,4 +173,18 @@ export const updateEntry = async (req, res) => {
        throw new Error("Could not update entry!");
        
       }
+}
+
+export const updateLocation = async(req, res) => {
+  const {ids, formControlData}  = req.body
+
+  try {
+    const results = await updateLocationService(ids, formControlData)
+    res.status(200).send(results)
+
+  } catch (error){
+   throw new Error("Could not update locations!");
+   
+  }
+  
 }

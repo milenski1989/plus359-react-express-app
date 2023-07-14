@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateArtService = exports.deleteArtService = exports.getCellsService = exports.searchService = exports.updateBioService = exports.getBioService = exports.getArtsService = exports.uploadService = exports.signupService = exports.loginService = void 0;
+exports.updateLocationService = exports.updateArtService = exports.deleteArtService = exports.getCellsService = exports.searchService = exports.updateBioService = exports.getBioService = exports.getArtsService = exports.uploadService = exports.signupService = exports.loginService = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const User_1 = require("../entities/User");
 const database_1 = require("../database");
@@ -107,13 +107,11 @@ const uploadService = (title, artist, technique, dimensions, price, notes, stora
     }
 });
 exports.uploadService = uploadService;
-const getArtsService = (name, page, count) => __awaiter(void 0, void 0, void 0, function* () {
+const getArtsService = (name, page, count, sortField, sortOrder) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const [arts, artsCount] = yield artsRepository.findAndCount({
+            order: { [sortField]: sortOrder.toUpperCase() },
             where: { storageLocation: name },
-            order: {
-                id: "DESC"
-            },
             take: parseInt(count),
             skip: (parseInt(count) * parseInt(page)) - parseInt(count)
         });
@@ -233,3 +231,26 @@ const updateArtService = (title, artist, technique, dimensions, price, notes, st
     }
 });
 exports.updateArtService = updateArtService;
+const updateLocationService = (ids, formControlData) => __awaiter(void 0, void 0, void 0, function* () {
+    const { storageLocation, cell, position } = formControlData;
+    const promises = [];
+    try {
+        const images = yield artsRepository.findBy({
+            id: (0, typeorm_1.In)([ids])
+        });
+        for (let image of images) {
+            promises.push(yield artsRepository.save({
+                id: image.id,
+                storageLocation: storageLocation,
+                cell: cell || '',
+                position: position || 0
+            }));
+        }
+        const result = yield Promise.all(promises);
+        return result;
+    }
+    catch (_j) {
+        throw new Error("Could not update locations!");
+    }
+});
+exports.updateLocationService = updateLocationService;

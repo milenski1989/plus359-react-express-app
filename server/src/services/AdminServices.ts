@@ -2,7 +2,7 @@ import bcrypt from "bcrypt"
 import { User } from "../entities/User";
 import { dbConnection } from "../database";
 import { Artworks } from "../entities/Artworks";
-import { Like } from "typeorm"
+import { In, Like } from "typeorm"
 import { Artists } from "../entities/Artists";
 import { ArtistsBios } from "../entities/ArtistsBios";
 
@@ -122,14 +122,11 @@ export const uploadService = async (
 
     }
 
-export const getArtsService = async (name: string, page: string, count: string) => {
-  
+export const getArtsService = async (name: string, page: string, count: string, sortField?: string, sortOrder?: string) => {
  try {
   const [arts, artsCount] = await artsRepository.findAndCount({
+    order: {[sortField] : sortOrder.toUpperCase()},
     where:{storageLocation: name},
-    order: {
-      id: "DESC"
-  },
  take: parseInt(count),
  skip: (parseInt(count) * parseInt(page)) - parseInt(count)
   })
@@ -276,6 +273,37 @@ export const updateArtService = async (
         }
 
 };
+
+export const updateLocationService = async(ids: number[], formControlData: {
+  storageLocation: string,
+  cell: string,
+  position: number
+
+}) => {
+  const {storageLocation, cell, position} = formControlData
+  const promises = []
+  try {
+    const images = await artsRepository.findBy({
+      id: In([ids])
+  })
+
+  for (let image of images) {
+    promises.push(await artsRepository.save({
+      id: image.id,
+      storageLocation: storageLocation,
+      cell: cell || '',
+      position: position || 0
+    }))
+  }
+
+  const result = await Promise.all(promises)
+  return result
+
+  } catch {
+  throw new Error("Could not update locations!")
+
+  }
+}
 
 
 

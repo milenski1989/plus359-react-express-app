@@ -1,4 +1,5 @@
 
+
 import React, { useContext, useEffect, useState } from 'react'
 import pdfMake from 'pdfmake/build/pdfmake'
 import pdfFonts from "pdfmake/build/vfs_fonts";
@@ -169,35 +170,27 @@ const PdfMaker = () => {
                                         }
                                     ]
                                 },
-                                
                                 {
-                                    stack: [
-                                        {
-                                            fontSize: 12,
-                                            text: !inputsData.paragraph ? `${bio.bio}` : `${bio.bio}\n\n ${inputsData.paragraph} `
-                                        }
+                                    stack:[
+                                        { 	 
+                                            fontSize: 10,
+                                            text: `${bio.bio}'\n\n'${inputsData.notes}`
+                                        },
+                                        '\n\n'
                                     ]
                                        
                                 }
                             ]
                         }
-                    ],
-                },
-            ],
-            footer: {
-                columns: [
-                    {   fontSize: 8,
-                        alignment: 'center',
-                        text: '"МХГ" ЕООД е вписана в регистъра по чл.116, ал.1 от Закона за културното наследство и може да осъществява търговска дейност с движими културни ценности по смисъла на същия закон.'
-                    }
-                ]
-            },
+                    ]
+                }
+            ]
         }
             
         const pdfGenerator = pdfMake.createPdf(docDefinition)
+
         pdfGenerator.download()
-        setCurrentImages([])
-        
+        //setCurrentImages([])
     }
 
     return <>
@@ -267,7 +260,7 @@ const PdfMaker = () => {
                     </button>
                     <button
                         className='flex bg-main text-white rounded mr-4 max-sm:mr-0 max-sm:mb-3 max-sm:w-4/5 justify-center px-2 py-2 text-sm leading-6 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2'
-                        onClick={() => {setCurrentImages([]); navigate('/gallery')}}>Cancel
+                        onClick={() => {setCurrentImages([]); navigate('/')}}>Cancel
                     </button>
                 </div> :
                 <div>Please wait...</div>

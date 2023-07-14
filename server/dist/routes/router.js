@@ -72,4 +72,5 @@ router.post('/upload', upload.single("file"), AdminController_1.uploadEntry);
 router.delete('/artworks/:filename', AdminController_1.deleteFromS3);
 router.delete('/artworks/:originalFilename', AdminController_1.deleteOriginalFromS3);
 router.put('/artworks/:id', AdminController_1.updateEntry);
+router.put('/update-location', AdminController_1.updateLocation);
 exports.default = router;
