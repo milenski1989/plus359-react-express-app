@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import Navbar from "./Navbar";
 import "./Gallery.css";
 import "./App.css";
@@ -6,7 +6,6 @@ import {Checkbox, CircularProgress, Pagination} from "@mui/material";
 import axios from "axios";
 import Message from "./Message";
 import "react-lazy-load-image-component/src/effects/blur.css";
-import ConfirmationDialog from "./ConfirmationDialog";
 import { ImageContext } from "./App";
 import { saveAs } from "file-saver";
 import CascadingDropdowns from "./CascadingDropdowns";
@@ -18,8 +17,9 @@ import IconSave from "./icons as components/IconSave";
 import IconEdit from "./icons as components/IconEdit";
 import IconDelete from "./icons as components/IconDelete";
 import { blue } from '@mui/material/colors';
-import { useNavigate } from "react-router-dom";
-
+import { useNavigate, useParams } from "react-router-dom";
+import RadioGroupSorting from "./RadioGroupSorting";
+import CustomDialog from "./CustomDialog";
 
 
 const Gallery = () => {
@@ -32,6 +32,7 @@ const Gallery = () => {
         isEditMode,
     } = useContext(ImageContext);
     const myStorage = window.localStorage;
+    const {name} = useParams()
 
     let navigate = useNavigate();
 
@@ -49,7 +50,9 @@ const Gallery = () => {
     const [keyword, setKeyword] = useState("");
     const [totalCount, setTotalCount] = useState(0);
     const [pagesCount, setPagesCount] = useState(0);
-    // eslint-disable-next-line no-unused-vars
+    const [thumbnailView, setThumbnailView] = useState(true)
+    const [selectedImageIndex, setSelectedImageIndex] = useState(null)
+    const [openModal, setOpenModal] = useState(false)
     const [multiSelectMode, setMultiSelectMode] = useState(false)
 
     const [formControlData, setFormControlData] = useState({
@@ -58,9 +61,23 @@ const Gallery = () => {
         position: "",
     });
 
+    const [sortField, setSortField] = useState('id')
+    const [sortOrder, setSortOrder] = useState('desc')
+
+    const listRef = useRef(null);
+
     useEffect(() => {
         getAll();
-    }, [page]);
+    }, [page, sortField, sortOrder]);
+
+    useEffect(() => {
+        if (selectedImageIndex != null && listRef.current) {
+            listRef.current.children[selectedImageIndex].scrollIntoView({
+                
+                block: 'center',
+            });
+        }
+    }, [selectedImageIndex]);
 
     useEffect(() => {
         if (currentImages.length) {
@@ -95,7 +112,7 @@ const Gallery = () => {
     const getAll = async () => {
         setLoading(true);
         const res = await fetch(
-            `http://localhost:5000/api/artworks?count=25&page=${page}`
+            `http://localhost:5000/api/artworks/${name.split(':')[1]}?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`
         );
         const data = await res.json();
         const { arts, artsCount } = data;
@@ -121,7 +138,7 @@ const Gallery = () => {
 
     const searchByKeyword = async () => {
         setLoading(true);
-        const res = await fetch(`http://localhost:5000/api/artworks/${keyword}`);
+        const res = await fetch(`http://localhost:5000/api/artworksByKeyword/${keyword}`);
         const data = await res.json();
 
         if (res.status === 200) {
@@ -161,7 +178,6 @@ const Gallery = () => {
     };
 
     const downloadOriginalImage = (downloadUrl, name) => {
-        console.log(downloadUrl, name)
         saveAs(downloadUrl, name);
     };
 
@@ -190,9 +206,7 @@ const Gallery = () => {
             notes,
             storageLocation,
             cell,
-            position,
-            onWall,
-            inExhibition,
+            position
         } = copyOfEntry;
         setUpdatedEntry({
             id: copyId,
@@ -204,9 +218,7 @@ const Gallery = () => {
             notes,
             storageLocation,
             cell,
-            position,
-            onWall,
-            inExhibition,
+            position
         });
     };
 
@@ -227,6 +239,7 @@ const Gallery = () => {
             `http://localhost:5000/api/artworks/${id}`,
             updatedEntry
         );
+
         if (response.status === 200) {
             setIsEditMode(false);
             setUpdatedEntry({});
@@ -236,6 +249,11 @@ const Gallery = () => {
             setUpdatedEntry({});
         }
     };
+
+    const handleImageClick = (id) => {
+        const index = searchResults.findIndex(art => art.id === id)
+        setSelectedImageIndex(index)
+    }
 
     const checkBoxHandler = (e, id) => {
         const index = searchResults.findIndex(art => art.id === id)
@@ -250,6 +268,45 @@ const Gallery = () => {
     const handleSelectImages = () => {
         setMultiSelectMode(prev => !prev)
         setCurrentImages([])
+    }
+
+    const updateLocation = async (formControlData) => {
+        const ids = []
+        for (let image of currentImages) {
+            ids.push(image.id)
+        }
+        const response = await axios.put(
+            `http://localhost:5000/api/update-location`,
+            {ids, formControlData}
+        );
+        if (response.status === 200) {
+            setOpenModal(false);
+            setMultiSelectMode(false)
+            setCurrentImages([])
+            getAll();
+        } else {
+            setOpenModal(false);
+            setMultiSelectMode(false)
+            setCurrentImages([])
+        }
+    }
+
+    const prepareImagesForLocationChange = async() => {
+        setOpenModal(true)
+    }
+
+    const handleDeleteOne = (originalName, filename, id) => {
+        deleteOne(originalName, filename, id)
+        setIsDeleteConfOpen(false)
+    };
+
+    const handleDeleteMultiple = () => {
+        
+        for (let image of currentImages) {
+            deleteOne(image.download_key, image.image_key, image.id)
+            setCurrentImages(prev => [...prev.filter(image => !image.id)])
+        }
+        setIsDeleteConfOpen(false)
     }
 
     return (
@@ -267,19 +324,50 @@ const Gallery = () => {
                 message="Entry deleted successfully!"
                 severity="success"
             />
-            <ConfirmationDialog
-                deleteOne={deleteOne}
-                isDeleteConfOpen={isDeleteConfOpen}
-                setIsDeleteConfOpen={setIsDeleteConfOpen}
-            />
+
+            {isDeleteConfOpen &&
+              <CustomDialog
+                  openModal={isDeleteConfOpen} 
+                  setOpenModal={() => setIsDeleteConfOpen(false)}
+                  title="Are you sure you want to delete the entry ?"
+                  handleClickYes={() => {
+                      if (currentImages.length > 1) {
+                          handleDeleteMultiple(currentImages[0].download_key, currentImages[0].image_key, currentImages[0].id)
+                      } else {
+                          handleDeleteOne(currentImages[0].download_key, currentImages[0].image_key, currentImages[0].id)
+                      }
+                  } }
+                  handleClickNo={() => setIsDeleteConfOpen(false)}
+              />}
+
+            {openModal && 
+            <CustomDialog 
+                openModal={openModal} 
+                setOpenModal={() => setOpenModal(false)}
+                title="This will change the location of all selected entries, are you sure?"
+                handleClickYes={() => updateLocation(formControlData)}
+                handleClickNo={() => {setOpenModal(false), setCurrentImages([]), setMultiSelectMode(false)}}
+            >
+                <CascadingDropdowns
+                    formControlData={formControlData}
+                    setFormControlData={setFormControlData}
+                    openInModal={openModal}
+                />
+
+            </CustomDialog>}
 
             <Navbar />
-
-            <SearchBar
-                onChange={onChange}
-                searchByKeyword={searchByKeyword}
-                triggerSearchWithEnter={triggerSearchWithEnter}
-            />
+            <div className="flex flex-row justify-around">
+                <SearchBar
+                    onChange={onChange}
+                    searchByKeyword={searchByKeyword}
+                    triggerSearchWithEnter={triggerSearchWithEnter}
+                />
+                <RadioGroupSorting
+                    setSortField={setSortField}
+                    setSortOrder={setSortOrder}
+                />
+            </div>
 
             {loading || isDeleting ? (
                 <CircularProgress className="loader" color="primary" />
@@ -290,7 +378,9 @@ const Gallery = () => {
                             onClick={handleSelectImages}>Select images</button>
                         {currentImages.length ?
                             <><button className='flex bg-main text-white rounded mr-4 max-sm:mr-0 max-sm:mb-3 max-sm:w-2/4 justify-center px-3 py-1.5 text-md leading-6 text-grey focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2'
-                                onClick={() => navigate("/pdf")}>Generate PDF</button>
+                                onClick={() => navigate("/pdf")}>Create a certificate</button>
+                            <button className='flex bg-main text-white rounded mr-4 max-sm:mr-0 max-sm:mb-3 max-sm:w-2/4 justify-center px-3 py-1.5 text-md leading-6 text-grey focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2'
+                                onClick={prepareImagesForLocationChange}>Change Location</button>
                             <button className='flex bg-main text-white rounded mr-4 max-sm:mr-0 max-sm:mb-3 max-sm:w-2/4 justify-center px-3 py-1.5 text-md leading-6 text-grey focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2'
                                 onClick={() => setIsDeleteConfOpen(true)}>Delete selected</button>
                             <button className='flex bg-main text-white rounded mr-4 max-sm:mr-0 max-sm:w-2/4 justify-center px-3 py-1.5 text-md leading-6 text-grey focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2'
@@ -300,19 +390,12 @@ const Gallery = () => {
                         }
                        
                     </div>
-            
-                    <div className="grid grid-cols-4 gap-x-3 max-sm:grid-cols-1 max-sm:p-0 p-20">
-                        {searchResults.length ? (
-                            searchResults.map((art, id) => (
+
+                    {thumbnailView ?
+                        <div className="columns-5 max-sm:columns-2 max-sm:gap-2 gap-4 mr-4 ml-4 max-sm:mt-8 mt-16">
+                            {searchResults.map((art, id) => (
                                 <><div
-                                    key={id}
-                                    className="bg-white my-7 border border shadow-lg shadow-grey rounded-md h-max max-2xl:w-3/4">
-                                    <div className="flex items-center p-4">
-
-                                        <p className="flex-1 text-sm font-semibold">{art.artist}</p>
-                                        <IconMoreHorizontal className="h-5" />
-                                    </div>
-
+                                    key={id}>
                                     {multiSelectMode &&
                                     <Checkbox
                                         style={{position: "absolute"}} onChange={(e) => checkBoxHandler(e,art.id)} 
@@ -325,15 +408,50 @@ const Gallery = () => {
                                     />
 
                                     }
-                                    <img className="w-full" src={art.image_url} />
+                                    <img
+                                        className="h-auto w-full rounded-md max-sm:mb-2 mb-4" src={art.image_url} onClick={() => {setThumbnailView(false);handleImageClick(art.id)}} />
+                                </div>
+                                </>
+                            ))}
+                            
+                        </div>
+                        :
+                        selectedImageIndex != null &&
+                        <><div>
+
+                        </div>
+                        <div  ref={listRef} className="gallery grid grid-cols-4 gap-x-3 max-sm:grid-cols-1 max-sm:p-0 p-20">
+                            {searchResults.map((art, id) => (
+    
+                                <><div
+                                    key={id}
+                                    className="bg-white my-7 border border shadow-lg shadow-grey rounded-md h-max max-2xl:w-3/4">
+                                    <div className="flex items-center p-4">
+
+                                        <p className="flex-1 text-sm font-semibold">{art.artist}</p>
+                                        <IconMoreHorizontal className="h-5" />
+                                    </div>
+
+                                    {multiSelectMode &&
+                                                <Checkbox
+                                                    style={{ position: "absolute" }} onChange={(e) => checkBoxHandler(e, art.id)}
+                                                    sx={{
+                                                        color: blue[400],
+                                                        '&.Mui-checked': {
+                                                            color: blue[600],
+                                                        }
+                                                    }} />}
+                                    <img
+                                        onClick={() => setThumbnailView(true)}
+                                        className="w-full" src={art.image_url} />
                                     <div className="flex justify-between p-4">
                                         <IconBxsDownload
                                             onClick={() => downloadOriginalImage(art.download_url, art.download_key)} />
                                         {isEditMode && currentImages.length && currentImages[0].id === art.id &&
-                                            <>
-                                                <Icon277Exit onClick={cancelEditing} />
-                                                <IconSave onClick={() => saveUpdatedEntry(art.id)} />
-                                            </>}
+                                                    <>
+                                                        <Icon277Exit onClick={cancelEditing} />
+                                                        <IconSave onClick={() => saveUpdatedEntry(art.id)} />
+                                                    </>}
 
                                         <IconEdit
                                             onClick={() => {
@@ -414,11 +532,13 @@ const Gallery = () => {
                                     </div>
                                 </div>
                                 </>
-                            ))
-                        ) : (
-                            <h3 className="nothingFound">Nothing was found!</h3>
-                        )}
-                    </div></>
+                            ))}
+
+                        </div></>}
+                 
+                    {!searchResults.length && <div className="flex flex-row justify-center content-center max-sm:ml-20 max-sm:mr-20">Nothing was found!</div>}
+                    
+                </>
             )}
 
             {searchResults.length ? (
@@ -431,6 +551,8 @@ const Gallery = () => {
                     onChange={(event, page) => setPage(page)}
                     showFirstButton={isTherePrevPage && true}
                     showLastButton={noNextPage && true}
+                    siblingCount={3}
+                    boundaryCount={2}
                 />
             ) : (
                 <></>

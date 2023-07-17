@@ -1,5 +1,5 @@
 import s3Client from "../s3Client/s3Client";
-import { deleteArtService, getArtsService, getBioService, getCellsService, loginService, searchService, signupService, updateArtService, updateBioService, uploadService } from "../services/AdminServices";
+import { createCertificateService, deleteArtService, getArtsService, getBioService, getCellsService, loginService, searchService, signupService, updateArtService, updateBioService, updateLocationService, uploadService } from "../services/AdminServices";
 import 'dotenv/config';
 
 export const login = async (req, res) => {
@@ -32,8 +32,7 @@ try {
 
 export const uploadEntry = async (req, res) => {
 
-  const {title, artist, technique, dimensions, price, notes, onWall,
-    inExhibition, storageLocation, cell, position, by_user} = req.body
+  const {title, artist, technique, dimensions, price, notes, storageLocation, cell, position, by_user} = req.body
 
   const image_url = req.file.transforms[0].location
   const image_key = req.file.transforms[0].key
@@ -49,8 +48,6 @@ try {
     dimensions,
     price,
     notes,
-    onWall,
-    inExhibition,
     storageLocation,
     cell,
     position,
@@ -68,9 +65,10 @@ try {
 }
 
   export const getArts = async (req, res) => {
-  const {page, count} = req.query
+  const {page, count, sortField, sortOrder} = req.query
+  const {name} = req.params
   try {
-   const [arts, artsCount] = await getArtsService(page, count)
+   const [arts, artsCount] = await getArtsService(name, page, count, sortField, sortOrder)
 
    res.status(200).json({arts, artsCount});
   } catch (error) {
@@ -152,8 +150,6 @@ export const updateEntry = async (req, res) => {
     dimensions,
     price,
     notes,
-    onWall,
-    inExhibition,
     storageLocation,
     cell,
     position,
@@ -166,8 +162,6 @@ export const updateEntry = async (req, res) => {
           dimensions,
           price,
           notes,
-          onWall,
-          inExhibition,
           storageLocation,
           cell,
           position,
@@ -179,4 +173,40 @@ export const updateEntry = async (req, res) => {
        throw new Error("Could not update entry!");
        
       }
+}
+
+export const updateLocation = async(req, res) => {
+  const {ids, formControlData}  = req.body
+
+  try {
+    const results = await updateLocationService(ids, formControlData)
+    res.status(200).send(results)
+
+  } catch (error){
+   throw new Error("Could not update locations!");
+   
+  }
+  
+}
+
+export const createCertificate = async (req, res) => {
+  const {imageSrc, bio, artist, title, technique, dimensions} = req.body
+
+ 
+
+  try {
+     createCertificateService(
+      imageSrc, bio, artist, title, technique, dimensions,
+      (chunk) => stream.write(chunk),
+      () => stream.end()
+    )
+
+    const stream = res.writeHead(200, {
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': 'attachment;filename=certificate.pdf'
+    })
+
+  } catch (error) {
+    res.status(400).json(error);
+  }
 }

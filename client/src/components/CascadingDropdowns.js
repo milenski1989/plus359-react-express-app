@@ -3,7 +3,7 @@ import React, { useContext, useState } from 'react'
 import { ImageContext } from './App';
 import { locations, findAvailablePositions } from "./constants/constants";
 
-function CascadingDropdowns({formControlData, setFormControlData}) {
+function CascadingDropdowns({formControlData, setFormControlData, openInModal}) {
 
     const {setUpdatedEntry, currentImage} = useContext(ImageContext)
 
@@ -34,9 +34,10 @@ function CascadingDropdowns({formControlData, setFormControlData}) {
         const {value} = event.target
         if (value === '--Cell--') return
         setCell(value)
-        const availablePositions =  await findAvailablePositions(value, location).then(data => data)
-        setPositions(availablePositions)
-        
+        if (!openInModal){
+            const availablePositions =  await findAvailablePositions(value, location).then(data => data)
+            setPositions(availablePositions)
+        }
         setFormControlData((prevState) => ({
             ...prevState,
             cell: value,
@@ -84,24 +85,28 @@ function CascadingDropdowns({formControlData, setFormControlData}) {
             {/*Cells*/}
             <select 
                 className='mt-6 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'
+                disabled={location === 'Sold'}
                 value={cell || currentImage[0].cell} 
                 onChange={changeCell}>
                 <option>--Cell--</option>
-                {cells.map(cell => (
+                {location !== 'Sold' && cells.map(cell => (
                     <option key={cell.name}>{cell.name}</option>
                 ))}
             </select>
             
             {/*Positions*/}
-            <select
-                className='mt-6 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'
-                value={position || currentImage[0].position}
-                onChange={changePosition}>
-                <option>--Position--</option>
-                {positions.map(position => (
-                    <option key={position}>{position}</option>
-                ))}
-            </select>
+            {!openInModal &&
+               <select
+                   className='mt-6 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'
+                   disabled={location === 'Sold'}
+                   value={position || currentImage[0].position}
+                   onChange={changePosition}>
+                   <option>--Position--</option>
+                   {positions.map(position => (
+                       <option key={position}>{position}</option>
+                   ))}
+               </select>
+            }
         </div>
     )
 }

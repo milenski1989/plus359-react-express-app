@@ -45,30 +45,32 @@ export const locations = [
         ]
     },
     {
-        name: "Bojurishte",
+        name: "South Park",
         cells: [
-            {name: "bojurishte1"},
-            {name: "bojurishte2"},
-            {name: "bojurishte3"},
-            {name: "bojurishte4"},
+            {name: "South Park1"},
+            {name: "South Park2"},
+            {name: "South Park3"},
+            {name: "South Park4"},
         ]
     },
     {
-        name: "Elin Pelin",
+        name: "Vasil Levski Rooms",
         cells: [
-            {name: "elinpelin1"},
-            {name: "elinpelin2"},
-            {name: "elinpelin3"},
-            {name: "elinpelin4"},
+            {name: "Office Room"},
+            {name: "Old Artists Room"},
+            {name: "Modern Art"},
+            {name: "Carpet Room"},
+            {name: "Books Room"},
+            {name: "Foreign Artists Room"}
         ]
     },
     {
         name: "Vasil Levski Folders",
         cells: [
-            {name: "1"},
+            {name: "1-Boryana Petkova"},
             {name: "2"},
-            {name: "3"},
-            {name: "4"},
+            {name: "3-Boris Kolev"},
+            {name: "4-Georgi Ruzhev"},
             {name: "5"},
             {name: "6"},
             {name: "7"},
@@ -98,6 +100,9 @@ export const locations = [
             {name: "other6"},
         ]
     },
+    {
+        name: "Sold"
+    }
     
 ]
 
@@ -114,30 +119,30 @@ export const findAvailablePositions = async (selectedCell, location = null) => {
     const storageEntries = await getArtsNumbers()
 
     if (selectedCell === "1-1" || selectedCell === "charta1" || selectedCell === "lozenets1" || selectedCell === "other1"
-    || selectedCell === "collect1"  || selectedCell === "bojurishte1"  || selectedCell === "elinpelin1") {
+    || selectedCell === "collect1"  || selectedCell === "South Park1"  || selectedCell === "Office Room") {
         i = 1
         newArray = Array.from(Array(50), () => i++)
         dropdownOptions = newArray.filter(post => storageEntries.every(pos => {return post !== pos.position} ))
     } else if (selectedCell === "1-2" || selectedCell === "charta2" || selectedCell === "lozenets2" || selectedCell === "other2"
-    || selectedCell === "collect2"  || selectedCell === "bojurishte2"  || selectedCell === "elinpelin2") {
+    || selectedCell === "collect2"  || selectedCell === "South Park2"  || selectedCell === "Old Artists Room") {
         i = 51
         newArray = Array.from(Array(50), () => i++)
         dropdownOptions = newArray.filter(post => storageEntries.every(pos => {return post !== pos.position} ))    
     } else if (selectedCell === "1-3" || selectedCell === "charta3" || selectedCell === "lozenets3" || selectedCell === "other3"
-    || selectedCell === "collect3"  || selectedCell === "bojurishte3"  || selectedCell === "elinpelin3") {
+    || selectedCell === "collect3"  || selectedCell === "South Park3"  || selectedCell === "Modern Art") {
         i = 101
         newArray = Array.from(Array(50), () => i++)
         dropdownOptions = newArray.filter(post => storageEntries.every(pos => {return post !== pos.position} ))    
     } else if (selectedCell === "1-4" || selectedCell === "charta4" || selectedCell === "lozenets4" || selectedCell === "other4"
-    || selectedCell === "collect4"  || selectedCell === "bojurishte4"  || selectedCell === "elinpelin4") {
+    || selectedCell === "collect4"  || selectedCell === "South Park4"  || selectedCell === "Carpet Room") {
         i = 151
         newArray = Array.from(Array(50), () => i++)
         dropdownOptions = newArray.filter(post => storageEntries.every(pos => {return post !== pos.position} ))    
-    } else if (selectedCell === "2-1" || selectedCell === "other5") {
+    } else if (selectedCell === "2-1" || selectedCell === "other5" || selectedCell === "Books Room") {
         i = 201
         newArray = Array.from(Array(50), () => i++)
         dropdownOptions = newArray.filter(post => storageEntries.every(pos => {return post !== pos.position} ))   
-    } else if (selectedCell === "2-2"  || selectedCell === "other6") {
+    } else if (selectedCell === "2-2"  || selectedCell === "other6" || selectedCell === "Foreign Artist Room") {
         i = 251
         newArray = Array.from(Array(50), () => i++)
         dropdownOptions = newArray.filter(post => storageEntries.every(pos => {return post !== pos.position} ))   

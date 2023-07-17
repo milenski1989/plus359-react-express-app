@@ -42,14 +42,6 @@ __decorate([
     __metadata("design:type", String)
 ], Artworks.prototype, "notes", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ default: 0 }),
-    __metadata("design:type", Number)
-], Artworks.prototype, "onWall", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ default: 0 }),
-    __metadata("design:type", Number)
-], Artworks.prototype, "inExhibition", void 0);
-__decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], Artworks.prototype, "storageLocation", void 0);

@@ -83,9 +83,7 @@ const Upload = () => {
             technique: "",
             dimensions: "",
             price: 0,
-            notes: "",
-            onWall: 0,
-            inExhibition: 0
+            notes: ""
         })
     
         setFormControlData({

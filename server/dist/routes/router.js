@@ -61,10 +61,10 @@ const upload = (0, multer_1.default)({
         acl: "public-read-write",
     }),
 });
-router.get('/artworks', AdminController_1.getArts);
+router.get('/artworks/:name', AdminController_1.getArts);
 router.get('/bio/:name', AdminController_1.getBio);
 router.put('/bio/:id', AdminController_1.updateBio);
-router.get('/artworks/:param', AdminController_1.searchArts);
+router.get('/artworksByKeyword/:param', AdminController_1.searchArts);
 router.get('/storage/:cell', AdminController_1.getFreeCells);
 router.post('/login', AdminController_1.login);
 router.post('/signup', AdminController_1.signup);
@@ -72,4 +72,6 @@ router.post('/upload', upload.single("file"), AdminController_1.uploadEntry);
 router.delete('/artworks/:filename', AdminController_1.deleteFromS3);
 router.delete('/artworks/:originalFilename', AdminController_1.deleteOriginalFromS3);
 router.put('/artworks/:id', AdminController_1.updateEntry);
+router.put('/update-location', AdminController_1.updateLocation);
+router.post('/create-certificate', AdminController_1.createCertificate);
 exports.default = router;

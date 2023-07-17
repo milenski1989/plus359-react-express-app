@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateArtService = exports.deleteArtService = exports.getCellsService = exports.searchService = exports.updateBioService = exports.getBioService = exports.getArtsService = exports.uploadService = exports.signupService = exports.loginService = void 0;
+exports.createCertificateService = exports.updateLocationService = exports.updateArtService = exports.deleteArtService = exports.getCellsService = exports.searchService = exports.updateBioService = exports.getBioService = exports.getArtsService = exports.uploadService = exports.signupService = exports.loginService = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const User_1 = require("../entities/User");
 const database_1 = require("../database");
@@ -20,6 +20,8 @@ const Artworks_1 = require("../entities/Artworks");
 const typeorm_1 = require("typeorm");
 const Artists_1 = require("../entities/Artists");
 const ArtistsBios_1 = require("../entities/ArtistsBios");
+const pdfkit_1 = __importDefault(require("pdfkit"));
+const path_1 = __importDefault(require("path"));
 const saltRounds = 10;
 database_1.dbConnection
     .initialize()
@@ -80,7 +82,7 @@ const signupService = (email, password, userName) => __awaiter(void 0, void 0, v
     }
 });
 exports.signupService = signupService;
-const uploadService = (title, artist, technique, dimensions, price, notes, onWall, inExhibition, storageLocation, cell, position, image_url, image_key, download_url, download_key, by_user) => __awaiter(void 0, void 0, void 0, function* () {
+const uploadService = (title, artist, technique, dimensions, price, notes, storageLocation, cell, position, image_url, image_key, download_url, download_key, by_user) => __awaiter(void 0, void 0, void 0, function* () {
     let newEntry;
     try {
         newEntry = yield artsRepository.create({
@@ -90,8 +92,6 @@ const uploadService = (title, artist, technique, dimensions, price, notes, onWal
             dimensions,
             price,
             notes,
-            onWall,
-            inExhibition,
             storageLocation,
             cell,
             position,
@@ -109,12 +109,11 @@ const uploadService = (title, artist, technique, dimensions, price, notes, onWal
     }
 });
 exports.uploadService = uploadService;
-const getArtsService = (page, count) => __awaiter(void 0, void 0, void 0, function* () {
+const getArtsService = (name, page, count, sortField, sortOrder) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const [arts, artsCount] = yield artsRepository.findAndCount({
-            order: {
-                id: "DESC"
-            },
+            order: { [sortField]: sortOrder.toUpperCase() },
+            where: { storageLocation: name },
             take: parseInt(count),
             skip: (parseInt(count) * parseInt(page)) - parseInt(count)
         });
@@ -210,15 +209,13 @@ const deleteArtService = (id) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.deleteArtService = deleteArtService;
-const updateArtService = (title, artist, technique, dimensions, price, notes, onWall, inExhibition, storageLocation, cell, position, by_user, id) => __awaiter(void 0, void 0, void 0, function* () {
+const updateArtService = (title, artist, technique, dimensions, price, notes, storageLocation, cell, position, by_user, id) => __awaiter(void 0, void 0, void 0, function* () {
     const updatedEntry = { title,
         artist,
         technique,
         dimensions,
         price,
         notes,
-        onWall,
-        inExhibition,
         storageLocation,
         cell,
         position,
@@ -236,3 +233,61 @@ const updateArtService = (title, artist, technique, dimensions, price, notes, on
     }
 });
 exports.updateArtService = updateArtService;
+const updateLocationService = (ids, formControlData) => __awaiter(void 0, void 0, void 0, function* () {
+    const { storageLocation, cell, position } = formControlData;
+    const promises = [];
+    try {
+        const images = yield artsRepository.findBy({
+            id: (0, typeorm_1.In)([ids])
+        });
+        for (let image of images) {
+            promises.push(yield artsRepository.save({
+                id: image.id,
+                storageLocation: storageLocation,
+                cell: cell || '',
+                position: position || 0
+            }));
+        }
+        const result = yield Promise.all(promises);
+        return result;
+    }
+    catch (_j) {
+        throw new Error("Could not update locations!");
+    }
+});
+exports.updateLocationService = updateLocationService;
+const createCertificateService = (imageSrc, bio, artist, title, technique, dimensions, dataCallback, endCallback) => {
+    const doc = new pdfkit_1.default({ size: 'letter', layout: 'landscape' });
+    const fontsFolderPath = path_1.default.join(__dirname, '../../fonts/Raleway/static');
+    //const fontsFolderSuperHosting = path.join(__dirname, '../fonts/Raleway/static');
+    const ralewayStandardFont = path_1.default.join(fontsFolderPath, 'Raleway-Light.ttf');
+    //layout
+    const columnWidth = doc.page.width / 4; // Divide the page width into two equal columns
+    const columnHeight = doc.page.height;
+    const gutter = 100; // Adjust the spacing between the columns
+    const startX = doc.page.margins.left;
+    const startY = doc.page.margins.top;
+    //layout
+    doc.registerFont('CustomFont', ralewayStandardFont);
+    doc.font('CustomFont');
+    try {
+        doc.image(imageSrc, 10, 30, { width: columnWidth, height: columnHeight / 3, fit: [30, 30] });
+        doc.fontSize(12).text('СЕРТИФИКАТ ЗА', 50, 30, { width: columnWidth });
+        doc.fontSize(12).text('АВТЕНТИЧНОСТ', 50, 50, { width: columnWidth });
+        doc.fontSize(10).text(`АВТОР: ${artist}`, 50, 80, { width: columnWidth });
+        doc.fontSize(10).text(`ТВОРБА: ${title}`, 50, 100, { width: columnWidth });
+        doc.fontSize(10).text(`ТЕХНИКА: ${technique}`, 50, 120, { width: columnWidth });
+        doc.fontSize(10).text(`РАЗМЕР: ${dimensions}см`, 50, 140, { width: columnWidth });
+        doc.image(imageSrc, 50, 160, { width: columnWidth, height: columnHeight, fit: [200, Infinity] });
+        doc.fontSize(6).text('Заключение: Произведението е оригинал', 50, 400, { width: columnWidth });
+        doc.fontSize(6).text('Малка Художествена Галерия', 50, 420, { width: columnWidth });
+        doc.fontSize(8).text(bio, startX + columnWidth + gutter, 30, { width: 320 });
+        doc.on('data', dataCallback);
+        doc.on('end', endCallback);
+        doc.end();
+    }
+    catch (_a) {
+        throw new Error("Could not create certificate!");
+    }
+};
+exports.createCertificateService = createCertificateService;

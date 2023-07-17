@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateEntry = exports.deleteOriginalFromS3 = exports.deleteFromS3 = exports.getFreeCells = exports.searchArts = exports.updateBio = exports.getBio = exports.getArts = exports.uploadEntry = exports.signup = exports.login = void 0;
+exports.createCertificate = exports.updateLocation = exports.updateEntry = exports.deleteOriginalFromS3 = exports.deleteFromS3 = exports.getFreeCells = exports.searchArts = exports.updateBio = exports.getBio = exports.getArts = exports.uploadEntry = exports.signup = exports.login = void 0;
 const s3Client_1 = __importDefault(require("../s3Client/s3Client"));
 const AdminServices_1 = require("../services/AdminServices");
 require("dotenv/config");
@@ -43,13 +43,13 @@ const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.signup = signup;
 const uploadEntry = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { title, artist, technique, dimensions, price, notes, onWall, inExhibition, storageLocation, cell, position, by_user } = req.body;
+    const { title, artist, technique, dimensions, price, notes, storageLocation, cell, position, by_user } = req.body;
     const image_url = req.file.transforms[0].location;
     const image_key = req.file.transforms[0].key;
     const download_url = req.file.transforms[1].location;
     const download_key = req.file.transforms[1].key;
     try {
-        const results = yield (0, AdminServices_1.uploadService)(title, artist, technique, dimensions, price, notes, onWall, inExhibition, storageLocation, cell, position, image_url, image_key, download_url, download_key, by_user);
+        const results = yield (0, AdminServices_1.uploadService)(title, artist, technique, dimensions, price, notes, storageLocation, cell, position, image_url, image_key, download_url, download_key, by_user);
         res.status(200).json({ results: results });
     }
     catch (error) {
@@ -58,9 +58,10 @@ const uploadEntry = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 });
 exports.uploadEntry = uploadEntry;
 const getArts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { page, count } = req.query;
+    const { page, count, sortField, sortOrder } = req.query;
+    const { name } = req.params;
     try {
-        const [arts, artsCount] = yield (0, AdminServices_1.getArtsService)(page, count);
+        const [arts, artsCount] = yield (0, AdminServices_1.getArtsService)(name, page, count, sortField, sortOrder);
         res.status(200).json({ arts, artsCount });
     }
     catch (error) {
@@ -131,10 +132,10 @@ const deleteOriginalFromS3 = (req, res) => __awaiter(void 0, void 0, void 0, fun
 });
 exports.deleteOriginalFromS3 = deleteOriginalFromS3;
 const updateEntry = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { title, artist, technique, dimensions, price, notes, onWall, inExhibition, storageLocation, cell, position, by_user } = req.body;
+    const { title, artist, technique, dimensions, price, notes, storageLocation, cell, position, by_user } = req.body;
     const { id } = req.params;
     try {
-        const results = yield (0, AdminServices_1.updateArtService)(title, artist, technique, dimensions, price, notes, onWall, inExhibition, storageLocation, cell, position, by_user, id);
+        const results = yield (0, AdminServices_1.updateArtService)(title, artist, technique, dimensions, price, notes, storageLocation, cell, position, by_user, id);
         res.status(200).send(results);
     }
     catch (error) {
@@ -142,3 +143,28 @@ const updateEntry = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.updateEntry = updateEntry;
+const updateLocation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { ids, formControlData } = req.body;
+    try {
+        const results = yield (0, AdminServices_1.updateLocationService)(ids, formControlData);
+        res.status(200).send(results);
+    }
+    catch (error) {
+        throw new Error("Could not update locations!");
+    }
+});
+exports.updateLocation = updateLocation;
+const createCertificate = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { imageSrc, bio, artist, title, technique, dimensions } = req.body;
+    try {
+        (0, AdminServices_1.createCertificateService)(imageSrc, bio, artist, title, technique, dimensions, (chunk) => stream.write(chunk), () => stream.end());
+        const stream = res.writeHead(200, {
+            'Content-Type': 'application/pdf',
+            'Content-Disposition': 'attachment;filename=certificate.pdf'
+        });
+    }
+    catch (error) {
+        res.status(400).json(error);
+    }
+});
+exports.createCertificate = createCertificate;
