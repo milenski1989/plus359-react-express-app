@@ -135,61 +135,67 @@ const PdfMaker = () => {
 
     const createCertificate = async () => {
 
-        const docDefinition = {
-            pageOrientation: 'landscape',
-            content: [
-                'СЕРТИФИКАТ ЗА АВТЕНТИЧНОСТ\n\n',
-                {
-                    columns: [
-                       
-                        {
-                            alignment: 'justify',
-                            columns: [
-                                
-                                {
-                                    stack:[
-                                        {
-                                            text: `АВТОР: ${currentImages[0].artist}\n\nТВОРБА: ${currentImages[0].title}\n\nТЕХНИКА: ${currentImages[0].technique}\n\nРАЗМЕР: ${currentImages[0].dimensions}\n\n`,
-                                            fontSize: 10
-                                        },
-                                        {
-                                            image: urls[0],
-                                            width: 200,
-                                            height: 300
-                                        },
-                                        '\n\n',
-                                        {
-                                            text: 'Заключение: Произведението е оригинал',
-                                            fontSize: 8
-                                        },
-                                        '\n\n',
-                                        {
-                                            text: 'Малка Художествена Галерия',
-                                            fontSize: 8,
-                                            color: '#6ec1e4'
-                                        }
-                                    ]
-                                },
-                                {
-                                    stack:[
-                                        { 	 
-                                            fontSize: 10,
-                                            text: `${bio.bio}'\n\n'${inputsData.notes}`
-                                        },
-                                        '\n\n'
-                                    ]
-                                       
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
-        }
-            
-        const pdfGenerator = pdfMake.createPdf(docDefinition)
+        try {
+            const response = await fetch('http://localhost:5000/api/create-certificate', {
+                method: "POST",
+                headers: {'Content-Type': 'application/json'},
+                body:  JSON.stringify({ imageSrc: urls[0],
+                    bio: `${bio.bio} \n\n ${inputsData.notes}`,
+                    artist: currentImages[0].artist,
+                    title: currentImages[0].title,
+                    technique: currentImages[0].technique,
+                    dimensions: currentImages[0].dimensions
+                })
+            });
 
-        pdfGenerator.download()
+            console.log(response)
+      
+            // Convert the response body to a ReadableStream
+            const reader = response.body.getReader();
+            
+            // Create a new ReadableStream with the response body
+            const stream = new ReadableStream({
+                start(controller) {
+                    async function push() {
+                        // Read the data from the response body
+                        const { done, value } = await reader.read();
+                  
+                        if (done) {
+                            // Close the stream
+                            controller.close();
+                            return;
+                        }
+                  
+                        // Push the data to the stream
+                        controller.enqueue(value);
+                        await push();
+                    }
+                
+                    push();
+                }
+            });
+            
+            // Create a new response object with the new stream
+            const newResponse = new Response(stream, response);
+            
+            // Create a blob from the response
+            const blob = await newResponse.blob();
+            
+            // Create a URL for the blob
+            const url = URL.createObjectURL(blob);
+            
+            // Create a link element and click it to download the file
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'file.pdf';
+            link.click();
+            
+            // Clean up the URL object
+            URL.revokeObjectURL(url);
+        }catch (error) {
+            console.log(error)
+        }
+        
         //setCurrentImages([])
     }
 
@@ -256,7 +262,7 @@ const PdfMaker = () => {
                 <div className="flex max-sm:flex-col mb-8 max-sm:mb-8 items-center justify-center mt-32">
                     <button
                         className='flex bg-main text-white rounded mr-4 max-sm:mr-0 max-sm:mb-3 max-sm:w-4/5 justify-center px-2 py-2 text-sm leading-6 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2'
-                        onClick={createCertificate}>Create and download PDF
+                        onClick={createCertificate}>Create and download a certificate
                     </button>
                     <button
                         className='flex bg-main text-white rounded mr-4 max-sm:mr-0 max-sm:mb-3 max-sm:w-4/5 justify-center px-2 py-2 text-sm leading-6 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2'

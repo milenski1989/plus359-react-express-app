@@ -73,4 +73,5 @@ router.delete('/artworks/:filename', AdminController_1.deleteFromS3);
 router.delete('/artworks/:originalFilename', AdminController_1.deleteOriginalFromS3);
 router.put('/artworks/:id', AdminController_1.updateEntry);
 router.put('/update-location', AdminController_1.updateLocation);
+router.post('/create-certificate', AdminController_1.createCertificate);
 exports.default = router;

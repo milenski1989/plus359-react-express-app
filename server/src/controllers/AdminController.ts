@@ -1,5 +1,5 @@
 import s3Client from "../s3Client/s3Client";
-import { deleteArtService, getArtsService, getBioService, getCellsService, loginService, searchService, signupService, updateArtService, updateBioService, updateLocationService, uploadService } from "../services/AdminServices";
+import { createCertificateService, deleteArtService, getArtsService, getBioService, getCellsService, loginService, searchService, signupService, updateArtService, updateBioService, updateLocationService, uploadService } from "../services/AdminServices";
 import 'dotenv/config';
 
 export const login = async (req, res) => {
@@ -187,4 +187,26 @@ export const updateLocation = async(req, res) => {
    
   }
   
+}
+
+export const createCertificate = async (req, res) => {
+  const {imageSrc, bio, artist, title, technique, dimensions} = req.body
+
+ 
+
+  try {
+     createCertificateService(
+      imageSrc, bio, artist, title, technique, dimensions,
+      (chunk) => stream.write(chunk),
+      () => stream.end()
+    )
+
+    const stream = res.writeHead(200, {
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': 'attachment;filename=certificate.pdf'
+    })
+
+  } catch (error) {
+    res.status(400).json(error);
+  }
 }

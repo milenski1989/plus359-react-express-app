@@ -1,5 +1,5 @@
 import express from "express"
-import { deleteFromS3, deleteOriginalFromS3, getArts, getBio, getFreeCells, login, searchArts, signup, updateBio, updateEntry, updateLocation, uploadEntry } from "../controllers/AdminController"
+import { createCertificate, deleteFromS3, deleteOriginalFromS3, getArts, getBio, getFreeCells, login, searchArts, signup, updateBio, updateEntry, updateLocation, uploadEntry } from "../controllers/AdminController"
 import multerS3 from 'multer-s3-transform';
 import multer from 'multer';
 import sharp from 'sharp';
@@ -73,5 +73,6 @@ router.delete('/artworks/:filename', deleteFromS3)
 router.delete('/artworks/:originalFilename', deleteOriginalFromS3)
 router.put('/artworks/:id', updateEntry)
 router.put('/update-location', updateLocation)
+router.post('/create-certificate', createCertificate)
 
 export default router

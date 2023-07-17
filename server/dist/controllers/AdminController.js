@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateLocation = exports.updateEntry = exports.deleteOriginalFromS3 = exports.deleteFromS3 = exports.getFreeCells = exports.searchArts = exports.updateBio = exports.getBio = exports.getArts = exports.uploadEntry = exports.signup = exports.login = void 0;
+exports.createCertificate = exports.updateLocation = exports.updateEntry = exports.deleteOriginalFromS3 = exports.deleteFromS3 = exports.getFreeCells = exports.searchArts = exports.updateBio = exports.getBio = exports.getArts = exports.uploadEntry = exports.signup = exports.login = void 0;
 const s3Client_1 = __importDefault(require("../s3Client/s3Client"));
 const AdminServices_1 = require("../services/AdminServices");
 require("dotenv/config");
@@ -154,3 +154,17 @@ const updateLocation = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.updateLocation = updateLocation;
+const createCertificate = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { imageSrc, bio, artist, title, technique, dimensions } = req.body;
+    try {
+        (0, AdminServices_1.createCertificateService)(imageSrc, bio, artist, title, technique, dimensions, (chunk) => stream.write(chunk), () => stream.end());
+        const stream = res.writeHead(200, {
+            'Content-Type': 'application/pdf',
+            'Content-Disposition': 'attachment;filename=certificate.pdf'
+        });
+    }
+    catch (error) {
+        res.status(400).json(error);
+    }
+});
+exports.createCertificate = createCertificate;
