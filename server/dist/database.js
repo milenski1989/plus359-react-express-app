@@ -24,3 +24,11 @@ exports.dbConnection = new typeorm_1.DataSource({
         User_1.User, Artworks_1.Artworks, Artists_1.Artists, ArtistsBios_1.ArtistsBios
     ]
 });
+exports.dbConnection
+    .initialize()
+    .then(() => {
+    console.log("Data Source has been initialized!");
+})
+    .catch((err) => {
+    console.error("Error during Data Source initialization:", err);
+});

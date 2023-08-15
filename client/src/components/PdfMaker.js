@@ -39,7 +39,7 @@ const PdfMaker = () => {
     },[])
 
     const getBioOfArtist = async (name) => {
-        const res = await fetch(`http://localhost:5000/api/bio/${name}`)
+        const res = await fetch(`http://localhost:5000/bios/bio/${name}`)
         const data = await res.json()
         return data
     };
@@ -55,7 +55,7 @@ const PdfMaker = () => {
 
     const updateBio = async (bio, id) => {
         const response = await axios.put(
-            `http://localhost:5000/api/bio/${id}`,
+            `http://localhost:5000/bios/bio/${id}`,
             bio
         );
 
@@ -136,7 +136,7 @@ const PdfMaker = () => {
     const createCertificate = async () => {
 
         try {
-            const response = await fetch('http://localhost:5000/api/create-certificate', {
+            const response = await fetch('http://localhost:5000/pdf/create-certificate', {
                 method: "POST",
                 headers: {'Content-Type': 'application/json'},
                 body:  JSON.stringify({ imageSrc: urls[0],

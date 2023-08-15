@@ -112,7 +112,7 @@ const Gallery = () => {
     const getAll = async () => {
         setLoading(true);
         const res = await fetch(
-            `http://localhost:5000/api/artworks/${name.split(':')[1]}?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`
+            `http://localhost:5000/artworks/${name.split(':')[1]}?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`
         );
         const data = await res.json();
         const { arts, artsCount } = data;
@@ -138,7 +138,7 @@ const Gallery = () => {
 
     const searchByKeyword = async () => {
         setLoading(true);
-        const res = await fetch(`http://localhost:5000/api/artworksByKeyword/${keyword}`);
+        const res = await fetch(`http://localhost:5000/artworks/artwork/${keyword}`);
         const data = await res.json();
 
         if (res.status === 200) {
@@ -157,24 +157,15 @@ const Gallery = () => {
     const deleteOne = async (originalFilename, filename, id) => {
         setIsDeleting(true);
 
+        const params = {originalFilename, filename, id}
+
         await axios.delete(
-            `http://localhost:5000/api/artworks/${originalFilename}`,
-            { originalFilename }
+            `http://localhost:5000/artworks/artwork/${params}`,
+            { params }
         );
 
-        await axios.delete(`http://localhost:5000/api/artworks/${filename}`, {
-            filename,
-        });
-        const response = await axios.delete(
-            `http://localhost:5000/api/artworks/${id}`,
-            { id }
-        );
+        setIsDeleting(false)
 
-        if (response.status === 200) {
-            getAll();
-            setIsDeleting(false);
-            setDeleteSuccessful(true);
-        }
     };
 
     const downloadOriginalImage = (downloadUrl, name) => {
@@ -236,7 +227,7 @@ const Gallery = () => {
 
     const updateEntry = async (id) => {
         const response = await axios.put(
-            `http://localhost:5000/api/artworks/${id}`,
+            `http://localhost:5000/artworks/artwork/${id}`,
             updatedEntry
         );
 
@@ -276,7 +267,7 @@ const Gallery = () => {
             ids.push(image.id)
         }
         const response = await axios.put(
-            `http://localhost:5000/api/update-location`,
+            `http://localhost:5000/storage/update-location`,
             {ids, formControlData}
         );
         if (response.status === 200) {
@@ -298,15 +289,31 @@ const Gallery = () => {
     const handleDeleteOne = (originalName, filename, id) => {
         deleteOne(originalName, filename, id)
         setIsDeleteConfOpen(false)
+        setDeleteSuccessful(true);
+        setCurrentImages(prev => prev.filter(image => !currentImages.some(img => img.id === image.id)));
+        getAll();
     };
 
-    const handleDeleteMultiple = () => {
-        
-        for (let image of currentImages) {
+    const handleDeleteMultiple = async () => {
+
+        const deletePromises = currentImages.map(image =>
             deleteOne(image.download_key, image.image_key, image.id)
-            setCurrentImages(prev => [...prev.filter(image => !image.id)])
+        );
+
+        try {
+            await Promise.all(deletePromises);
+            getAll();
+            setIsDeleting(false);
+            setDeleteSuccessful(true);
+            setCurrentImages(prev => prev.filter(image => !currentImages.some(img => img.id === image.id)));
+            setCurrentImages([])
+            setIsDeleteConfOpen(false)
+        } catch (error) {
+            setIsDeleting(false);
+            setDeleteSuccessful(false);
+            setIsDeleteConfOpen(false)
         }
-        setIsDeleteConfOpen(false)
+        
     }
 
     return (

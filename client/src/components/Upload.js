@@ -63,7 +63,7 @@ const Upload = () => {
             data.append("position", formControlData.position)
             data.append("by_user", user.userName)
     
-            await axios.post("http://localhost:5000/api/upload", data, {
+            await axios.post("http://localhost:5000/s3/upload", data, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },

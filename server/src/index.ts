@@ -6,7 +6,12 @@ import cors from "cors"
 import bodyParser from "body-parser"
 import session from "express-session"
 import path from "path"
-import router from "./routes/router"
+import { AuthenticationController } from "./controllers/AuthenticationController"
+import { ArtworksController } from "./controllers/ArtworksController"
+import { S3Controller } from "./controllers/S3Controller"
+import { StorageController } from "./controllers/StorageController"
+import { PdfController } from "./controllers/PdfController"
+import { BiosController } from "./controllers/BiosController"
 dotenv.config()
 
     const app = express()
@@ -25,8 +30,20 @@ dotenv.config()
         saveUninitialized: true,
       })
     )
-    
-    app.use('/api', router)
+
+    const authController = new AuthenticationController();
+    const artworksController = new ArtworksController()
+    const s3Controller = new S3Controller()
+    const storageController = new StorageController()
+    const pdfController = new PdfController()
+    const biosController = new BiosController()
+
+    app.use('/auth', authController.router);
+    app.use('/artworks', artworksController.router)
+    app.use('/s3', s3Controller.router)
+    app.use('/storage', storageController.router)
+    app.use('/pdf', pdfController.router)
+    app.use('/bios', biosController.router)
     
     app.get('*', (req,res) =>{
       res.sendFile(path.join(__dirname+'/build/index.html'));
