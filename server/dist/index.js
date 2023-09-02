@@ -11,7 +11,12 @@ const cors_1 = __importDefault(require("cors"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const express_session_1 = __importDefault(require("express-session"));
 const path_1 = __importDefault(require("path"));
-const router_1 = __importDefault(require("./routes/router"));
+const AuthenticationController_1 = require("./controllers/AuthenticationController");
+const ArtworksController_1 = require("./controllers/ArtworksController");
+const S3Controller_1 = require("./controllers/S3Controller");
+const StorageController_1 = require("./controllers/StorageController");
+const PdfController_1 = require("./controllers/PdfController");
+const BiosController_1 = require("./controllers/BiosController");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use(express_1.default.static(path_1.default.join(__dirname, '/build')));
@@ -24,7 +29,18 @@ app.use((0, express_session_1.default)({
     resave: true,
     saveUninitialized: true,
 }));
-app.use('/api', router_1.default);
+const authController = new AuthenticationController_1.AuthenticationController();
+const artworksController = new ArtworksController_1.ArtworksController();
+const s3Controller = new S3Controller_1.S3Controller();
+const storageController = new StorageController_1.StorageController();
+const pdfController = new PdfController_1.PdfController();
+const biosController = new BiosController_1.BiosController();
+app.use('/auth', authController.router);
+app.use('/artworks', artworksController.router);
+app.use('/s3', s3Controller.router);
+app.use('/storage', storageController.router);
+app.use('/pdf', pdfController.router);
+app.use('/bios', biosController.router);
 app.get('*', (req, res) => {
     res.sendFile(path_1.default.join(__dirname + '/build/index.html'));
 });
