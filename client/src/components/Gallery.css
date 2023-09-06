@@ -13,8 +13,7 @@
   padding: 0.5rem;
  }
 
-@media screen and (max-width: 900px) {
-  .galleryItem {
-    width:100%;
-  }
-}
+ .gallery {
+  margin-left: 2rem;
+  margin-right: 2rem;
+ }

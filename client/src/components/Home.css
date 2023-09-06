@@ -1,0 +1,51 @@
+.folders {
+    column-gap: 10px;
+    padding: 5rem;
+}
+
+.folder {
+    padding: 20px;
+    background: linear-gradient(135deg, #f9ea8f 0%, #fbc740 100%);
+    border-radius: 6px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 400px) {
+    .folders {
+      column-count: 1;
+    }
+  }
+  
+  @media screen and (min-width: 401px) and (max-width: 768px) {
+    .folders {
+      column-count: 2;
+    }
+  }
+  
+  @media screen and (min-width: 769px) and (max-width: 900px) {
+    .folders {
+      column-count: 3;
+    }
+  }
+  
+  @media screen and (min-width: 901px) and (max-width: 1200px) {
+    .folders {
+      column-count: 4;
+    }
+  }
+  
+  @media screen and (min-width: 1201px) {
+    .folders {
+      column-count: 4;
+    }
+  }
+
+.title {
+    font-size: 18px;
+    margin-top: 10px;
+    color: #000000;
+    text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.5);
+}

@@ -5,7 +5,7 @@ import pdfMake from 'pdfmake/build/pdfmake'
 import pdfFonts from "pdfmake/build/vfs_fonts";
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 import Navbar from './Navbar';
-import { ImageContext } from './App';
+import { ImageContext } from './contexts/ImageContext';
 import IconEdit from './icons as components/IconEdit';
 import IconSave from './icons as components/IconSave';
 import axios from 'axios';

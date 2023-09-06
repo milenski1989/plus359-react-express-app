@@ -1,4 +1,3 @@
-import Navbar from "./Navbar";
 import "./App.css";
 import ConstructionIcon from '@mui/icons-material/Construction';
 
@@ -10,7 +9,6 @@ const Account = () => {
 
     return (
         <>
-            <Navbar />
             <section className="mainSection" style={{textAlign: "center", marginTop: "40vh"}}>
                 <ConstructionIcon fontSize="large" color="primary"/>
 
