@@ -2,7 +2,8 @@
 import { Checkbox } from '@mui/material';
 import { blue } from '@mui/material/colors';
 import { useContext } from 'react';
-import { ImageContext } from './App';
+import { ImageContext } from './contexts/ImageContext';
+import './ThumbnailView.css'
 
 const ThumbnailView = ({searchResults, multiSelectMode, handleThumbnailView, handleSelectedImageIndex}) => {
 
@@ -25,11 +26,10 @@ const ThumbnailView = ({searchResults, multiSelectMode, handleThumbnailView, han
         }
     }
 
-
     return <>
-        <div className="columns-5 max-sm:columns-2 max-sm:gap-2 gap-4 mr-4 ml-4 max-sm:mt-8 mt-16">
+        <div className="cards">
             {searchResults.map((art, id) => (
-                <><div
+                <div
                     key={id}>
                     {multiSelectMode &&
                                     <Checkbox
@@ -44,9 +44,8 @@ const ThumbnailView = ({searchResults, multiSelectMode, handleThumbnailView, han
 
                     }
                     <img
-                        className="h-auto w-full rounded-md max-sm:mb-2 mb-4" src={art.image_url} onClick={() => {handleThumbnailView(false); handleImageClick(art.id)}} />
+                        className="img" src={art.image_url} onClick={() => {handleThumbnailView(false); handleImageClick(art.id)}} />
                 </div>
-                </>
             ))}
                             
         </div>

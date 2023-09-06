@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars */
 import React, { useContext, useState } from 'react'
-import { ImageContext } from './App';
+import { ImageContext } from './contexts/ImageContext';
 import { locations, findAvailablePositions } from "./constants/constants";
 
 function CascadingDropdowns({formControlData, setFormControlData, openInModal}) {
 
-    const {setUpdatedEntry, currentImage} = useContext(ImageContext)
+    const {setUpdatedEntry, currentImages} = useContext(ImageContext)
 
     const [location, setLocation] = useState('--Location--')
     const [cell, setCell] = useState('--Cell--')
@@ -74,7 +74,7 @@ function CascadingDropdowns({formControlData, setFormControlData, openInModal}) 
             {/* Locations*/}   
             <select
                 className='mt-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'
-                value={location || currentImage[0].storageLocation}
+                value={location}
                 onChange={changeLocation}>
                 <option>--Location--</option>
                 {locations.map(location => (
@@ -86,7 +86,7 @@ function CascadingDropdowns({formControlData, setFormControlData, openInModal}) 
             <select 
                 className='mt-6 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'
                 disabled={location === 'Sold'}
-                value={cell || currentImage[0].cell} 
+                value={cell} 
                 onChange={changeCell}>
                 <option>--Cell--</option>
                 {location !== 'Sold' && cells.map(cell => (
@@ -99,7 +99,7 @@ function CascadingDropdowns({formControlData, setFormControlData, openInModal}) 
                <select
                    className='mt-6 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'
                    disabled={location === 'Sold'}
-                   value={position || currentImage[0].position}
+                   value={position}
                    onChange={changePosition}>
                    <option>--Position--</option>
                    {positions.map(position => (

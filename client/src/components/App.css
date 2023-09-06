@@ -1,19 +1,14 @@
 body {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Open Sans';
     box-sizing: border-box;
     padding: 0;
     margin: 0;
     overflow-x: hidden;
 }
 
-.dark {
-  background-color: #333131;
-  color: #ffffff;
-  }
-  .light {
-  background-color: #fff;
-  color: #333;
-  }
+main {
+  margin: 2rem;
+}
 
 @keyframes spinner {
     0% {
@@ -38,4 +33,19 @@ body {
   margin-top: 1rem;
   text-align: center;
  }
+
+ .sortButtonsContainer {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.sortButtonAndIconContainer {
+  display: flex;
+  flex-direction: row;
+}
+
+.sortIcon {
+  margin-left: 1rem;
+}
 
