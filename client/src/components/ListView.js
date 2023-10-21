@@ -5,6 +5,7 @@ import { Checkbox } from "@mui/material";
 import EditableContainer from "./EditableContainer";
 import ActionButtons from "./ActionButtons";
 import './ListView.css'
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 
 const ListView = ({searchResults, handleThumbnailView, handleMultiSelectMode, multiSelectMode, selectedImageIndex, handleConfirmationDialog, fetchData}) => {
@@ -49,15 +50,18 @@ const ListView = ({searchResults, handleThumbnailView, handleMultiSelectMode, mu
                         color: blue[400],
                         '&.Mui-checked': {
                             color: blue[600],
-                        }
+                        },
+                        zIndex: '9999'
                     }}
                     style={{position: 'absolute', top: '40px'}}
                 />}
-                   
-                    <img
+
+                    <LazyLoadImage
                         onClick={() => handleThumbnailView(true)}
-                        className="img" src={art.image_url}
-                        loading="lazy"
+                        src={art.image_url}
+                        effect="blur"
+                        width='100%'
+                        height="auto"
                     />
 
                     <ActionButtons 

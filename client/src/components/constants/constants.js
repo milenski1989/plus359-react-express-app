@@ -15,7 +15,10 @@ export const locations = [
             {name: "3-2"},
             {name: "3-3"},
             {name: "3-4"},
-        ] 
+        ],
+        children: [
+
+        ]
     },
     {
         name: "Charta",
@@ -24,6 +27,9 @@ export const locations = [
             {name: "charta2"},
             {name: "charta3"},
             {name: "charta4"},
+        ],
+        children: [
+            
         ]
     },
     {
@@ -33,6 +39,9 @@ export const locations = [
             {name: "lozenets2"},
             {name: "lozenets3"},
             {name: "lozenets4"},
+        ],
+        children: [
+            
         ]
     },
     {
@@ -42,6 +51,9 @@ export const locations = [
             {name: "collect2"},
             {name: "collect3"},
             {name: "collect4"},
+        ],
+        children: [
+            
         ]
     },
     {
@@ -51,6 +63,9 @@ export const locations = [
             {name: "South Park2"},
             {name: "South Park3"},
             {name: "South Park4"},
+        ],
+        children: [
+            
         ]
     },
     {
@@ -62,6 +77,9 @@ export const locations = [
             {name: "Carpet Room"},
             {name: "Books Room"},
             {name: "Foreign Artists Room"}
+        ],
+        children: [
+            
         ]
     },
     {
@@ -87,6 +105,9 @@ export const locations = [
             {name: "18"},
             {name: "19"},
             {name: "20"},
+        ],
+        children: [
+            
         ]
     },
     {
@@ -98,10 +119,16 @@ export const locations = [
             {name: "other4"},
             {name: "other5"},
             {name: "other6"},
+        ],
+        children: [
+            
         ]
     },
     {
-        name: "Sold"
+        name: "Sold",
+        children: [
+            
+        ]
     }
     
 ]

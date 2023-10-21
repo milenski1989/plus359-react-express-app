@@ -2,13 +2,13 @@ import { CircularProgress} from "@mui/material"
 import { useState } from "react"
 import './App.css'
 import Message from "./Message"
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-const linkStyle = {
-    textDecoration: "none",
-    color: "#6ec1e4",
-    display: "inline"
-};
+// const linkStyle = {
+//     textDecoration: "none",
+//     color: "#6ec1e4",
+//     display: "inline"
+// };
 
 const Login = () => {
 
@@ -102,11 +102,6 @@ const Login = () => {
                                 <button type="submit" disabled={!email || !password} className={!email || !password ? "flex w-full justify-center rounded-md bg-white text-black px-3 py-1.5 text-sm leading-6 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" : "flex w-full justify-center rounded-md bg-main text-white px-3 py-1.5 text-sm leading-6 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"}>Sign in</button>
                             </div>
                         </form>
-
-                        <div className="mt-10 text-center text-sm text-gray-500">
-      Not a member?
-      Not registered yet? Go to <Link to='/signup' style={linkStyle}>signup</Link>
-                        </div>
                     </div>
                 </div>
             }

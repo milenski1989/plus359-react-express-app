@@ -1,7 +1,7 @@
 import { Route, Navigate, createBrowserRouter, createRoutesFromElements, RouterProvider, } from 'react-router-dom'
 import {React, lazy, Suspense} from 'react'
 import './App.css'
-import Login from './Login'
+const Login = lazy(() => import('./Login'))
 const Home = lazy(() => import('./Home'))
 const Upload = lazy(() => import('./Upload'))
 const Gallery = lazy(() => import('./Gallery'))
@@ -14,7 +14,7 @@ import { ImageProvider } from './contexts/ImageContext'
 const router = createBrowserRouter(
     createRoutesFromElements(
         <Route>
-            <Route exact path="/login" element={<Login/>} />
+            <Route exact path="/login" element={<Suspense fallback=''><Login/></Suspense>} />
             <Route exact path="/signup" element={<Suspense fallback=''><Signup/></Suspense>} />
             <Route element={<ProtectedRoute/>}>
                 <Route path="/" element={<Suspense fallback=''><Home/></Suspense>}></Route>

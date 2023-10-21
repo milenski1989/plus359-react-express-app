@@ -4,6 +4,7 @@ import { blue } from '@mui/material/colors';
 import { useContext } from 'react';
 import { ImageContext } from './contexts/ImageContext';
 import './ThumbnailView.css'
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 const ThumbnailView = ({searchResults, multiSelectMode, handleThumbnailView, handleSelectedImageIndex}) => {
 
@@ -38,13 +39,19 @@ const ThumbnailView = ({searchResults, multiSelectMode, handleThumbnailView, han
                                             color: blue[400],
                                             '&.Mui-checked': {
                                                 color: blue[600],
-                                            }}}
+                                            },
+                                            zIndex: '9999'}}
                                     
                                     />
 
                     }
-                    <img
-                        className="img" src={art.image_url} onClick={() => {handleThumbnailView(false); handleImageClick(art.id)}} />
+                    <LazyLoadImage
+                        onClick={() => {handleThumbnailView(false); handleImageClick(art.id)}}
+                        src={art.image_url}
+                        effect="blur"
+                        width='100%'
+                        height="auto"
+                    />
                 </div>
             ))}
                             
