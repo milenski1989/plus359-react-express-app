@@ -30,27 +30,13 @@ this.initializeRoutes()
       }
     }
 
-    // searchAllByKeyword = async (req, res) => {
-
-    //   const {param} = req.body
-    //   const keywordsArray = param.split(" ");
-    //   console.log(param)
-
-    //   try {
-    //     const results = await ArtworksService.getInstance().searchAllsByKeywords(keywordsArray);
-    //     res.status(200).json(results);
-    //   } catch (error) {
-    //     console.error("Error searching by keywords:", error.message);
-    //     res.status(500).json({ error: "Internal server error" });
-    //   }
-    // };
-
     async searchAllByKeywords(req, res) {
       const { keywords } = req.body;
+      const {page, count, sortField, sortOrder} = req.query
   
       try {
-        const results = await ArtworksService.getInstance().searchByKeywords(keywords);
-        res.json({ results });
+        const [arts, artsCount] = await ArtworksService.getInstance().searchByKeywords(keywords, page, count, sortField, sortOrder);
+        res.json({ arts, artsCount });
       } catch (error) {
         console.error('Error:', error);
         res.status(404).json({ error: 'No results from the search!' });

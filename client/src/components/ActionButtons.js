@@ -70,7 +70,7 @@ function ActionButtons({art, handleMultiSelectMode, handleConfirmationDialog, se
 
     const updateEntry = async (id) => {
         const response = await axios.put(
-            `http://localhost:5000/artworks/artwork/${id}`,
+            `https://app.plus359gallery.com/artworks/artwork/${id}`,
             updatedEntry
         );
 

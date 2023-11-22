@@ -81,33 +81,8 @@ export default class ArtworksService {
         }
     }
 
-    // async searchAllByKeywords (params: string[]) {
-    //     console.log('PARAMS', params)
-    //   try {
-    //     const queryBuilder = await dbConnection
-    //     .createQueryBuilder().select("artworks")
-    //     .from(Artworks, "artworks")
 
-    //     // Loop through each keyword and add conditions for each column
-    //     params.forEach(keyword => {
-    //         queryBuilder.andWhere(
-    //             `artist = :keyword OR technique = :keyword OR title = :keyword`,
-    //             { keyword }
-    //         );
-    //     });
-
-    //     // Group by the artwork ID to ensure uniqueness
-    //     queryBuilder.groupBy("id");
-
-    //     const results = await queryBuilder.orderBy("id", "DESC").getMany();
-    //     return results;
-    // } catch (error) {
-    //     console.error("Fetch failed!", error);
-    //     throw new Error("Fetch failed!");
-    // }
-    //   }
-
-    async searchByKeywords(keywords: string[]): Promise<Artworks[]> {
+    async searchByKeywords(keywords: string[],  page: string, count: string, sortField?: string, sortOrder?: string) {
 
         const whereConditions = keywords.map(keyword =>
             `(CONCAT(artworks.artist, ' ', artworks.title, ' ', artworks.technique, ' ', artworks.notes, ' ', artworks.storageLocation, ' ', artworks.cell) LIKE ?)`
@@ -119,32 +94,26 @@ export default class ArtworksService {
             SELECT *
             FROM artworks
             WHERE ${whereConditions}
+            ORDER BY ${sortField} ${sortOrder.toUpperCase()}
+            LIMIT ? OFFSET ?
           `;
-        
-          const results = await dbConnection.query(query, whereParams);
-        const queryBuilder = dbConnection.createQueryBuilder().select("artworks")
-        .from(Artworks, "artworks")
-    
-    
-    //      // Create a WHERE clause with separate conditions for each keyword
-    // const whereConditions = keywords.map(keyword =>
-    //     `(CONCAT(artworks.artist, ' ', artworks.title, ' ', artworks.technique) LIKE :${keyword})`
-    //   ).join(' AND ');
-  
-    //   // Construct the final WHERE clause
-    //   const whereClause = `(${whereConditions})`;
-      
-  
-    //   // Build and execute the query
-    //   const results = await queryBuilder
-    //     .where(whereClause, keywords.reduce((params, keyword) => {
-    //       params[keyword] = `%${keyword}%`;
-    //       return params;
-    //     }, {}))
-    //     .getMany();
 
-  
-      return results;
+          const countQuery = `
+            SELECT COUNT(*) AS total
+            FROM artworks
+            WHERE ${whereConditions}
+          `;
+
+          const paginationParams = [parseInt(count), (parseInt(page) - 1) * parseInt(count)];
+          const finalParams = [...whereParams, ...paginationParams];
+
+          const countResult = await dbConnection.query(countQuery, whereParams);
+          const total = countResult[0].total;
+
+        
+          const results = await dbConnection.query(query, finalParams);
+
+      return [results, total];
       }
       
 

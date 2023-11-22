@@ -65,7 +65,7 @@ const Gallery = () => {
         try {
             setLoading(true);
             const response = await fetch(
-                `http://localhost:5000/artworks/${name.split(':')[1]}?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`,
+                `https://app.plus359gallery.com/artworks/${name.split(':')[1]}?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`,
             );
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -113,21 +113,6 @@ const Gallery = () => {
         }
     };
 
-    // const searchByKeyword = async () => {
-    //     setLoading(true);
-    //     const res = await fetch(`http://localhost:5000/artworks/artwork/${keyword}`);
-    //     const data = await res.json();
-
-    //     if (res.status === 200) {
-    //         setSearchResults(data);
-    //         setLoading(false);
-    //     } else {
-    //         setLoading(false);
-    //     }
-    // };
-
-    // Frontend
-
     const onChange = event => {
         if (!event.target.value) setSearchResults(results);
         const inputKeywords = event.target.value.split(' ');
@@ -137,52 +122,30 @@ const Gallery = () => {
     
     const searchByKeywords = async() => {
         if (!keywords.length) return
-        // Send keywords to the Express API
-        const res = await fetch('http://localhost:5000/artworks/artwork', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ keywords }),
-        })
 
-        const data = await res.json();
-
-        if (res.status === 200) {
-            setSearchResults(data.results);
+        try {
+            const res = await fetch(`https://app.plus359gallery.com/artworks/artwork?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ keywords }),
+            })
+    
+            const data = await res.json();
+            const { arts, artsCount } = data;
+            setResults(arts);
+            setSearchResults(arts);
+            setPagesCount(Math.ceil(artsCount / 25));
+            setTotalCount(artsCount);
             setLoading(false);
-        }  else {
+        } catch (error) {
+            setError({ error: true, message: error.message });
             setLoading(false);
         }
     };
-    // const searchByKeywords = async () => {
-    //     setLoading(true);
-    
-    //     try {
-    //         const res = await fetch(`http://localhost:5000/artworks/artwork/${encodeURIComponent(keywords)}`);
-    //         const data = await res.json();
-    
-    //         if (res.status === 200) {
-    //             setSearchResults(data);
-    //         } else {
-    //             console.error(`Error: ${res.status}`);
-    //         }
-    //     } catch (error) {
-    //         console.error('An error occurred while fetching data:', error);
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
 
-    // const onChange = (e) => {
-    //     const newKeyword = e.target.value.trim().toLowerCase();
-    //     const _tempArray = []
-    //     _tempArray.push(newKeyword)
-    //     setKeywords(_tempArray);
-    //     if (!e.target.value) setSearchResults(results);
-        
-    // };
-
+    console.log(searchResults, 'searchResults')
 
     const deleteOne = async (originalFilename, filename, id) => {
         setIsDeleting(true);
@@ -190,7 +153,7 @@ const Gallery = () => {
         const params = {originalFilename, filename, id}
 
         await axios.delete(
-            `http://localhost:5000/artworks/artwork/${params}`,
+            `https://app.plus359gallery.com/artworks/artwork/${params}`,
             { params }
         );
 
@@ -219,7 +182,7 @@ const Gallery = () => {
             ids.push(image.id)
         }
         const response = await axios.put(
-            `http://localhost:5000/storage/update-location`,
+            `https://app.plus359gallery.com/storage/update-location`,
             {ids, formControlData}
         );
         if (response.status === 200) {
