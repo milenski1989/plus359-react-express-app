@@ -58,7 +58,7 @@ const Gallery = () => {
     const [sortOrder, setSortOrder] = useState('desc')
 
     useEffect(() => {
-        fetchData();
+        keywords.length ? searchByKeywords() : fetchData()
     }, [page, sortField, sortOrder, isDeleting]);
 
     const fetchData = async () => {
