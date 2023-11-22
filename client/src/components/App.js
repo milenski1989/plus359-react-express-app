@@ -10,6 +10,31 @@ const Account = lazy(() => import('./Account'))
 const Signup = lazy(() => import('./Signup'))
 import ProtectedRoute from './ProtectedRoute'
 import { ImageProvider } from './contexts/ImageContext'
+import { ThemeProvider, createTheme } from '@mui/material'
+
+const theme = createTheme({
+    components: {
+        MuiButton: {
+            styleOverrides: {
+                root: {
+                    padding: '0.5rem 1.2rem',
+                    textTransform: 'capitalize',
+                    fontSize: '1rem',
+                },
+            },
+        },
+        MuiOutlinedInput: {
+            styleOverrides: {
+                notchedOutline: {
+                    borderColor: '#000000',
+                    '&.Mui-focused': {
+                        borderColor: '#007bff !important',
+                    },
+                },
+            },
+        },
+    },
+});
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -34,9 +59,13 @@ const router = createBrowserRouter(
 const App = () => {
 
     return <>
-        <ImageProvider>
-            <RouterProvider router={router} />
-        </ImageProvider>
+        <ThemeProvider theme={theme}>
+            <ImageProvider>
+          
+                <RouterProvider router={router} />
+           
+            </ImageProvider>
+        </ThemeProvider>
     </>
 }
 

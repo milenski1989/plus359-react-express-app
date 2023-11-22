@@ -31,7 +31,28 @@ const Sort = ({ sortField, handleSortField, sortOrder, handleSortOrder }) => {
                         <IconSortAsc className='sortIcon' /> }
                 </button>
             </div>
+
+            <div className='sortButtonAndIconContainer'>
+                <p>Sort by artist</p>
+                <button onClick={() => handleSortClick('artist')}>
+                    { sortField === 'artist' &&
+                     sortOrder === 'asc' ? 
+                        <IconSortDesc className='sortIcon' /> : 
+                        <IconSortAsc className='sortIcon' /> }
+                </button>
+            </div>
+            <div className='sortButtonAndIconContainer'>
+                <p>Sort by title</p>
+                <button onClick={() => handleSortClick('title')}>
+                    { sortField === 'title' &&
+                     sortOrder === 'asc' ? 
+                        <IconSortDesc className='sortIcon' /> : 
+                        <IconSortAsc className='sortIcon' /> }
+                </button>
+            </div>
         </div>
+
+        
     );
 };
 

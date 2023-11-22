@@ -9,7 +9,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const typeorm_1 = require("typeorm");
 const database_1 = require("../database");
 const Artworks_1 = require("../entities/Artworks");
 const S3Service_1 = require("./S3Service");
@@ -67,29 +66,56 @@ class ArtworksService {
             }
         });
     }
-    searchAllByKeyword(params) {
+    // async searchAllByKeywords (params: string[]) {
+    //     console.log('PARAMS', params)
+    //   try {
+    //     const queryBuilder = await dbConnection
+    //     .createQueryBuilder().select("artworks")
+    //     .from(Artworks, "artworks")
+    //     // Loop through each keyword and add conditions for each column
+    //     params.forEach(keyword => {
+    //         queryBuilder.andWhere(
+    //             `artist = :keyword OR technique = :keyword OR title = :keyword`,
+    //             { keyword }
+    //         );
+    //     });
+    //     // Group by the artwork ID to ensure uniqueness
+    //     queryBuilder.groupBy("id");
+    //     const results = await queryBuilder.orderBy("id", "DESC").getMany();
+    //     return results;
+    // } catch (error) {
+    //     console.error("Fetch failed!", error);
+    //     throw new Error("Fetch failed!");
+    // }
+    //   }
+    searchByKeywords(keywords) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const results = yield artsRepository.find({ where: [
-                        { artist: (0, typeorm_1.Like)(`%${params}%`) },
-                        { technique: (0, typeorm_1.Like)(`%${params}%`) },
-                        { title: (0, typeorm_1.Like)(`%${params}%`) },
-                        { storageLocation: (0, typeorm_1.Like)(`%${params}%`) },
-                        { dimensions: (0, typeorm_1.Like)(`%${params}%`) },
-                        { notes: (0, typeorm_1.Like)(`%${params}%`) }
-                    ],
-                    order: {
-                        id: "DESC",
-                    },
-                });
-                return results;
-            }
-            catch (_a) {
-                throw new Error("Fetch failed!");
-            }
+            const whereConditions = keywords.map(keyword => `(CONCAT(artworks.artist, ' ', artworks.title, ' ', artworks.technique, ' ', artworks.notes, ' ', artworks.storageLocation, ' ', artworks.cell) LIKE ?)`).join(' AND ');
+            const whereParams = keywords.map(keyword => `%${keyword}%`);
+            const query = `
+            SELECT *
+            FROM artworks
+            WHERE ${whereConditions}
+          `;
+            const results = yield database_1.dbConnection.query(query, whereParams);
+            const queryBuilder = database_1.dbConnection.createQueryBuilder().select("artworks")
+                .from(Artworks_1.Artworks, "artworks");
+            //      // Create a WHERE clause with separate conditions for each keyword
+            // const whereConditions = keywords.map(keyword =>
+            //     `(CONCAT(artworks.artist, ' ', artworks.title, ' ', artworks.technique) LIKE :${keyword})`
+            //   ).join(' AND ');
+            //   // Construct the final WHERE clause
+            //   const whereClause = `(${whereConditions})`;
+            //   // Build and execute the query
+            //   const results = await queryBuilder
+            //     .where(whereClause, keywords.reduce((params, keyword) => {
+            //       params[keyword] = `%${keyword}%`;
+            //       return params;
+            //     }, {}))
+            //     .getMany();
+            return results;
         });
     }
-    ;
     deleteFileFromS3AndDB(originalFilename, filename, id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {

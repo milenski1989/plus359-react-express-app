@@ -1,14 +1,25 @@
-import { CircularProgress} from "@mui/material"
+import { Alert, Box, Button, CircularProgress, Container, CssBaseline, Link, TextField } from "@mui/material"
 import { useState } from "react"
 import './App.css'
 import Message from "./Message"
 import { useNavigate } from "react-router-dom";
+import  './Login.css'
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import Typography from '@mui/material/Typography';
+import Avatar from '@mui/material/Avatar';
 
-// const linkStyle = {
-//     textDecoration: "none",
-//     color: "#6ec1e4",
-//     display: "inline"
-// };
+function Copyright(props) {
+    return (
+        <Typography variant="body2" color="text.secondary" align="center" {...props}>
+            {'Copyright © '}
+            <Link color="inherit" href="http://plus359gallery.com" style={{textDecoration: 'none', color: '#007bff'}}>
+          +359 Gallery
+            </Link>{' '}
+            {new Date().getFullYear()}
+            {'.'}
+        </Typography>
+    );
+}
 
 const Login = () => {
 
@@ -16,10 +27,16 @@ const Login = () => {
     const [password, setPassword] = useState('')
     const [loading, setLoading] = useState(false)
     const [loginError, setLoginError] = useState({error: false, message: ''})
+    const [emailError, setEmailError] = useState(false);
 
     let myStorage = window.localStorage
 
     let navigate = useNavigate();
+
+    const validateEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
 
 
     const handleLogin = async () => {
@@ -53,6 +70,11 @@ const Login = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault()
+        if (!validateEmail(email)) {
+            setEmailError(true);
+            return;
+        }
+
         setLoading(true)
         handleLogin()
     }
@@ -66,44 +88,63 @@ const Login = () => {
             { loading ? 
                 <CircularProgress className="loader" color="primary" /> 
                 : 
-                <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-                    <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-                        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Sign in</h2>
-                    </div>
+                <Container component="main" maxWidth="xs">
+                    <CssBaseline />
+                    <Box
+                        sx={{
+                            marginTop: 8,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+                            <LockOutlinedIcon />
+                        </Avatar>
+                        <Typography component="h1" variant="h5">
+                          Sign in
+                        </Typography>
+                        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+                            {loginError.error && <Alert severity="error">{loginError.message}</Alert>}
+                            <TextField
+                                fullWidth
+                                label="email@example.com"
+                                variant="outlined"
+                                margin="normal"
+                                value={email}
+                                onChange={(e) => {
+                                    setEmail(e.target.value);
+                                    setEmailError(false);
+                                }}
+                                required
+                                error={emailError}
+                                helperText={emailError ? 'Invalid email format' : ''}
+                            />
+                            <TextField
+                                fullWidth
+                                label="Password"
+                                type="password"
+                                variant="outlined"
+                                margin="normal"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                            />
+                            <Button
+                                sx={{mt: 2}}
+                                type="submit"
+                                variant="contained"
+                                fullWidth
+                                disabled={!email || !password || loading || emailError}
+                            >
+                                {loading ? <CircularProgress size={24} /> : 'Sign in'}
+                            </Button>
+                        </Box>
+                    </Box>
+                    <Copyright sx={{ mt: 8, mb: 4 }} />
+                </Container>
 
-                    <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                        <form className="space-y-6" onSubmit={handleSubmit}>
-                            <div>
-                                <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">*Email</label>
-                                <div className="mt-2">
-                                    <input onChange={(e) => setEmail(e.target.value)} id="email" name="email" type="email" autoComplete="email" required 
-                                        placeholder="example@email.com"
-                                        className="placeholder-shown:border-gray-500block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 invalid:border-pink-500 invalid:text-pink-600
-                                    focus:invalid:border-pink-500 focus:invalid:ring-pink-500 sm:text-sm sm:leading-6" />
-
-                                </div>
-                            </div>
-
-                            <div>
-                                <div className="flex items-center justify-between">
-                                    <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">*Password</label>
-                                    <div className="text-sm">
-                                        <a href="#" className="font-semibold text-main ">Forgot password?</a>
-                                    </div>
-                                </div>
-                                <div className="mt-2">
-                                    <input onChange={(e) => setPassword(e.target.value)} id="password" name="password" type="password" autoComplete="current-password" required
-                                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500   invalid:border-pink-500 invalid:text-pink-600
-                                    focus:invalid:border-pink-500 focus:invalid:ring-pink-500 sm:text-sm sm:leading-6"/>
-                                </div>
-                            </div>
-
-                            <div>
-                                <button type="submit" disabled={!email || !password} className={!email || !password ? "flex w-full justify-center rounded-md bg-white text-black px-3 py-1.5 text-sm leading-6 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" : "flex w-full justify-center rounded-md bg-main text-white px-3 py-1.5 text-sm leading-6 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"}>Sign in</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+               
             }
                 
             

@@ -13,7 +13,7 @@ this.initializeRoutes()
 
     private initializeRoutes() {
         this.router.get('/:name', this.getAllByStorage)
-        this.router.get('/artwork/:param', this.searchAllByKeyword)
+        this.router.post('/artwork', this.searchAllByKeywords)
         this.router.delete('/artwork/:params', this.deleteFileFromS3andDB)
         this.router.put('/artwork/:id', this.updateArtwork)
     }
@@ -30,17 +30,33 @@ this.initializeRoutes()
       }
     }
 
-    searchAllByKeyword = async (req, res) => {
-      const {param} = req.params
+    // searchAllByKeyword = async (req, res) => {
+
+    //   const {param} = req.body
+    //   const keywordsArray = param.split(" ");
+    //   console.log(param)
+
+    //   try {
+    //     const results = await ArtworksService.getInstance().searchAllsByKeywords(keywordsArray);
+    //     res.status(200).json(results);
+    //   } catch (error) {
+    //     console.error("Error searching by keywords:", error.message);
+    //     res.status(500).json({ error: "Internal server error" });
+    //   }
+    // };
+
+    async searchAllByKeywords(req, res) {
+      const { keywords } = req.body;
+  
       try {
-        const results = await ArtworksService.getInstance().searchAllByKeyword(param)
-        res.status(200).json(results);
-    
-      } catch {
-        throw new Error("No entries found");
-        
+        const results = await ArtworksService.getInstance().searchByKeywords(keywords);
+        res.json({ results });
+      } catch (error) {
+        console.error('Error:', error);
+        res.status(404).json({ error: 'No results from the search!' });
       }
     }
+    
 
     deleteFileFromS3andDB = async (req, res) => {
       const {originalFilename, filename, id} = req.query
