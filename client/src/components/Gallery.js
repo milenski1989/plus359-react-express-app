@@ -34,7 +34,7 @@ const Gallery = () => {
         error: false,
         message: "",
     });
-    const [results, setResults] = useState([]);
+
     const [isDeleting, setIsDeleting] = useState(false);
     const [isDeleteConfOpen, setIsDeleteConfOpen] = useState(false);
     const [searchResults, setSearchResults] = useState([]);
@@ -65,14 +65,13 @@ const Gallery = () => {
         try {
             setLoading(true);
             const response = await fetch(
-                `https://app.plus359gallery.com/artworks/${name.split(':')[1]}?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`,
+                `http://localhost:5000/artworks/${name.split(':')[1]}?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`,
             );
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
             const data = await response.json();
             const { arts, artsCount } = data;
-            setResults(arts);
             setSearchResults(arts);
             setPagesCount(Math.ceil(artsCount / 25));
             setTotalCount(artsCount);
@@ -114,17 +113,20 @@ const Gallery = () => {
     };
 
     const onChange = event => {
-        if (!event.target.value) setSearchResults(results);
+        if (!event.target.value) {
+            const res = fetchData()
+            setSearchResults(res);
+        }
         const inputKeywords = event.target.value.split(' ');
         setKeywords(inputKeywords);
        
     };
     
     const searchByKeywords = async() => {
-        if (!keywords.length) return
+        if (!keywords.length) return;
 
         try {
-            const res = await fetch(`https://app.plus359gallery.com/artworks/artwork?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`, {
+            const res = await fetch(`http://localhost:5000/artworks/artwork?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -134,7 +136,6 @@ const Gallery = () => {
     
             const data = await res.json();
             const { arts, artsCount } = data;
-            setResults(arts);
             setSearchResults(arts);
             setPagesCount(Math.ceil(artsCount / 25));
             setTotalCount(artsCount);
@@ -145,15 +146,13 @@ const Gallery = () => {
         }
     };
 
-    console.log(searchResults, 'searchResults')
-
     const deleteOne = async (originalFilename, filename, id) => {
         setIsDeleting(true);
 
         const params = {originalFilename, filename, id}
 
         await axios.delete(
-            `https://app.plus359gallery.com/artworks/artwork/${params}`,
+            `http://localhost:5000/artworks/artwork/${params}`,
             { params }
         );
 
@@ -182,7 +181,7 @@ const Gallery = () => {
             ids.push(image.id)
         }
         const response = await axios.put(
-            `https://app.plus359gallery.com/storage/update-location`,
+            `http://localhost:5000/storage/update-location`,
             {ids, formControlData}
         );
         if (response.status === 200) {

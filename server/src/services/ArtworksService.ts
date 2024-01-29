@@ -25,17 +25,30 @@ export default class ArtworksService {
 
     async getAllByStorage (name: string, page: string, count: string, sortField?: string, sortOrder?: string) {
         try {
-         const [arts, artsCount] = await artsRepository.findAndCount({
-           order: {[sortField] : sortOrder.toUpperCase()},
-           where:{storageLocation: name},
-        take: parseInt(count),
-        skip: (parseInt(count) * parseInt(page)) - parseInt(count)
-         })
-       
-         return [arts, artsCount]
+
+          if (name === 'All') {
+            const [arts, artsCount] = await artsRepository.findAndCount({
+              order: {[sortField] : sortOrder.toUpperCase()},
+           take: parseInt(count),
+           skip: (parseInt(count) * parseInt(page)) - parseInt(count)
+            })
+
+            return [arts, artsCount]
+
+          } else {
+            const [arts, artsCount] = await artsRepository.findAndCount({
+              order: {[sortField] : sortOrder.toUpperCase()},
+              where:{storageLocation: name},
+           take: parseInt(count),
+           skip: (parseInt(count) * parseInt(page)) - parseInt(count)
+            })
+   
+            return [arts, artsCount]
+            
+          }
+        
         } catch {
          throw new Error("Fetch failed!");
-         
         }
        };
 

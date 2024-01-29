@@ -63,7 +63,7 @@ class S3Service {
                             cb(null, { fieldName: file.fieldname });
                         },
                         transform: function (req, file, cb) {
-                            cb(null, (0, sharp_1.default)().resize(300, 300, { fit: 'inside' }).jpeg());
+                            cb(null, (0, sharp_1.default)().resize(500, 500, { fit: 'inside' }).jpeg());
                         },
                     },
                 ],

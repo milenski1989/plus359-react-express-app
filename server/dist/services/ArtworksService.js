@@ -25,13 +25,23 @@ class ArtworksService {
     getAllByStorage(name, page, count, sortField, sortOrder) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const [arts, artsCount] = yield artsRepository.findAndCount({
-                    order: { [sortField]: sortOrder.toUpperCase() },
-                    where: { storageLocation: name },
-                    take: parseInt(count),
-                    skip: (parseInt(count) * parseInt(page)) - parseInt(count)
-                });
-                return [arts, artsCount];
+                if (name === 'All') {
+                    const [arts, artsCount] = yield artsRepository.findAndCount({
+                        order: { [sortField]: sortOrder.toUpperCase() },
+                        take: parseInt(count),
+                        skip: (parseInt(count) * parseInt(page)) - parseInt(count)
+                    });
+                    return [arts, artsCount];
+                }
+                else {
+                    const [arts, artsCount] = yield artsRepository.findAndCount({
+                        order: { [sortField]: sortOrder.toUpperCase() },
+                        where: { storageLocation: name },
+                        take: parseInt(count),
+                        skip: (parseInt(count) * parseInt(page)) - parseInt(count)
+                    });
+                    return [arts, artsCount];
+                }
             }
             catch (_a) {
                 throw new Error("Fetch failed!");

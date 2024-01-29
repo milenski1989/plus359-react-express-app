@@ -138,7 +138,7 @@ export const findAvailablePositions = async (selectedCell, location = null) => {
     let newArray;
     let dropdownOptions
     const getArtsNumbers = async () => {
-        const res = await fetch(`https://app.plus359gallery.com/storage/${selectedCell}`)
+        const res = await fetch(`http://localhost:5000/storage/${selectedCell}`)
         const data = await res.json()
         return data
     };

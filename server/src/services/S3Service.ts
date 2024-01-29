@@ -53,7 +53,7 @@ export class S3Service {
               cb(null, { fieldName: file.fieldname });
             },
             transform: function (req, file, cb) {
-              cb(null, sharp().resize(300, 300, { fit: 'inside' }).jpeg());
+              cb(null, sharp().resize(500, 500, { fit: 'inside' }).jpeg());
             },
           },
         ],
