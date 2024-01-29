@@ -1,6 +1,6 @@
 
 
-import { Like } from "typeorm";
+import { In, Like } from "typeorm";
 import { dbConnection } from "../database";
 import { Artworks } from "../entities/Artworks";
 import { S3Service } from "./S3Service";
@@ -25,17 +25,30 @@ export default class ArtworksService {
 
     async getAllByStorage (name: string, page: string, count: string, sortField?: string, sortOrder?: string) {
         try {
-         const [arts, artsCount] = await artsRepository.findAndCount({
-           order: {[sortField] : sortOrder.toUpperCase()},
-           where:{storageLocation: name},
-        take: parseInt(count),
-        skip: (parseInt(count) * parseInt(page)) - parseInt(count)
-         })
-       
-         return [arts, artsCount]
+
+          if (name === 'All') {
+            const [arts, artsCount] = await artsRepository.findAndCount({
+              order: {[sortField] : sortOrder.toUpperCase()},
+           take: parseInt(count),
+           skip: (parseInt(count) * parseInt(page)) - parseInt(count)
+            })
+
+            return [arts, artsCount]
+
+          } else {
+            const [arts, artsCount] = await artsRepository.findAndCount({
+              order: {[sortField] : sortOrder.toUpperCase()},
+              where:{storageLocation: name},
+           take: parseInt(count),
+           skip: (parseInt(count) * parseInt(page)) - parseInt(count)
+            })
+   
+            return [arts, artsCount]
+            
+          }
+        
         } catch {
          throw new Error("Fetch failed!");
-         
         }
        };
 
@@ -81,28 +94,41 @@ export default class ArtworksService {
         }
     }
 
-    async searchAllByKeyword (params: string) {
-        try {
-         const results = await artsRepository.find(
-         { where: [
-          {artist:  Like(`%${params}%`)},
-          {technique: Like(`%${params}%`)},
-          {title: Like(`%${params}%`)},
-          {storageLocation: Like(`%${params}%`)},
-          {dimensions: Like(`%${params}%`)},
-          {notes: Like(`%${params}%`)}
-        ],
-        order: {
-          id: "DESC",
-      },
-      })
+
+    async searchByKeywords(keywords: string[],  page: string, count: string, sortField?: string, sortOrder?: string) {
+
+        const whereConditions = keywords.map(keyword =>
+            `(CONCAT(artworks.artist, ' ', artworks.title, ' ', artworks.technique, ' ', artworks.notes, ' ', artworks.storageLocation, ' ', artworks.cell) LIKE ?)`
+          ).join(' AND ');
         
-         return results
-        } catch {
-         throw new Error("Fetch failed!");
-         
-        }
-       };
+          const whereParams = keywords.map(keyword => `%${keyword}%`);
+        
+          const query = `
+            SELECT *
+            FROM artworks
+            WHERE ${whereConditions}
+            ORDER BY ${sortField} ${sortOrder.toUpperCase()}
+            LIMIT ? OFFSET ?
+          `;
+
+          const countQuery = `
+            SELECT COUNT(*) AS total
+            FROM artworks
+            WHERE ${whereConditions}
+          `;
+
+          const paginationParams = [parseInt(count), (parseInt(page) - 1) * parseInt(count)];
+          const finalParams = [...whereParams, ...paginationParams];
+
+          const countResult = await dbConnection.query(countQuery, whereParams);
+          const total = countResult[0].total;
+
+        
+          const results = await dbConnection.query(query, finalParams);
+
+      return [results, total];
+      }
+      
 
        async deleteFileFromS3AndDB (originalFilename, filename, id) {
         

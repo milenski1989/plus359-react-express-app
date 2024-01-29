@@ -13,7 +13,7 @@ this.initializeRoutes()
 
     private initializeRoutes() {
         this.router.get('/:name', this.getAllByStorage)
-        this.router.get('/artwork/:param', this.searchAllByKeyword)
+        this.router.post('/artwork', this.searchAllByKeywords)
         this.router.delete('/artwork/:params', this.deleteFileFromS3andDB)
         this.router.put('/artwork/:id', this.updateArtwork)
     }
@@ -30,17 +30,19 @@ this.initializeRoutes()
       }
     }
 
-    searchAllByKeyword = async (req, res) => {
-      const {param} = req.params
+    async searchAllByKeywords(req, res) {
+      const { keywords } = req.body;
+      const {page, count, sortField, sortOrder} = req.query
+  
       try {
-        const results = await ArtworksService.getInstance().searchAllByKeyword(param)
-        res.status(200).json(results);
-    
-      } catch {
-        throw new Error("No entries found");
-        
+        const [arts, artsCount] = await ArtworksService.getInstance().searchByKeywords(keywords, page, count, sortField, sortOrder);
+        res.json({ arts, artsCount });
+      } catch (error) {
+        console.error('Error:', error);
+        res.status(404).json({ error: 'No results from the search!' });
       }
     }
+    
 
     deleteFileFromS3andDB = async (req, res) => {
       const {originalFilename, filename, id} = req.query

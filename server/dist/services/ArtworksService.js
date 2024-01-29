@@ -9,7 +9,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const typeorm_1 = require("typeorm");
 const database_1 = require("../database");
 const Artworks_1 = require("../entities/Artworks");
 const S3Service_1 = require("./S3Service");
@@ -26,13 +25,23 @@ class ArtworksService {
     getAllByStorage(name, page, count, sortField, sortOrder) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const [arts, artsCount] = yield artsRepository.findAndCount({
-                    order: { [sortField]: sortOrder.toUpperCase() },
-                    where: { storageLocation: name },
-                    take: parseInt(count),
-                    skip: (parseInt(count) * parseInt(page)) - parseInt(count)
-                });
-                return [arts, artsCount];
+                if (name === 'All') {
+                    const [arts, artsCount] = yield artsRepository.findAndCount({
+                        order: { [sortField]: sortOrder.toUpperCase() },
+                        take: parseInt(count),
+                        skip: (parseInt(count) * parseInt(page)) - parseInt(count)
+                    });
+                    return [arts, artsCount];
+                }
+                else {
+                    const [arts, artsCount] = yield artsRepository.findAndCount({
+                        order: { [sortField]: sortOrder.toUpperCase() },
+                        where: { storageLocation: name },
+                        take: parseInt(count),
+                        skip: (parseInt(count) * parseInt(page)) - parseInt(count)
+                    });
+                    return [arts, artsCount];
+                }
             }
             catch (_a) {
                 throw new Error("Fetch failed!");
@@ -67,29 +76,30 @@ class ArtworksService {
             }
         });
     }
-    searchAllByKeyword(params) {
+    searchByKeywords(keywords, page, count, sortField, sortOrder) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const results = yield artsRepository.find({ where: [
-                        { artist: (0, typeorm_1.Like)(`%${params}%`) },
-                        { technique: (0, typeorm_1.Like)(`%${params}%`) },
-                        { title: (0, typeorm_1.Like)(`%${params}%`) },
-                        { storageLocation: (0, typeorm_1.Like)(`%${params}%`) },
-                        { dimensions: (0, typeorm_1.Like)(`%${params}%`) },
-                        { notes: (0, typeorm_1.Like)(`%${params}%`) }
-                    ],
-                    order: {
-                        id: "DESC",
-                    },
-                });
-                return results;
-            }
-            catch (_a) {
-                throw new Error("Fetch failed!");
-            }
+            const whereConditions = keywords.map(keyword => `(CONCAT(artworks.artist, ' ', artworks.title, ' ', artworks.technique, ' ', artworks.notes, ' ', artworks.storageLocation, ' ', artworks.cell) LIKE ?)`).join(' AND ');
+            const whereParams = keywords.map(keyword => `%${keyword}%`);
+            const query = `
+            SELECT *
+            FROM artworks
+            WHERE ${whereConditions}
+            ORDER BY ${sortField} ${sortOrder.toUpperCase()}
+            LIMIT ? OFFSET ?
+          `;
+            const countQuery = `
+            SELECT COUNT(*) AS total
+            FROM artworks
+            WHERE ${whereConditions}
+          `;
+            const paginationParams = [parseInt(count), (parseInt(page) - 1) * parseInt(count)];
+            const finalParams = [...whereParams, ...paginationParams];
+            const countResult = yield database_1.dbConnection.query(countQuery, whereParams);
+            const total = countResult[0].total;
+            const results = yield database_1.dbConnection.query(query, finalParams);
+            return [results, total];
         });
     }
-    ;
     deleteFileFromS3AndDB(originalFilename, filename, id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {

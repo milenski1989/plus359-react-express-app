@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import './Home.css'
 
 const storages = [
-    'Vasil Levski', 'Vasil Levski Folders', 'Charta', 'Lozenets',
+    'All', 'Vasil Levski', 'Vasil Levski Folders', 'Charta', 'Lozenets',
     'South Park', 'Vasil Levski Rooms', 'Collect', 'Other'
 ]
 

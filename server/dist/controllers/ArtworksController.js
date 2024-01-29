@@ -51,16 +51,6 @@ class ArtworksController {
                 res.status(400).json(error);
             }
         });
-        this.searchAllByKeyword = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const { param } = req.params;
-            try {
-                const results = yield ArtworksService_1.default.getInstance().searchAllByKeyword(param);
-                res.status(200).json(results);
-            }
-            catch (_a) {
-                throw new Error("No entries found");
-            }
-        });
         this.deleteFileFromS3andDB = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const { originalFilename, filename, id } = req.query;
             console.log(req.query);
@@ -88,9 +78,23 @@ class ArtworksController {
     }
     initializeRoutes() {
         this.router.get('/:name', this.getAllByStorage);
-        this.router.get('/artwork/:param', this.searchAllByKeyword);
+        this.router.post('/artwork', this.searchAllByKeywords);
         this.router.delete('/artwork/:params', this.deleteFileFromS3andDB);
         this.router.put('/artwork/:id', this.updateArtwork);
+    }
+    searchAllByKeywords(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { keywords } = req.body;
+            const { page, count, sortField, sortOrder } = req.query;
+            try {
+                const [arts, artsCount] = yield ArtworksService_1.default.getInstance().searchByKeywords(keywords, page, count, sortField, sortOrder);
+                res.json({ arts, artsCount });
+            }
+            catch (error) {
+                console.error('Error:', error);
+                res.status(404).json({ error: 'No results from the search!' });
+            }
+        });
     }
 }
 exports.ArtworksController = ArtworksController;

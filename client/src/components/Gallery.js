@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import "./Gallery.css";
 import "./App.css";
-import {CircularProgress, Pagination} from "@mui/material";
+import {Button, CircularProgress, Pagination} from "@mui/material";
 import axios from "axios";
 import Message from "./Message";
 import "react-lazy-load-image-component/src/effects/blur.css";
@@ -34,13 +34,13 @@ const Gallery = () => {
         error: false,
         message: "",
     });
-    const [results, setResults] = useState([]);
+
     const [isDeleting, setIsDeleting] = useState(false);
     const [isDeleteConfOpen, setIsDeleteConfOpen] = useState(false);
     const [searchResults, setSearchResults] = useState([]);
     const [deletedSuccessful, setDeleteSuccessful] = useState(false);
     const [page, setPage] = useState(1);
-    const [keyword, setKeyword] = useState("");
+    const [keywords, setKeywords] = useState([]);
     const [totalCount, setTotalCount] = useState(0);
     const [pagesCount, setPagesCount] = useState(0);
     const [thumbnailView, setThumbnailView] = useState(true)
@@ -58,7 +58,7 @@ const Gallery = () => {
     const [sortOrder, setSortOrder] = useState('desc')
 
     useEffect(() => {
-        fetchData();
+        keywords.length ? searchByKeywords() : fetchData()
     }, [page, sortField, sortOrder, isDeleting]);
 
     const fetchData = async () => {
@@ -72,7 +72,6 @@ const Gallery = () => {
             }
             const data = await response.json();
             const { arts, artsCount } = data;
-            setResults(arts);
             setSearchResults(arts);
             setPagesCount(Math.ceil(artsCount / 25));
             setTotalCount(artsCount);
@@ -109,26 +108,42 @@ const Gallery = () => {
     const triggerSearchWithEnter = (e) => {
         if (e.charCode === 13) {
             e.preventDefault();
-            searchByKeyword();
+            searchByKeywords();
         }
     };
 
-    const searchByKeyword = async () => {
-        setLoading(true);
-        const res = await fetch(`http://localhost:5000/artworks/artwork/${keyword}`);
-        const data = await res.json();
+    const onChange = event => {
+        if (!event.target.value) {
+            const res = fetchData()
+            setSearchResults(res);
+        }
+        const inputKeywords = event.target.value.split(' ');
+        setKeywords(inputKeywords);
+       
+    };
+    
+    const searchByKeywords = async() => {
+        if (!keywords.length) return;
 
-        if (res.status === 200) {
-            setSearchResults(data);
+        try {
+            const res = await fetch(`http://localhost:5000/artworks/artwork?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ keywords }),
+            })
+    
+            const data = await res.json();
+            const { arts, artsCount } = data;
+            setSearchResults(arts);
+            setPagesCount(Math.ceil(artsCount / 25));
+            setTotalCount(artsCount);
             setLoading(false);
-        } else {
+        } catch (error) {
+            setError({ error: true, message: error.message });
             setLoading(false);
         }
-    };
-
-    const onChange = (e) => {
-        setKeyword(e.target.value);
-        if (!e.target.value) setSearchResults(results);
     };
 
     const deleteOne = async (originalFilename, filename, id) => {
@@ -265,24 +280,43 @@ const Gallery = () => {
 
             <SearchBar
                 onChange={onChange}
-                searchByKeyword={searchByKeyword}
+                searchByKeyword={searchByKeywords}
                 triggerSearchWithEnter={triggerSearchWithEnter} />
             {loading || isDeleting ? (
                 <CircularProgress className="loader" color="primary" />
             ) : (
                 <>
                     <div className="flex max-sm:flex-col items-center justify-center mt-16 max-sm:mb-8 max-sm:mb-8">
-                        <button className='flex bg-main text-white rounded mr-4 max-sm:mr-0 max-sm:mb-3 max-sm:w-2/4 justify-center px-3 py-1.5 text-md leading-6 text-grey focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2'
-                            onClick={handleSelectImages}>Select images</button>
+                        <Button
+                            sx={{mr: 2}}  
+                            variant="outlined" 
+                            onClick={handleSelectImages}>
+                                Select images
+                        </Button>
                         {currentImages.length ?
-                            <><button className='flex bg-main text-white rounded mr-4 max-sm:mr-0 max-sm:mb-3 max-sm:w-2/4 justify-center px-3 py-1.5 text-md leading-6 text-grey focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2'
-                                onClick={() => navigate("/pdf")}>Create a certificate</button>
-                            <button className='flex bg-main text-white rounded mr-4 max-sm:mr-0 max-sm:mb-3 max-sm:w-2/4 justify-center px-3 py-1.5 text-md leading-6 text-grey focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2'
-                                onClick={prepareImagesForLocationChange}>Change Location</button>
-                            <button className='flex bg-main text-white rounded mr-4 max-sm:mr-0 max-sm:mb-3 max-sm:w-2/4 justify-center px-3 py-1.5 text-md leading-6 text-grey focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2'
-                                onClick={() => setIsDeleteConfOpen(true)}>Delete selected</button>
-                            <button className='flex bg-main text-white rounded mr-4 max-sm:mr-0 max-sm:w-2/4 justify-center px-3 py-1.5 text-md leading-6 text-grey focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2'
-                                onClick={() => { setMultiSelectMode(false); setCurrentImages([]); } }>Unselect all</button>
+                            <><Button 
+                                sx={{mr: 2}} 
+                                variant="outlined"
+                                onClick={() => navigate("/pdf")}>
+                                    Create a certificate
+                            </Button>
+                            <Button
+                                sx={{mr: 2}} 
+                                variant="outlined"
+                                onClick={prepareImagesForLocationChange}>
+                                    Change Location
+                            </Button>
+                            <Button
+                                sx={{mr: 2}} 
+                                variant="outlined"
+                                onClick={() => setIsDeleteConfOpen(true)}>
+                                    Delete selected
+                            </Button>
+                            <Button
+                                variant="outlined"
+                                onClick={() => { setMultiSelectMode(false); setCurrentImages([]); } }>
+                                    Unselect all
+                            </Button>
                             </> :
                             <></>}
 
@@ -309,7 +343,7 @@ const Gallery = () => {
                             handleMultiSelectMode={setMultiSelectMode}
                             multiSelectMode={multiSelectMode}
                             handleConfirmationDialog={setIsDeleteConfOpen}
-                            fetchData={fetchData} />}
+                            fetchData={searchByKeywords} />}
                     {!searchResults.length && <div className="flex flex-row justify-center content-center max-sm:ml-20 max-sm:mr-20">Nothing was found!</div>}
                 </>
             )}

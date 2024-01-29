@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./Upload.css";
-import {CircularProgress} from "@mui/material";
+import {Button, CircularProgress, TextField} from "@mui/material";
 import "./App.css";
 import Message from "./Message";
 import Navbar from "./Navbar";
@@ -121,7 +121,8 @@ const Upload = () => {
                             <div className="flex items-center justify-between">
                             </div>
                             <div className="mt-2">
-                                <input
+                                
+                                <TextField
                                     onChange={imageSelectHandler} 
                                     id="textField" type="file" 
                                     autoComplete="current-password" 
@@ -137,19 +138,18 @@ const Upload = () => {
                             return (
                                 <div key={key}>
                                     <div className="flex items-center justify-between">
-                                        <label htmlFor="textField" 
-                                            className="block text-sm font-medium leading-6 text-gray-900">{key === 'artist' || key === 'technique' || key === 'title' ? `*${key}` : key}
-                                        </label>
                                     </div>
                                     <div className="mt-1">
-                                        <input value={value} 
+                                        <TextField 
+                                            label={key}
+                                            value={value} 
+                                            fullWidth
                                             onChange={(event) =>
                                                 setInputsData((prevState) => ({
                                                     ...prevState,
                                                     [key]: event.target.value,
                                                 }))
-                                            } id="textField" name={key} type="text" autoComplete="current-password" required={key === 'artist' || key === 'technique' || key === 'title'}
-                                            className="placeholder-shown:border-gray-500block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 invalid:border-pink-500 invalid:text-pink-600 focus:invalid:border-pink-500 focus:invalid:ring-pink-500 sm:text-sm sm:leading-6"/>
+                                            } id="textField" name={key} required={key === 'artist' || key === 'technique' || key === 'title'}/>
                                     </div>
                                 </div>
                             )
@@ -162,7 +162,14 @@ const Upload = () => {
                         />
 
                         <div>
-                            <button type="submit" disabled={!file || !inputsData.artist || !inputsData.technique || !formControlData.storageLocation} className={!file || !inputsData.artist || !inputsData.technique || !formControlData.storageLocation ? "flex w-full justify-center rounded-md bg-white px-3 py-1.5 text-sm leading-6 text-grey shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2" : "flex w-full justify-center rounded-md bg-main px-3 py-1.5 text-sm leading-6 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"}>Upload</button>
+                            <Button 
+                                sx={{mt: 2}}
+                                type="submit"
+                                variant="contained"
+                                fullWidth 
+                                disabled={!file || !inputsData.artist || !inputsData.technique || !formControlData.storageLocation}>
+                                    Upload
+                            </Button>
                         </div>
                     </form>
                 </div>
