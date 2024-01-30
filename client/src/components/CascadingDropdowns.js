@@ -1,113 +1,104 @@
 /* eslint-disable no-unused-vars */
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
+
 import { ImageContext } from './contexts/ImageContext';
 import { locations, findAvailablePositions } from "./constants/constants";
+import { Box } from '@mui/material';
 
-function CascadingDropdowns({formControlData, setFormControlData, openInModal}) {
+function CascadingDropdowns({
+    setFormControlData, 
+    openInModal, 
+}) {
 
-    const {setUpdatedEntry, currentImages} = useContext(ImageContext)
+    const {setUpdatedEntry, isEditMode} = useContext(ImageContext)
 
     const [location, setLocation] = useState('--Location--')
-    const [cell, setCell] = useState('--Cell--')
     const [cells, setCells] = useState([])
-    const [position, setPosition] = useState('--Position--')
-    const [positions, setPositions] = useState([])
+    const [availablePositions, setAvailablePositions] = useState([])
 
-    const changeLocation = (event) => {
-        const {value} = event.target
-        if (value === '--Location--') return
-        setLocation(event.target.value)
-        setCells(locations.find(location => location.name === event.target.value).cells)
+
+    const changeLocation = (newValue) => {
+        setLocation(newValue)
+        setCells(locations.find(location => location.name === newValue).cells)
 
         setFormControlData((prevState) => ({
             ...prevState,
-            storageLocation: value,
+            storageLocation: newValue,
         })),
         setUpdatedEntry &&
         setUpdatedEntry((prevState) => ({
             ...prevState,
-            storageLocation: value
+            storageLocation: newValue
         }))
     }
 
-    const changeCell = async (event) => {
-        const {value} = event.target
-        if (value === '--Cell--') return
-        setCell(value)
+    const changeCell = async (newValue) => {
         if (!openInModal){
-            const availablePositions =  await findAvailablePositions(value, location).then(data => data)
-            setPositions(availablePositions)
+            const _availablePositions =  await findAvailablePositions(newValue, location).then(data => data)
+            setAvailablePositions(_availablePositions)
         }
         setFormControlData((prevState) => ({
             ...prevState,
-            cell: value,
+            cell: newValue,
         }));
 
         if (setUpdatedEntry) {
             setUpdatedEntry((prevState) => ({
                 ...prevState,
-                cell: value
+                cell: newValue
             }))
         }  
     }
 
-    const changePosition = (event) => {
-        const {value} = event.target
-        if (value === '--Position--') return
-        setPosition(value)
-
+    const changePosition = (newValue) => {
         setFormControlData((prevState) => ({
             ...prevState,
-            position: value,
+            position: newValue,
         }));
         
         if (setUpdatedEntry) {
             setUpdatedEntry((prevState) => ({
                 ...prevState,
-                position: value
+                position: newValue
             }))
         }  
     }
 
     return (
-        <div className="md:container md:mx-auto">
-            {/* Locations*/}   
-            <select
-                className='mt-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'
-                value={location}
-                onChange={changeLocation}>
-                <option>--Location--</option>
-                {locations.map(location => (
-                    <option key={location.name}>{location.name}</option>
-                ))}
-            </select>
-            
-            {/*Cells*/}
-            <select 
-                className='mt-6 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'
+        <Box>
+            <Autocomplete
+                disablePortal
+                options={locations.map(location => location.name)}
+                renderInput={(params) => <TextField {...params} label="Location" />} 
+                onChange={(event, newValue) => changeLocation(newValue)}
+                fullWidth
+                sx={{marginBottom: '1rem'}}
+            />
+          
+            <Autocomplete
+                disablePortal
                 disabled={location === 'Sold'}
-                value={cell} 
-                onChange={changeCell}>
-                <option>--Cell--</option>
-                {location !== 'Sold' && cells.map(cell => (
-                    <option key={cell.name}>{cell.name}</option>
-                ))}
-            </select>
+                options={cells.map(cell => cell.name)}
+                renderInput={(params) => <TextField {...params} label="Cell" />} 
+                onChange={(event, newValue) => changeCell(newValue)}
+                fullWidth
+                sx={{marginBottom: '1rem'}}
+            />
             
-            {/*Positions*/}
             {!openInModal &&
-               <select
-                   className='mt-6 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'
-                   disabled={location === 'Sold'}
-                   value={position}
-                   onChange={changePosition}>
-                   <option>--Position--</option>
-                   {positions.map(position => (
-                       <option key={position}>{position}</option>
-                   ))}
-               </select>
+                <Autocomplete
+                    disablePortal
+                    disabled={location === 'Sold'}
+                    options={availablePositions}
+                    renderInput={(params) => <TextField {...params} label="Position" />} 
+                    onChange={(event, newValue) => changePosition(newValue)}
+                    fullWidth
+                    sx={{marginBottom: '1rem'}}
+                />
             }
-        </div>
+        </Box>
     )
 }
 

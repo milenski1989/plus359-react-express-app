@@ -12,6 +12,7 @@ function EditableContainer({art}) {
         isEditMode,
     } = useContext(ImageContext);
 
+    // eslint-disable-next-line no-unused-vars
     const [formControlData, setFormControlData] = useState({
         storageLocation: "",
         cell: "",
@@ -85,7 +86,6 @@ function EditableContainer({art}) {
                 )}
                 {isEditMode && currentImages.length && currentImages[0].id === art.id ? (
                     <CascadingDropdowns
-                        formControlData={formControlData}
                         setFormControlData={setFormControlData} />
                 ) : (
                     <>

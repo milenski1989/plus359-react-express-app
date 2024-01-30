@@ -4,6 +4,7 @@ import { In, Like } from "typeorm";
 import { dbConnection } from "../database";
 import { Artworks } from "../entities/Artworks";
 import { S3Service } from "./S3Service";
+import ArtistsService from "./ArtistsService";
 
 const s3Client = new S3Service()
 
@@ -22,6 +23,24 @@ export default class ArtworksService {
 
         return ArtworksService.authenticationService
     }
+
+    async getAll () {
+      try {
+          return await artsRepository.find()
+      } catch {
+       throw new Error("Fetch failed!");
+      }
+     };
+
+     async getAllByArtist (artist: string) {
+      try {
+        return await artsRepository.find({
+          where:{artist: artist}
+        })
+    } catch {
+     throw new Error("Fetch failed!");
+    }
+     }
 
     async getAllByStorage (name: string, page: string, count: string, sortField?: string, sortOrder?: string) {
         try {

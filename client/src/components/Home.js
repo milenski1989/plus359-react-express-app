@@ -4,6 +4,7 @@ import './App.css'
 import Navbar from "./Navbar";
 import { useNavigate } from "react-router-dom";
 import './Home.css'
+import { Box } from '@mui/material';
 
 const storages = [
     'All', 'Vasil Levski', 'Vasil Levski Folders', 'Charta', 'Lozenets',
@@ -21,18 +22,25 @@ const Home = () => {
 
     return <>
         <Navbar/>
-        <div className="folders">
+        <Box 
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: "center",
+                justifyContent: "center",
+                marginTop: "6rem"
+            }}
+        >
             {storages.map(storage => (
-                <div 
+                <Box 
                     key={storage} 
-                    className="folder"
+                    sx={{color: "black", cursor: "pointer", fontSize: "18px", marginBottom: "1rem"}}
                     onClick={() => handleStorageSelect(storage)}
                 >
-                    <div className="title">{storage}</div>
-                </div>
+                    {storage}
+                </Box>
             ))}
-            
-        </div>
+        </Box>
     </>
 }
 

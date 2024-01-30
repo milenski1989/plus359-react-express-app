@@ -36,17 +36,17 @@ const Navbar = () => {
                 <div className={`${!isOpen && "max-sm:hidden"} w-full`} id="navbar-default">
                     <div className="font-medium flex flex-col justify-between max-sm:content-around p-4 md:p-0 mt-4 lg:flex-row md:space-x-8 md:mt-0 md:border-0">
                         <Link to='/' 
-                            className="block py-2 pl-3 pr-4 rounded text-white"
+                            className="block py-2 pl-3 pr-4 rounded text-[#40C8F4]"
                         >Home</Link>
                         <Link to='/upload'
-                            className="block py-2 pl-3 pr-4 rounded text-white"
+                            className="block py-2 pl-3 pr-4 rounded text-[#40C8F4]"
                         >Upload</Link>
                         <Link to='/account'
-                            className="block py-2 pl-3 pr-4 rounded text-white"
+                            className="block py-2 pl-3 pr-4 rounded text-[#40C8F4]"
                         >Account</Link>
                         <Link to='/login'
                             onClick={handleLogout}
-                            className="block py-2 pl-3 pr-4 rounded text-white"
+                            className="block py-2 pl-3 pr-4 rounded text-[#40C8F4]"
                         >Log Out</Link>
                     </div>
                 </div>

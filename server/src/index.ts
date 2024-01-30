@@ -12,6 +12,7 @@ import { S3Controller } from "./controllers/S3Controller"
 import { StorageController } from "./controllers/StorageController"
 import { PdfController } from "./controllers/PdfController"
 import { BiosController } from "./controllers/BiosController"
+import { ArtistsController } from "./controllers/ArtistsController"
 dotenv.config()
 
     const app = express()
@@ -37,6 +38,7 @@ dotenv.config()
     const storageController = new StorageController()
     const pdfController = new PdfController()
     const biosController = new BiosController()
+    const artistsController = new ArtistsController()
 
     app.use('/auth', authController.router);
     app.use('/artworks', artworksController.router)
@@ -44,6 +46,7 @@ dotenv.config()
     app.use('/storage', storageController.router)
     app.use('/pdf', pdfController.router)
     app.use('/bios', biosController.router)
+    app.use('/artists', artistsController.router)
     
     app.get('*', (req,res) =>{
       res.sendFile(path.join(__dirname+'/build/index.html'));

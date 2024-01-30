@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import "./Gallery.css";
 import "./App.css";
-import {Button, CircularProgress, Pagination} from "@mui/material";
+import {Autocomplete, Button, CircularProgress, Pagination, TextField} from "@mui/material";
 import axios from "axios";
 import Message from "./Message";
 import "react-lazy-load-image-component/src/effects/blur.css";
@@ -22,6 +22,7 @@ const Gallery = () => {
         currentImages,
         setCurrentImages,
         setUpdatedEntry,
+        isEditMode
     } = useContext(ImageContext);
     const myStorage = window.localStorage;
   
@@ -38,6 +39,8 @@ const Gallery = () => {
     const [isDeleting, setIsDeleting] = useState(false);
     const [isDeleteConfOpen, setIsDeleteConfOpen] = useState(false);
     const [searchResults, setSearchResults] = useState([]);
+    const [originalSearchResults, setOriginalSearchResults] = useState([]);
+    const [artists, setArtists] = useState([])
     const [deletedSuccessful, setDeleteSuccessful] = useState(false);
     const [page, setPage] = useState(1);
     const [keywords, setKeywords] = useState([]);
@@ -59,13 +62,18 @@ const Gallery = () => {
 
     useEffect(() => {
         keywords.length ? searchByKeywords() : fetchData()
-    }, [page, sortField, sortOrder, isDeleting]);
+    }, [page, sortField, sortOrder, isDeleting, isEditMode]);
+
+    useEffect(() => {
+        getArtists()
+    },[])
+    
 
     const fetchData = async () => {
         try {
             setLoading(true);
             const response = await fetch(
-                `http://localhost:5000/artworks/${name.split(':')[1]}?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`,
+                `https://app.plus359gallery.com/artworks/${name.split(':')[1]}?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`,
             );
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -73,6 +81,7 @@ const Gallery = () => {
             const data = await response.json();
             const { arts, artsCount } = data;
             setSearchResults(arts);
+            setOriginalSearchResults(arts)
             setPagesCount(Math.ceil(artsCount / 25));
             setTotalCount(artsCount);
             setLoading(false);
@@ -81,6 +90,12 @@ const Gallery = () => {
             setLoading(false);
         }
     };
+
+    const getArtists = async () => {
+        const res = await fetch('https://app.plus359gallery.com/artists/allFromArtworks')
+        const data = await res.json()
+        setArtists(data)
+    }
       
     useEffect(() => {
         if (currentImages.length) {
@@ -126,7 +141,7 @@ const Gallery = () => {
         if (!keywords.length) return;
 
         try {
-            const res = await fetch(`http://localhost:5000/artworks/artwork?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`, {
+            const res = await fetch(`https://app.plus359gallery.com/artworks/artwork?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -152,7 +167,7 @@ const Gallery = () => {
         const params = {originalFilename, filename, id}
 
         await axios.delete(
-            `http://localhost:5000/artworks/artwork/${params}`,
+            `https://app.plus359gallery.com/artworks/artwork/${params}`,
             { params }
         );
 
@@ -181,7 +196,7 @@ const Gallery = () => {
             ids.push(image.id)
         }
         const response = await axios.put(
-            `http://localhost:5000/storage/update-location`,
+            `https://app.plus359gallery.com/storage/update-location`,
             {ids, formControlData}
         );
         if (response.status === 200) {
@@ -228,6 +243,17 @@ const Gallery = () => {
         
     }
 
+    const filterByArtist = async (event, artist) => {
+        if (!artist && artist !== "-") {
+            setSearchResults(originalSearchResults);
+        } else {
+            const res = await fetch(`https://app.plus359gallery.com/artworks/artworksByArtist/${artist}`)
+            const data = await res.json()
+            setSearchResults(data.artworks);
+        }
+        setPage(1);
+    };
+
     return (
         <><Navbar /><div className="gallery">
             <Message
@@ -272,7 +298,6 @@ const Gallery = () => {
                     handleClickNo={() => { setOpenModal(false), setCurrentImages([]), setMultiSelectMode(false); } }
                 >
                     <CascadingDropdowns
-                        formControlData={formControlData}
                         setFormControlData={setFormControlData}
                         openInModal={openModal} />
 
@@ -282,6 +307,19 @@ const Gallery = () => {
                 onChange={onChange}
                 searchByKeyword={searchByKeywords}
                 triggerSearchWithEnter={triggerSearchWithEnter} />
+            <Autocomplete
+                disablePortal
+                options={artists}
+                renderInput={(params) => <TextField {...params} label="Filter by an artist" />}
+                onChange={(event, newValue) => filterByArtist(event, newValue)}
+                sx={{
+                    marginTop: "1rem",
+                    width: "100%",
+                    '@media (min-width:600px)': {
+                        width: "300px"
+                    }
+                }}
+            />
             {loading || isDeleting ? (
                 <CircularProgress className="loader" color="primary" />
             ) : (
@@ -348,7 +386,7 @@ const Gallery = () => {
                 </>
             )}
 
-            {searchResults.length && !loading ? (
+            {searchResults.length && !loading? (
                 <Pagination
                     count={pagesCount && pagesCount}
                     page={page}

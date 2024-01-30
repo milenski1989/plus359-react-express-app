@@ -16,9 +16,6 @@ export const locations = [
             {name: "3-3"},
             {name: "3-4"},
         ],
-        children: [
-
-        ]
     },
     {
         name: "Charta",
@@ -28,9 +25,6 @@ export const locations = [
             {name: "charta3"},
             {name: "charta4"},
         ],
-        children: [
-            
-        ]
     },
     {
         name: "Lozenets",
@@ -40,9 +34,6 @@ export const locations = [
             {name: "lozenets3"},
             {name: "lozenets4"},
         ],
-        children: [
-            
-        ]
     },
     {
         name: "Collect",
@@ -52,9 +43,6 @@ export const locations = [
             {name: "collect3"},
             {name: "collect4"},
         ],
-        children: [
-            
-        ]
     },
     {
         name: "South Park",
@@ -64,9 +52,6 @@ export const locations = [
             {name: "South Park3"},
             {name: "South Park4"},
         ],
-        children: [
-            
-        ]
     },
     {
         name: "Vasil Levski Rooms",
@@ -78,9 +63,6 @@ export const locations = [
             {name: "Books Room"},
             {name: "Foreign Artists Room"}
         ],
-        children: [
-            
-        ]
     },
     {
         name: "Vasil Levski Folders",
@@ -106,9 +88,6 @@ export const locations = [
             {name: "19"},
             {name: "20"},
         ],
-        children: [
-            
-        ]
     },
     {
         name: "Other",
@@ -120,15 +99,9 @@ export const locations = [
             {name: "other5"},
             {name: "other6"},
         ],
-        children: [
-            
-        ]
     },
     {
         name: "Sold",
-        children: [
-            
-        ]
     }
     
 ]
@@ -138,7 +111,7 @@ export const findAvailablePositions = async (selectedCell, location = null) => {
     let newArray;
     let dropdownOptions
     const getArtsNumbers = async () => {
-        const res = await fetch(`http://localhost:5000/storage/${selectedCell}`)
+        const res = await fetch(`https://app.plus359gallery.com/storage/${selectedCell}`)
         const data = await res.json()
         return data
     };

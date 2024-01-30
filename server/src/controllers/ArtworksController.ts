@@ -12,10 +12,22 @@ this.initializeRoutes()
     }
 
     private initializeRoutes() {
+        this.router.get('/artworksByArtist/:artist', this.getAllByArtist)
         this.router.get('/:name', this.getAllByStorage)
         this.router.post('/artwork', this.searchAllByKeywords)
         this.router.delete('/artwork/:params', this.deleteFileFromS3andDB)
         this.router.put('/artwork/:id', this.updateArtwork)
+    }
+
+    getAllByArtist = async (req, res) => {
+      const {artist} = req.params
+      try {
+       const artworks = await ArtworksService.getInstance().getAllByArtist(artist)
+    
+       res.status(200).json({artworks});
+      } catch (error) {
+        res.status(400).json(error);
+      }
     }
 
     getAllByStorage = async (req, res) => {
@@ -46,7 +58,7 @@ this.initializeRoutes()
 
     deleteFileFromS3andDB = async (req, res) => {
       const {originalFilename, filename, id} = req.query
-      console.log(req.query)
+      
       try {
         const results = await ArtworksService.getInstance().deleteFileFromS3AndDB(originalFilename, filename, id)
         res.send(results)
