@@ -40,6 +40,16 @@ const express = __importStar(require("express"));
 const ArtworksService_1 = __importDefault(require("../services/ArtworksService"));
 class ArtworksController {
     constructor() {
+        this.getAllByArtist = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { artist } = req.params;
+            try {
+                const artworks = yield ArtworksService_1.default.getInstance().getAllByArtist(artist);
+                res.status(200).json({ artworks });
+            }
+            catch (error) {
+                res.status(400).json(error);
+            }
+        });
         this.getAllByStorage = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const { page, count, sortField, sortOrder } = req.query;
             const { name } = req.params;
@@ -53,7 +63,6 @@ class ArtworksController {
         });
         this.deleteFileFromS3andDB = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const { originalFilename, filename, id } = req.query;
-            console.log(req.query);
             try {
                 const results = yield ArtworksService_1.default.getInstance().deleteFileFromS3AndDB(originalFilename, filename, id);
                 res.send(results);
@@ -77,6 +86,7 @@ class ArtworksController {
         this.initializeRoutes();
     }
     initializeRoutes() {
+        this.router.get('/artworksByArtist/:artist', this.getAllByArtist);
         this.router.get('/:name', this.getAllByStorage);
         this.router.post('/artwork', this.searchAllByKeywords);
         this.router.delete('/artwork/:params', this.deleteFileFromS3andDB);

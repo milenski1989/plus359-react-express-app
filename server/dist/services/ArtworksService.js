@@ -22,6 +22,43 @@ class ArtworksService {
         }
         return ArtworksService.authenticationService;
     }
+    getOneById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield artsRepository.findOne({
+                    where: {
+                        id: id
+                    }
+                });
+            }
+            catch (_a) {
+                throw new Error("Fetch failed!");
+            }
+        });
+    }
+    getAll() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield artsRepository.find();
+            }
+            catch (_a) {
+                throw new Error("Fetch failed!");
+            }
+        });
+    }
+    ;
+    getAllByArtist(artist) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield artsRepository.find({
+                    where: { artist: artist }
+                });
+            }
+            catch (_a) {
+                throw new Error("Fetch failed!");
+            }
+        });
+    }
     getAllByStorage(name, page, count, sortField, sortOrder) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -72,7 +109,23 @@ class ArtworksService {
                 return savedArtwork;
             }
             catch (error) {
-                throw new Error("Error saving artwork into the database");
+                throw new Error("Error saving artwork into the database!");
+            }
+        });
+    }
+    updateImageData(old_download_key, old_image_key, id, image_url, image_key, download_url, download_key) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                yield s3Client.deleteFile(old_download_key, old_image_key);
+                yield database_1.dbConnection
+                    .createQueryBuilder()
+                    .update(Artworks_1.Artworks)
+                    .set({ image_url, image_key, download_url, download_key })
+                    .where("id = :id", { id: id })
+                    .execute();
+            }
+            catch (_a) {
+                throw new Error("Error updating image data in database!");
             }
         });
     }
@@ -80,10 +133,11 @@ class ArtworksService {
         return __awaiter(this, void 0, void 0, function* () {
             const whereConditions = keywords.map(keyword => `(CONCAT(artworks.artist, ' ', artworks.title, ' ', artworks.technique, ' ', artworks.notes, ' ', artworks.storageLocation, ' ', artworks.cell) LIKE ?)`).join(' AND ');
             const whereParams = keywords.map(keyword => `%${keyword}%`);
+            const additionalCondition = `AND artworks.storageLocation NOT IN ('Sold')`;
             const query = `
             SELECT *
             FROM artworks
-            WHERE ${whereConditions}
+            WHERE ${whereConditions} ${additionalCondition}
             ORDER BY ${sortField} ${sortOrder.toUpperCase()}
             LIMIT ? OFFSET ?
           `;

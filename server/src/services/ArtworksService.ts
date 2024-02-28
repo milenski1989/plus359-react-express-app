@@ -4,6 +4,7 @@ import { In, Like } from "typeorm";
 import { dbConnection } from "../database";
 import { Artworks } from "../entities/Artworks";
 import { S3Service } from "./S3Service";
+import ArtistsService from "./ArtistsService";
 
 const s3Client = new S3Service()
 
@@ -22,6 +23,36 @@ export default class ArtworksService {
 
         return ArtworksService.authenticationService
     }
+
+    async getOneById (id) {
+      try {
+        return await artsRepository.findOne({
+          where: {
+            id: id
+          }
+        })
+      } catch {
+        throw new Error("Fetch failed!");
+      }
+    }
+
+    async getAll () {
+      try {
+          return await artsRepository.find()
+      } catch {
+       throw new Error("Fetch failed!");
+      }
+     };
+
+     async getAllByArtist (artist: string) {
+      try {
+        return await artsRepository.find({
+          where:{artist: artist}
+        })
+    } catch {
+     throw new Error("Fetch failed!");
+    }
+     }
 
     async getAllByStorage (name: string, page: string, count: string, sortField?: string, sortOrder?: string) {
         try {
@@ -90,8 +121,25 @@ export default class ArtworksService {
 
             return savedArtwork;
         } catch (error) {
-            throw new Error("Error saving artwork into the database");
+            throw new Error("Error saving artwork into the database!");
         }
+    }
+
+     async updateImageData (old_download_key, old_image_key, id, image_url, image_key, download_url, download_key) {
+      try {
+
+        await s3Client.deleteFile(old_download_key, old_image_key)
+        
+        await dbConnection
+        .createQueryBuilder()
+        .update(Artworks)
+        .set({image_url, image_key, download_url, download_key})
+        .where("id = :id", { id: id })
+        .execute()
+
+      } catch {
+        throw new Error("Error updating image data in database!");
+      }
     }
 
 
@@ -102,11 +150,12 @@ export default class ArtworksService {
           ).join(' AND ');
         
           const whereParams = keywords.map(keyword => `%${keyword}%`);
+          const additionalCondition = `AND artworks.storageLocation NOT IN ('Sold')`
         
           const query = `
             SELECT *
             FROM artworks
-            WHERE ${whereConditions}
+            WHERE ${whereConditions} ${additionalCondition}
             ORDER BY ${sortField} ${sortOrder.toUpperCase()}
             LIMIT ? OFFSET ?
           `;
@@ -128,8 +177,7 @@ export default class ArtworksService {
 
       return [results, total];
       }
-      
-
+    
        async deleteFileFromS3AndDB (originalFilename, filename, id) {
         
         try {

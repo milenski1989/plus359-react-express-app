@@ -1,0 +1,37 @@
+.editable {
+    display: block;
+  }
+   .columnCount {
+    column-count: 3;
+    column-gap: 10px;
+   }
+  
+   .mainImageInfoContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0.5rem;
+   }
+  
+   .gallery {
+    margin-left: 2rem;
+    margin-right: 2rem;
+   }
+  
+   .search-actions-container {
+    display: flex;
+    align-items: center;
+    margin-top: 4rem;
+    margin-bottom: 4rem;
+   }
+  
+   .main-actions-pdf-location-container {
+    display: flex;
+    margin-right: auto;
+   }
+  
+   .view-mode-icons-container {
+    display: flex;
+    margin-left: 1.2rem;
+  
+   }

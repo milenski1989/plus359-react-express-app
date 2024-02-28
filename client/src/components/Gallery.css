@@ -17,3 +17,21 @@
   margin-left: 2rem;
   margin-right: 2rem;
  }
+
+ .search-actions-container {
+  display: flex;
+  align-items: center;
+  margin-top: 4rem;
+  margin-bottom: 4rem;
+ }
+
+ .main-actions-pdf-location-container {
+  display: flex;
+  margin-right: auto;
+ }
+
+ .view-mode-icons-container {
+  display: flex;
+  margin-left: 1.2rem;
+
+ }

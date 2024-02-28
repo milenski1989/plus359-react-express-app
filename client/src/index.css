@@ -5,5 +5,8 @@
 
 body {
     font-family: 'Open Sans';
-    background-color: #F7F9FA !important;
+}
+
+.rotate-class {
+    transform: rotate(90deg);
 }

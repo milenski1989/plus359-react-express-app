@@ -1,21 +1,17 @@
 
 import { Checkbox } from '@mui/material';
-import { blue } from '@mui/material/colors';
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { useContext } from 'react';
 import { ImageContext } from './contexts/ImageContext';
 import './ThumbnailView.css'
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 
-const ThumbnailView = ({searchResults, multiSelectMode, handleThumbnailView, handleSelectedImageIndex}) => {
+const ThumbnailView = ({searchResults}) => {
 
     const {
         setCurrentImages,
     } = useContext(ImageContext);
-
-    const handleImageClick = (id) => {
-        const index = searchResults.findIndex(art => art.id === id)
-        handleSelectedImageIndex(index)
-    }
 
     const checkBoxHandler = (e, id) => {
         const index = searchResults.findIndex(art => art.id === id)
@@ -32,21 +28,20 @@ const ThumbnailView = ({searchResults, multiSelectMode, handleThumbnailView, han
             {searchResults.map((art, id) => (
                 <div
                     key={id}>
-                    {multiSelectMode &&
-                                    <Checkbox
-                                        style={{position: "absolute"}} onChange={(e) => checkBoxHandler(e,art.id)} 
-                                        sx={{
-                                            color: blue[400],
-                                            '&.Mui-checked': {
-                                                color: blue[600],
-                                            },
-                                            zIndex: '9999'}}
-                                    
-                                    />
-
-                    }
+                    <Checkbox
+                        onChange={(e) => checkBoxHandler(e, art.id)}
+                        sx={{
+                            position: "absolute",
+                            zIndex: '9999',
+                            color: "white",
+                            "&.Mui-checked": {
+                                color: "white",
+                            },
+                        }}
+                        icon={<RadioButtonUncheckedIcon />}
+                        checkedIcon={<CheckCircleOutlineIcon />}
+                    />
                     <LazyLoadImage
-                        onClick={() => {handleThumbnailView(false); handleImageClick(art.id)}}
                         src={art.image_url}
                         effect="blur"
                         width='100%'

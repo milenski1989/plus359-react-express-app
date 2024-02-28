@@ -2,4 +2,39 @@
 
 .navbar {
     font-family: 'Montserrat';
+    background-color: black;
+ 
+}
+
+.navbar-elements-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 1rem;
+}
+
+.logo {
+    width: 5rem;
+    margin-right: 1rem;
+}
+
+.current-location {
+    color: white;
+    margin-left: 1rem;
+    font-size: 20px;
+}
+
+.nav-link {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 0.75rem;
+    padding-right: 1rem;
+    color: #40C8F4;
+    font-size: 18px;
+}
+
+.right-side {
+    display: flex;
+    margin-left: auto;
+   
 }

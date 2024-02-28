@@ -10,6 +10,11 @@ main {
   margin: 2rem;
 }
 
+.center {
+  margin: auto;
+  width: 50%;
+}
+
 @keyframes spinner {
     0% {
       transform: rotate(0deg);
@@ -33,19 +38,4 @@ main {
   margin-top: 1rem;
   text-align: center;
  }
-
- .sortButtonsContainer {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 1rem;
-}
-
-.sortButtonAndIconContainer {
-  display: flex;
-  flex-direction: row;
-}
-
-.sortIcon {
-  margin-left: 1rem;
-}
 

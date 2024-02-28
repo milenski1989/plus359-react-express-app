@@ -1,3 +1,30 @@
+export const generateBackGroundColor = (cell) => {
+    if (cell === "1-1" || cell === "charta1" || cell === "lozenets1" || cell === "other1" || cell === "collect1" || cell === "South Park1" || cell ==="Office Room") {
+        return "#EAC435"
+    } else if (cell === "1-2" || cell === "charta2" || cell === "lozenets2" || cell === "other2" || cell === "collect2" || cell === "South Park2" || cell === "Old Artists Room") {
+        return "#345995"
+    } else if (cell === "1-3" || cell === "charta3" || cell === "lozenets3" || cell === "other3" || cell === "collect3" || cell === "South Park3" || cell === "Modern Art") {
+        return "#E40066"
+    } else if (cell === "1-4" || cell === "charta4" || cell === "lozenets4" || cell === "other4" || cell === "collect4" || cell === "South Park4" || cell === "Carpet Room") {
+        return "#03CEA4"
+    } else if (cell === "2-1" || cell === "other5" || cell === "Books Room") {
+        return "#FB4D3D"
+    } else if (cell === "2-2" || cell === "other6" || cell === "Black Room") {
+        return "#84DCC6"
+    } else if (cell === "2-3" || cell === "Foyer") {
+        return "#A5FFD6"
+    } else if (cell === "2-4") {
+        return "#C98CA7"
+    } else if (cell === "3-1") {
+        return "#E8FCC2"
+    } else if (cell === "3-2") {
+        return "#D63230"
+    } else if (cell === "3-3") {
+        return "#CFD186"
+    } else if (cell === "3-4") {
+        return "#8B5FBF"
+    }  
+}
 
 export const locations = [
     {
@@ -16,9 +43,6 @@ export const locations = [
             {name: "3-3"},
             {name: "3-4"},
         ],
-        children: [
-
-        ]
     },
     {
         name: "Charta",
@@ -28,9 +52,6 @@ export const locations = [
             {name: "charta3"},
             {name: "charta4"},
         ],
-        children: [
-            
-        ]
     },
     {
         name: "Lozenets",
@@ -40,9 +61,6 @@ export const locations = [
             {name: "lozenets3"},
             {name: "lozenets4"},
         ],
-        children: [
-            
-        ]
     },
     {
         name: "Collect",
@@ -52,9 +70,6 @@ export const locations = [
             {name: "collect3"},
             {name: "collect4"},
         ],
-        children: [
-            
-        ]
     },
     {
         name: "South Park",
@@ -64,23 +79,18 @@ export const locations = [
             {name: "South Park3"},
             {name: "South Park4"},
         ],
-        children: [
-            
-        ]
     },
     {
         name: "Vasil Levski Rooms",
         cells: [
+            {name: "Foyer"},
             {name: "Office Room"},
             {name: "Old Artists Room"},
             {name: "Modern Art"},
             {name: "Carpet Room"},
             {name: "Books Room"},
-            {name: "Foreign Artists Room"}
+            {name: "Black Room"}
         ],
-        children: [
-            
-        ]
     },
     {
         name: "Vasil Levski Folders",
@@ -106,9 +116,6 @@ export const locations = [
             {name: "19"},
             {name: "20"},
         ],
-        children: [
-            
-        ]
     },
     {
         name: "Other",
@@ -120,15 +127,9 @@ export const locations = [
             {name: "other5"},
             {name: "other6"},
         ],
-        children: [
-            
-        ]
     },
     {
         name: "Sold",
-        children: [
-            
-        ]
     }
     
 ]
@@ -169,8 +170,12 @@ export const findAvailablePositions = async (selectedCell, location = null) => {
         i = 201
         newArray = Array.from(Array(50), () => i++)
         dropdownOptions = newArray.filter(post => storageEntries.every(pos => {return post !== pos.position} ))   
-    } else if (selectedCell === "2-2"  || selectedCell === "other6" || selectedCell === "Foreign Artist Room") {
+    } else if (selectedCell === "2-2"  || selectedCell === "other6" || selectedCell === "Black Room") {
         i = 251
+        newArray = Array.from(Array(50), () => i++)
+        dropdownOptions = newArray.filter(post => storageEntries.every(pos => {return post !== pos.position} ))   
+    } else if (selectedCell === "Foyer") {
+        i = 700
         newArray = Array.from(Array(50), () => i++)
         dropdownOptions = newArray.filter(post => storageEntries.every(pos => {return post !== pos.position} ))   
     } else if (selectedCell === "2-3") {
