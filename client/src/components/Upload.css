@@ -1,25 +1,4 @@
-.flexContainer {
-    display: flex;
-    flex-direction: column;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 4rem;
-    margin-bottom: 4rem;
-    width: 40vw;
-}
-
-.upload-container {
-  margin-top: 4rem;
-  margin-bottom: 3rem;
-}
-
-@media screen and (max-width: 400px) {
-    .upload-container {
-        width: 60vw;
-    }
-  }
-
-  input {
+input {
     appearance: none;
     font: 1.25rem / 1.5 sans-serif;
     display: block;

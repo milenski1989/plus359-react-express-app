@@ -106,7 +106,7 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, page, sortField, s
 
     const updateEntry = async (id) => {
         const response = await axios.put(
-            `http://localhost:5000/artworks/artwork/${id}`,
+            `https://app.plus359gallery.com/artworks/artwork/${id}`,
             updatedEntry
         );
 
@@ -135,7 +135,7 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, page, sortField, s
             data.append("old_image_key", art.id === updatedEntry.id && art.image_key)
             data.append("old_download_key", art.id === updatedEntry.id && art.download_key)
     
-            const res = await axios.post("http://localhost:5000/s3/replace", data, {
+            const res = await axios.post("https://app.plus359gallery.com/s3/replace", data, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },

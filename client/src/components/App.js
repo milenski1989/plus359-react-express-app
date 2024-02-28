@@ -9,37 +9,38 @@ const Account = lazy(() => import('./Account'))
 const Signup = lazy(() => import('./Signup'))
 import ProtectedRoute from './ProtectedRoute'
 import { ImageProvider } from './contexts/ImageContext'
-import { ThemeProvider, createTheme } from '@mui/material'
+//import { ThemeProvider, createTheme } from '@mui/material'
 import NewGalleryContent from './refactored components/NewGalleryContent'
 
-const theme = createTheme({
-    components: {
-        MuiButton: {
-            styleOverrides: {
-                root: {
-                    padding: '0.5rem 1.2rem',
-                    textTransform: 'capitalize',
-                    fontSize: '1rem',
-                },
-            },
-        },
-        MuiOutlinedInput: {
-            styleOverrides: {
-                root: {
-                    '@media (max-width: 400px)': {
-                        width: '80%'
-                    }
-                },
-                notchedOutline: {
-                    borderColor: '#000000',
-                    '&.Mui-focused': {
-                        borderColor: '#007bff !important',
-                    },
-                },
-            },
-        },
-    },
-});
+// const theme = createTheme({
+//     components: {
+//         MuiButton: {
+//             styleOverrides: {
+//                 root: {
+//                     padding: '0.5rem 1.2rem',
+//                     textTransform: 'capitalize',
+//                     fontSize: '1rem',
+//                 },
+//             },
+//         },
+//         MuiOutlinedInput: {
+//             styleOverrides: {
+//                 root: {
+//                     width: '100vw',
+//                     '@media (max-width: 400px)': {
+//                         width: '80vw'
+//                     }
+//                 },
+//                 notchedOutline: {
+//                     borderColor: '#000000',
+//                     '&.Mui-focused': {
+//                         borderColor: '#007bff !important',
+//                     },
+//                 },
+//             },
+//         },
+//     },
+// });
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -63,11 +64,11 @@ const router = createBrowserRouter(
 const App = () => {
 
     return <>
-        <ThemeProvider theme={theme}>
-            <ImageProvider>
-                <RouterProvider router={router} />
-            </ImageProvider>
-        </ThemeProvider>
+        
+        <ImageProvider>
+            <RouterProvider router={router} />
+        </ImageProvider>
+        
     </>
 }
 

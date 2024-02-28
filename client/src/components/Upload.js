@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./Upload.css";
-import {Autocomplete, Button, CircularProgress, TextField} from "@mui/material";
+import {Autocomplete, Box, Button, CircularProgress, TextField} from "@mui/material";
 import "./App.css";
 import Message from "./Message";
 import Navbar from "./Navbar";
@@ -42,7 +42,7 @@ const Upload = () => {
     const [isArtistFromDropdown, setIsArtistFromDropDown] = useState(false)
 
     const getArtists = async () => {
-        const res = await fetch(`http://localhost:5000/artists/allFromArtworks`)
+        const res = await fetch(`https://app.plus359gallery.com/artists/allFromArtworks`)
         const data = await res.json()
         setArtists(data)
     }
@@ -76,7 +76,7 @@ const Upload = () => {
             data.append("position", formControlData.position)
             data.append("by_user", user.userName)
     
-            await axios.post("http://localhost:5000/s3/upload", data, {
+            await axios.post("https://app.plus359gallery.com/s3/upload", data, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -153,72 +153,71 @@ const Upload = () => {
         {uploading ? 
             <CircularProgress variant="determinate" value={progress} className="loader" color="primary" />
             : 
-
-            <div className="upload-container">
-                <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-                </div>
-
-                <div className="mt-10 w-2/5 sm:mx-auto max-sm:w-4/5 max-sm:mr-auto max-sm:ml-auto">
-                    <form onSubmit={handleSubmit}>     
-                        <TextField
-                            onChange={imageSelectHandler} 
-                            id="textField" type="file" 
-                            autoComplete="current-password" 
-                            required 
-                            className="peer cursor-pointer block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
-                        <p className="invisible peer-invalid:visible text-red-400 mt-0">
+            <Box
+                component="section"
+                sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    margin: '3rem auto',
+                    marginTop: '4rem',
+                    width: "60vw",
+                    "@media (max-width: 390px)": {
+                        width: "50vw",
+                    },
+                }}
+            >
+                <TextField
+                    onChange={imageSelectHandler} 
+                    id="textField" type="file" 
+                    autoComplete="current-password" 
+                    required 
+                    className="peer cursor-pointer block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
+                <p className="invisible peer-invalid:visible text-red-400 mt-0">
                                     Please upload an image
-                        </p>
-                        <Autocomplete
-                            disablePortal
-                            options={artists}
-                            renderInput={(params) => <TextField {...params} label="Artists" />}
-                            onChange={(event, newValue) => handleChangeArtistFromDropDown(newValue)}
-                            required
-                            fullWidth
-                            sx={{marginBottom: '1rem'}}
-                        />
-                        <TextField
-                            label="Add a new artist"
-                            value={newArtistFromInput}
-                            disabled={isArtistFromDropdown}
-                            onChange={(e) => handleChangeNewArtist(e)}
-                            fullWidth
-                            sx={{ marginBottom: "1rem" }}
-                        />
-                        {Object.entries(inputsData).map(([key, value]) => {
-                            return (
-                                <div key={key}>
-                                    <div className="flex items-center justify-between">
-                                    </div>
-                                    <TextField 
-                                        label={key}
-                                        value={value} 
-                                        fullWidth
-                                        onChange={(event) => handleInputChange(key, event)} 
-                                        id="textField" name={key} required={key === 'technique' || key === 'title'}
-                                        sx={{marginBottom: '1rem'}}
-                                    />
-                                </div>
-                            )
-                        })}
-                        <CascadingDropdowns
-                            setFormControlData={setFormControlData}
-                        />
-
-                        <div>
-                            <Button 
-                                sx={{mt: 2}}
-                                type="submit"
-                                variant="contained"
-                                fullWidth 
-                                disabled={!file || !inputsData.technique || !inputsData.title || !formControlData.artist || !formControlData.storageLocation}>
-                                    Upload
-                            </Button>
+                </p>
+                <Autocomplete
+                    disablePortal
+                    options={artists}
+                    renderInput={(params) => <TextField {...params} label="Artists" />}
+                    onChange={(event, newValue) => handleChangeArtistFromDropDown(newValue)}
+                    required
+                    sx={{marginBottom: '1rem'}}
+                />
+                <TextField
+                    label="Add a new artist"
+                    value={newArtistFromInput}
+                    disabled={isArtistFromDropdown}
+                    onChange={(e) => handleChangeNewArtist(e)}
+                    sx={{ marginBottom: "1rem", width: '60vw' }}
+                />
+                {Object.entries(inputsData).map(([key, value]) => {
+                    return (
+                        <div key={key}>
+                            <div className="flex items-center justify-between">
+                            </div>
+                            <TextField 
+                                label={key}
+                                value={value} 
+                                onChange={(event) => handleInputChange(key, event)} 
+                                id="textField" name={key} required={key === 'technique' || key === 'title'}
+                                sx={{marginBottom: '1rem', width: '60vw'}}
+                            />
                         </div>
-                    </form>
-                </div>
-            </div>}
+                    )
+                })}
+                <CascadingDropdowns
+                    setFormControlData={setFormControlData}
+                />
+                <Button 
+                    onClick={handleSubmit}
+                    sx={{mt: 2}}
+                    type="submit"
+                    variant="contained"
+                    disabled={!file || !inputsData.technique || !inputsData.title || !formControlData.artist || !formControlData.storageLocation}>
+                                    Upload
+                </Button>
+            </Box>
+        }
     </>          
 };
 

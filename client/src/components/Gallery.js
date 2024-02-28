@@ -71,7 +71,7 @@ const Gallery = () => {
         try {
             setLoading(true);
             const response = await fetch(
-                `http://localhost:5000/artworks/${name.split(':')[1]}?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`,
+                `https://app.plus359gallery.com/artworks/${name.split(':')[1]}?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`,
             );
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -133,7 +133,7 @@ const Gallery = () => {
         if (!keywords.length) return;
 
         try {
-            const res = await fetch(`http://localhost:5000/artworks/artwork?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`, {
+            const res = await fetch(`https://app.plus359gallery.com/artworks/artwork?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -159,7 +159,7 @@ const Gallery = () => {
         const params = {originalFilename, filename, id}
 
         await axios.delete(
-            `http://localhost:5000/artworks/artwork/${params}`,
+            `https://app.plus359gallery.com/artworks/artwork/${params}`,
             { params }
         );
 
@@ -215,7 +215,7 @@ const Gallery = () => {
             ids.push(image.id)
         }
         const response = await axios.put(
-            `http://localhost:5000/storage/update-location`,
+            `https://app.plus359gallery.com/storage/update-location`,
             {ids, formControlData}
         );
         if (response.status === 200) {

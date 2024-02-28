@@ -25,7 +25,7 @@ const LocationChangeDialog = ({isLocationChangeDialogOpen, handleIsLocationChang
         }
         try {
             await axios.put(
-                `http://localhost:5000/storage/update-location`,
+                `https://app.plus359gallery.com/storage/update-location`,
                 {ids, formControlData}
             );
         } catch (error) {
