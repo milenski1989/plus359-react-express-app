@@ -154,7 +154,7 @@ const Upload = () => {
             <CircularProgress variant="determinate" value={progress} className="loader" color="primary" />
             : 
 
-            <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+            <div className="upload-container">
                 <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                 </div>
 

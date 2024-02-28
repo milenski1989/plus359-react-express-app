@@ -25,6 +25,11 @@ const theme = createTheme({
         },
         MuiOutlinedInput: {
             styleOverrides: {
+                root: {
+                    '@media (max-width: 400px)': {
+                        width: '80%'
+                    }
+                },
                 notchedOutline: {
                     borderColor: '#000000',
                     '&.Mui-focused': {

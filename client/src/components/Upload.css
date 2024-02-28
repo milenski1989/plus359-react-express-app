@@ -8,8 +8,13 @@
     width: 40vw;
 }
 
-@media screen and (max-width: 500px) {
-    .flexContainer {
+.upload-container {
+  margin-top: 4rem;
+  margin-bottom: 3rem;
+}
+
+@media screen and (max-width: 400px) {
+    .upload-container {
         width: 60vw;
     }
   }
