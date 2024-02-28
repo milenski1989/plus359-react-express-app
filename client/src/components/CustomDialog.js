@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material'
 import React from 'react'
 
-function CustomDialog({children, openModal, setOpenModal, title, handleClickYes, handleClickNo}) {
+function CustomDialog({children, openModal, setOpenModal, title, handleClickYes, handleClickNo, confirmButtonText, cancelButtonText, disabledConfirmButton}) {
     return (
         <Dialog
             open={openModal}
@@ -20,14 +20,15 @@ function CustomDialog({children, openModal, setOpenModal, title, handleClickYes,
                 <Button
                     variant="contained"
                     sx={{backgroundColor: '#6ec1e4', width: "100px", marginTop: "0.75rem", boxShadow: 1, marginLeft: "auto", marginRight: "auto"}}
-                    children="yes"            
+                    children={confirmButtonText}          
                     onClick={handleClickYes}
+                    disabled={disabledConfirmButton}
                 />
 
                 <Button
                     variant="contained"
                     sx={{backgroundColor: '#6ec1e4', width: "100px", marginTop: "0.75rem", boxShadow: 1, marginLeft: "auto", marginRight: "auto"}}
-                    children="cancel"            
+                    children={cancelButtonText}           
                     onClick={handleClickNo}
                 />
             </DialogActions>

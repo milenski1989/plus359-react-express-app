@@ -12,14 +12,14 @@ function CascadingDropdowns({
     openInModal, 
 }) {
 
-    const {setUpdatedEntry, isEditMode} = useContext(ImageContext)
+    const {setUpdatedEntry, updatedEntry, isEditMode} = useContext(ImageContext)
 
     const [location, setLocation] = useState('--Location--')
     const [cells, setCells] = useState([])
     const [availablePositions, setAvailablePositions] = useState([])
 
-
     const changeLocation = (newValue) => {
+        if (!newValue) return
         setLocation(newValue)
         setCells(locations.find(location => location.name === newValue).cells)
 
@@ -35,10 +35,9 @@ function CascadingDropdowns({
     }
 
     const changeCell = async (newValue) => {
-        if (!openInModal){
-            const _availablePositions =  await findAvailablePositions(newValue, location).then(data => data)
-            setAvailablePositions(_availablePositions)
-        }
+        if (!newValue) return
+        const _availablePositions =  await findAvailablePositions(newValue, location).then(data => data)
+        setAvailablePositions(_availablePositions)
         setFormControlData((prevState) => ({
             ...prevState,
             cell: newValue,
@@ -53,6 +52,7 @@ function CascadingDropdowns({
     }
 
     const changePosition = (newValue) => {
+        if (!newValue) return
         setFormControlData((prevState) => ({
             ...prevState,
             position: newValue,
@@ -66,13 +66,26 @@ function CascadingDropdowns({
         }  
     }
 
+    const clearLocation = (event, newValue) => {
+        setFormControlData({
+            storageLocation: newValue,
+            position: newValue,
+            cell: newValue
+        });
+    }
+
     return (
         <Box>
             <Autocomplete
                 disablePortal
                 options={locations.map(location => location.name)}
-                renderInput={(params) => <TextField {...params} label="Location" />} 
+                renderInput={(params) => <TextField {...params} label={isEditMode ? updatedEntry.storageLocation : 'Location'} />} 
                 onChange={(event, newValue) => changeLocation(newValue)}
+                onInputChange={(event, newInputValue) => {
+                    if (newInputValue === '') {
+                        clearLocation(event, newInputValue);
+                    }
+                }}
                 fullWidth
                 sx={{marginBottom: '1rem'}}
             />
@@ -80,24 +93,23 @@ function CascadingDropdowns({
             <Autocomplete
                 disablePortal
                 disabled={location === 'Sold'}
-                options={cells.map(cell => cell.name)}
-                renderInput={(params) => <TextField {...params} label="Cell" />} 
+                options={location !== 'Sold' ? cells.map(cell => cell.name) : []}
+                renderInput={(params) =>
+                    <TextField {...params} label={isEditMode ? `cell: ${updatedEntry.cell ? updatedEntry.cell : 'none'}` : 'Cell'} />} 
                 onChange={(event, newValue) => changeCell(newValue)}
                 fullWidth
                 sx={{marginBottom: '1rem'}}
             />
-            
-            {!openInModal &&
-                <Autocomplete
-                    disablePortal
-                    disabled={location === 'Sold'}
-                    options={availablePositions}
-                    renderInput={(params) => <TextField {...params} label="Position" />} 
-                    onChange={(event, newValue) => changePosition(newValue)}
-                    fullWidth
-                    sx={{marginBottom: '1rem'}}
-                />
-            }
+            <Autocomplete
+                disablePortal
+                disabled={location === 'Sold'}
+                options={availablePositions}
+                renderInput={(params) =>
+                    <TextField {...params} label={isEditMode ? `position: ${updatedEntry.position}` : 'Position'} />} 
+                onChange={(event, newValue) => changePosition(newValue)}
+                fullWidth
+                sx={{marginBottom: '1rem'}}
+            />
         </Box>
     )
 }

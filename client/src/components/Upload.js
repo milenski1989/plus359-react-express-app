@@ -39,10 +39,10 @@ const Upload = () => {
     const [artists, setArtists] = useState([])
     
     const [newArtistFromInput, setNewArtistFromInput] = useState("")
-    const [artistFromDropDown, setArtistFromDropDown] = useState("")
+    const [isArtistFromDropdown, setIsArtistFromDropDown] = useState(false)
 
     const getArtists = async () => {
-        const res = await fetch(`https://app.plus359gallery.com/artists/allFromArtworks`)
+        const res = await fetch(`http://localhost:5000/artists/allFromArtworks`)
         const data = await res.json()
         setArtists(data)
     }
@@ -52,8 +52,8 @@ const Upload = () => {
     },[])
 
     const imageSelectHandler = (e) => {
-        const file = e.target.files[0];
-        setFile(file);
+        const _file = e.target.files[0];
+        setFile(_file);
     }
 
     const handleSubmit = async () => {
@@ -76,7 +76,7 @@ const Upload = () => {
             data.append("position", formControlData.position)
             data.append("by_user", user.userName)
     
-            await axios.post("https://app.plus359gallery.com/s3/upload", data, {
+            await axios.post("http://localhost:5000/s3/upload", data, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -93,7 +93,6 @@ const Upload = () => {
         setUploading(false);
         setUploadSuccessful(true);
         setInputsData({
-            artist: "",
             title: "",
             technique: "",
             dimensions: "",
@@ -117,11 +116,11 @@ const Upload = () => {
 
     const handleChangeArtistFromDropDown = async (newValue) => {
         if (!newValue) {
-            setArtistFromDropDown("")
+            setIsArtistFromDropDown(false)
             return
         } else {
             setNewArtistFromInput("")
-            setArtistFromDropDown(newValue)
+            setIsArtistFromDropDown(true)
             setFormControlData((prevState) => ({
                 ...prevState,
                 artist: newValue,
@@ -130,7 +129,7 @@ const Upload = () => {
     }
 
     const handleChangeNewArtist = (e) => {
-        setArtistFromDropDown("")
+        setIsArtistFromDropDown(false)
         setNewArtistFromInput(e.target.value)
         setFormControlData((prevState) => ({
             ...prevState,
@@ -143,7 +142,8 @@ const Upload = () => {
             open={uploadingError.error}
             handleClose={() => setUploadingError({ error: false, message: "" })}
             message={uploadingError.message}
-            severity="error" /><Message
+            severity="error" />
+        <Message
             open={uploadSuccessful}
             handleClose={() => setUploadSuccessful(false)}
             message="Entry uploaded successfully!"
@@ -174,16 +174,14 @@ const Upload = () => {
                             options={artists}
                             renderInput={(params) => <TextField {...params} label="Artists" />}
                             onChange={(event, newValue) => handleChangeArtistFromDropDown(newValue)}
-                            filterOptions={(options) => {
-                                return options;
-                            }}
+                            required
                             fullWidth
                             sx={{marginBottom: '1rem'}}
                         />
                         <TextField
                             label="Add a new artist"
                             value={newArtistFromInput}
-                            disabled={artistFromDropDown}
+                            disabled={isArtistFromDropdown}
                             onChange={(e) => handleChangeNewArtist(e)}
                             fullWidth
                             sx={{ marginBottom: "1rem" }}
@@ -214,7 +212,7 @@ const Upload = () => {
                                 type="submit"
                                 variant="contained"
                                 fullWidth 
-                                disabled={!file || !inputsData.technique || !formControlData.storageLocation}>
+                                disabled={!file || !inputsData.technique || !inputsData.title || !formControlData.artist || !formControlData.storageLocation}>
                                     Upload
                             </Button>
                         </div>

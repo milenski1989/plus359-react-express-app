@@ -3,7 +3,7 @@ import { ImageContext } from './contexts/ImageContext';
 import CascadingDropdowns from './CascadingDropdowns'
 import './EditableContainer.css'
 
-function EditableContainer({art}) {
+const EditableContainer = ({art}) => {
 
     const {
         currentImages,
@@ -27,9 +27,9 @@ function EditableContainer({art}) {
         }));
     };
 
-    return (
-        <div>
-            <p className="px-4 mb-4">
+    return <>
+        <div className='editable-container'>
+            <div className="px-4 mb-4">
                 {isEditMode && currentImages.length && currentImages[0].id === art.id ? (
                     <div>
                         <label className='input-label' htmlFor="artist">Artist:</label>
@@ -38,7 +38,7 @@ function EditableContainer({art}) {
                             onChange={(event) => onChangeEditableInput(event)}
                             className="text-lg editable"
                             disabled={!isEditMode}
-                            value={isEditMode ?  updatedEntry.artist : currentImages[0].artist} />
+                            value={isEditMode ? updatedEntry.artist : currentImages[0].artist} />
                         <label className='input-label' htmlFor="title">Title:</label>
                         <input
                             name="title"
@@ -94,9 +94,10 @@ function EditableContainer({art}) {
                          Position: ${art.position}`}</p>
                     </>
                 )}
-            </p>
+            </div>
         </div>
-    )
+    </>
+   
 }
 
 export default EditableContainer

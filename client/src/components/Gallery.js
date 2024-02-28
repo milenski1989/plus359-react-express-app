@@ -2,20 +2,25 @@ import React, { useContext, useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import "./Gallery.css";
 import "./App.css";
-import {Autocomplete, Button, CircularProgress, Pagination, TextField} from "@mui/material";
+import {CircularProgress, Pagination} from "@mui/material";
 import axios from "axios";
 import Message from "./Message";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { ImageContext } from "./contexts/ImageContext";
-import CascadingDropdowns from "./CascadingDropdowns";
-import SearchBar from "./SearchBar";
+import SearchAndFiltersBar from "./SearchAndFiltersBar";
 import { useNavigate } from "react-router-dom";
 import CustomDialog from "./CustomDialog";
 import ThumbnailView from "./ThumbnailView";
-import ListView from "./ListView";
+import DetailsView from "./DetailsView";
 import Sort from "./Sort";
 import { useParams } from "react-router-dom";
-
+import ListViewIcon from '../components/assets/list-view-solid.svg';
+import ThumbnailViewIcon from '../components/assets/thumbnail-view-solid.svg';
+import ListView from "./ListView";
+import DetailsViewIcon from '../components/assets/details-view-solid.svg';
+import LocationIcon from '../components/assets/move-solid.svg'
+import PdfIcon from '../components/assets/pdf-solid.svg'
+import CascadingDropdowns from "./CascadingDropdowns";
 
 const Gallery = () => {
     const {
@@ -40,16 +45,17 @@ const Gallery = () => {
     const [isDeleteConfOpen, setIsDeleteConfOpen] = useState(false);
     const [searchResults, setSearchResults] = useState([]);
     const [originalSearchResults, setOriginalSearchResults] = useState([]);
-    const [artists, setArtists] = useState([])
     const [deletedSuccessful, setDeleteSuccessful] = useState(false);
     const [page, setPage] = useState(1);
     const [keywords, setKeywords] = useState([]);
     const [totalCount, setTotalCount] = useState(0);
     const [pagesCount, setPagesCount] = useState(0);
-    const [thumbnailView, setThumbnailView] = useState(true)
-    const [selectedImageIndex, setSelectedImageIndex] = useState(null)
-    const [openModal, setOpenModal] = useState(false)
-    const [multiSelectMode, setMultiSelectMode] = useState(false)
+    const [viewMode, setViewMode] = useState('thumbnail')
+    const [paginationDisabled, setPaginationDisabled] = useState(false);
+
+    const [sortField, setSortField] = useState('id')
+    const [sortOrder, setSortOrder] = useState('desc')
+    const [locationReplaceDialogOpened, setLocationReplaceDialogOpened] = useState(false)
 
     const [formControlData, setFormControlData] = useState({
         storageLocation: "",
@@ -57,23 +63,15 @@ const Gallery = () => {
         position: "",
     });
 
-    const [sortField, setSortField] = useState('id')
-    const [sortOrder, setSortOrder] = useState('desc')
-
     useEffect(() => {
         keywords.length ? searchByKeywords() : fetchData()
-    }, [page, sortField, sortOrder, isDeleting, isEditMode]);
-
-    useEffect(() => {
-        getArtists()
-    },[])
-    
+    }, [page, sortField, sortOrder, isDeleting]);
 
     const fetchData = async () => {
         try {
             setLoading(true);
             const response = await fetch(
-                `https://app.plus359gallery.com/artworks/${name.split(':')[1]}?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`,
+                `http://localhost:5000/artworks/${name.split(':')[1]}?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`,
             );
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -91,12 +89,6 @@ const Gallery = () => {
         }
     };
 
-    const getArtists = async () => {
-        const res = await fetch('https://app.plus359gallery.com/artists/allFromArtworks')
-        const data = await res.json()
-        setArtists(data)
-    }
-      
     useEffect(() => {
         if (currentImages.length) {
             myStorage.setItem(
@@ -141,7 +133,7 @@ const Gallery = () => {
         if (!keywords.length) return;
 
         try {
-            const res = await fetch(`https://app.plus359gallery.com/artworks/artwork?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`, {
+            const res = await fetch(`http://localhost:5000/artworks/artwork?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -167,7 +159,7 @@ const Gallery = () => {
         const params = {originalFilename, filename, id}
 
         await axios.delete(
-            `https://app.plus359gallery.com/artworks/artwork/${params}`,
+            `http://localhost:5000/artworks/artwork/${params}`,
             { params }
         );
 
@@ -184,36 +176,6 @@ const Gallery = () => {
     const isTherePrevPage = () => {
         return page !== 0;
     };
-
-    const handleSelectImages = () => {
-        setMultiSelectMode(prev => !prev)
-        setCurrentImages([])
-    }
-
-    const updateLocation = async (formControlData) => {
-        const ids = []
-        for (let image of currentImages) {
-            ids.push(image.id)
-        }
-        const response = await axios.put(
-            `https://app.plus359gallery.com/storage/update-location`,
-            {ids, formControlData}
-        );
-        if (response.status === 200) {
-            setOpenModal(false);
-            setMultiSelectMode(false)
-            setCurrentImages([])
-            await fetchData()
-        } else {
-            setOpenModal(false);
-            setMultiSelectMode(false)
-            setCurrentImages([])
-        }
-    }
-
-    const prepareImagesForLocationChange = async() => {
-        setOpenModal(true)
-    }
 
     const handleDeleteOne = async (originalName, filename, id) => {
         deleteOne(originalName, filename, id)
@@ -242,17 +204,50 @@ const Gallery = () => {
         }
         
     }
+    
+    const prepareImagesForLocationChange = async() => {
+        setLocationReplaceDialogOpened(true)
+    }
 
-    const filterByArtist = async (event, artist) => {
-        if (!artist && artist !== "-") {
-            setSearchResults(originalSearchResults);
-        } else {
-            const res = await fetch(`https://app.plus359gallery.com/artworks/artworksByArtist/${artist}`)
-            const data = await res.json()
-            setSearchResults(data.artworks);
+    const updateLocation = async (formControlData) => {
+        const ids = []
+        for (let image of currentImages) {
+            ids.push(image.id)
         }
-        setPage(1);
-    };
+        const response = await axios.put(
+            `http://localhost:5000/storage/update-location`,
+            {ids, formControlData}
+        );
+        if (response.status === 200) {
+            setLocationReplaceDialogOpened(false);
+            setCurrentImages([])
+            await fetchData()
+        } else {
+            setLocationReplaceDialogOpened(false);
+            setCurrentImages([])
+        }
+    }
+
+    const renderViewMode = () => {
+        if (viewMode === 'thumbnail') {
+            return  <ThumbnailView
+                searchResults={searchResults}
+            />  
+        } else if (viewMode === 'details') {
+            return  <DetailsView
+                searchResults={searchResults}
+                handleConfirmationDialog={setIsDeleteConfOpen}
+                fetchData={searchByKeywords}
+            />
+        } else {
+            return  <ListView
+                searchResults={searchResults}
+                fetchData={searchByKeywords}
+                handleUpdatedEntry={setUpdatedEntry}
+                handleConfirmationDialog={setIsDeleteConfOpen}
+            /> 
+        }
+    }
 
     return (
         <><Navbar /><div className="gallery">
@@ -268,6 +263,22 @@ const Gallery = () => {
                 message="Entry deleted successfully!"
                 severity="success" />
 
+            {locationReplaceDialogOpened &&
+                <CustomDialog
+                    openModal={locationReplaceDialogOpened}
+                    setOpenModal={() => setLocationReplaceDialogOpened(false)}
+                    title="This will change the location of all selected entries, are you sure?"
+                    handleClickYes={() => updateLocation(formControlData)}
+                    handleClickNo={() => { setLocationReplaceDialogOpened(false), setCurrentImages([])} }
+                    confirmButtonText="Yes"
+                    cancelButtonText="No"
+                >
+                    <CascadingDropdowns
+                        setFormControlData={setFormControlData}
+                        openInModal={locationReplaceDialogOpened} />
+
+                </CustomDialog>}
+
             {isDeleteConfOpen &&
                 <CustomDialog
                     openModal={isDeleteConfOpen}
@@ -281,112 +292,56 @@ const Gallery = () => {
                         }
                     } }
                     handleClickNo={() => {
-                        if (currentImages.length === 1) {
+                        if (currentImages.length === 1 && !isEditMode) {
                             setCurrentImages([]);
                             setIsDeleteConfOpen(false);
                         } else {
                             setIsDeleteConfOpen(false);
                         }
-                    } } />}
-
-            {openModal &&
-                <CustomDialog
-                    openModal={openModal}
-                    setOpenModal={() => setOpenModal(false)}
-                    title="This will change the location of all selected entries, are you sure?"
-                    handleClickYes={() => updateLocation(formControlData)}
-                    handleClickNo={() => { setOpenModal(false), setCurrentImages([]), setMultiSelectMode(false); } }
-                >
-                    <CascadingDropdowns
-                        setFormControlData={setFormControlData}
-                        openInModal={openModal} />
-
-                </CustomDialog>}
-
-            <SearchBar
-                onChange={onChange}
-                searchByKeyword={searchByKeywords}
-                triggerSearchWithEnter={triggerSearchWithEnter} />
-            <Autocomplete
-                disablePortal
-                options={artists}
-                renderInput={(params) => <TextField {...params} label="Filter by an artist" />}
-                onChange={(event, newValue) => filterByArtist(event, newValue)}
-                sx={{
-                    marginTop: "1rem",
-                    width: "100%",
-                    '@media (min-width:600px)': {
-                        width: "300px"
-                    }
-                }}
-            />
+                    } } 
+                    confirmButtonText="Yes"
+                    cancelButtonText="Cancel"
+                />}
+                
+            <div className="search-actions-container">
+                <div className="main-actions-pdf-location-container">
+                    <img src={PdfIcon} className='icon' onClick={() => navigate('/pdf')}/>
+                    {currentImages.length ?
+                        <img src={LocationIcon} className='icon' onClick={prepareImagesForLocationChange}/> : <></>}
+                </div>
+                
+                <>
+                    <Sort
+                        sortField={sortField}
+                        handleSortField={setSortField}
+                        sortOrder={sortOrder}
+                        handleSortOrder={setSortOrder} />
+                    <SearchAndFiltersBar
+                        onChange={onChange}
+                        searchByKeyword={searchByKeywords}
+                        triggerSearchWithEnter={triggerSearchWithEnter}
+                        setPaginationDisabled={setPaginationDisabled}
+                        setSearchResults={setSearchResults}
+                        originalSearchResults={originalSearchResults}
+                        setPage={setPage} />
+                    <div className="view-mode-icons-container">
+                        <img className={viewMode === 'thumbnail' ? 'selected icon' : 'icon'} src={ThumbnailViewIcon} onClick={() => setViewMode('thumbnail')}/>
+                        <img className={viewMode === 'details' ? 'selected icon' : 'icon'} src={DetailsViewIcon} onClick={() => setViewMode('details')}/>
+                        <img className={viewMode === 'list' ? 'selected icon' : 'icon'} src={ListViewIcon} onClick={() => setViewMode('list')}/>
+                    </div>
+                </>
+                
+            </div>        
             {loading || isDeleting ? (
                 <CircularProgress className="loader" color="primary" />
             ) : (
                 <>
-                    <div className="flex max-sm:flex-col items-center justify-center mt-16 max-sm:mb-8 max-sm:mb-8">
-                        <Button
-                            sx={{mr: 2}}  
-                            variant="outlined" 
-                            onClick={handleSelectImages}>
-                                Select images
-                        </Button>
-                        {currentImages.length ?
-                            <><Button 
-                                sx={{mr: 2}} 
-                                variant="outlined"
-                                onClick={() => navigate("/pdf")}>
-                                    Create a certificate
-                            </Button>
-                            <Button
-                                sx={{mr: 2}} 
-                                variant="outlined"
-                                onClick={prepareImagesForLocationChange}>
-                                    Change Location
-                            </Button>
-                            <Button
-                                sx={{mr: 2}} 
-                                variant="outlined"
-                                onClick={() => setIsDeleteConfOpen(true)}>
-                                    Delete selected
-                            </Button>
-                            <Button
-                                variant="outlined"
-                                onClick={() => { setMultiSelectMode(false); setCurrentImages([]); } }>
-                                    Unselect all
-                            </Button>
-                            </> :
-                            <></>}
-
-                    </div>
-                    <></>
-                    {searchResults.length !== 0 &&
-                        <Sort
-                            sortField={sortField}
-                            handleSortField={setSortField}
-                            sortOrder={sortOrder}
-                            handleSortOrder={setSortOrder} />}
-                    {thumbnailView ?
-                        <ThumbnailView
-                            searchResults={searchResults}
-                            multiSelectMode={multiSelectMode}
-                            handleThumbnailView={setThumbnailView}
-                            handleSelectedImageIndex={setSelectedImageIndex} />
-                        :
-                        selectedImageIndex != null &&
-                        <ListView
-                            searchResults={searchResults}
-                            handleThumbnailView={setThumbnailView}
-                            handleUpdatedEntry={setUpdatedEntry}
-                            handleMultiSelectMode={setMultiSelectMode}
-                            multiSelectMode={multiSelectMode}
-                            handleConfirmationDialog={setIsDeleteConfOpen}
-                            fetchData={searchByKeywords} />}
+                    {renderViewMode()}
                     {!searchResults.length && <div className="flex flex-row justify-center content-center max-sm:ml-20 max-sm:mr-20">Nothing was found!</div>}
                 </>
             )}
 
-            {searchResults.length && !loading? (
+            {searchResults.length && !paginationDisabled && !loading ? (
                 <Pagination
                     count={pagesCount && pagesCount}
                     page={page}
