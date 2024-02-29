@@ -42,7 +42,7 @@ const Upload = () => {
     const [isArtistFromDropdown, setIsArtistFromDropDown] = useState(false)
 
     const getArtists = async () => {
-        const res = await fetch(`https://app.plus359gallery.com/artists/allFromArtworks`)
+        const res = await fetch(`http://localhost:5000/artists/allFromArtworks`)
         const data = await res.json()
         setArtists(data)
     }
@@ -76,7 +76,7 @@ const Upload = () => {
             data.append("position", formControlData.position)
             data.append("by_user", user.userName)
     
-            await axios.post("https://app.plus359gallery.com/s3/upload", data, {
+            await axios.post("http://localhost:5000/s3/upload", data, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -161,9 +161,6 @@ const Upload = () => {
                     margin: '3rem auto',
                     marginTop: '4rem',
                     width: "60vw",
-                    "@media (max-width: 390px)": {
-                        width: "50vw",
-                    },
                 }}
             >
                 <TextField

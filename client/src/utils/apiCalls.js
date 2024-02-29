@@ -1,7 +1,7 @@
 
 export const getAllEntries = async (name, page, sortField, sortOrder) => {
     const res = await fetch(
-        `https://app.plus359gallery.com/artworks/${name.split(':')[1]}?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`,
+        `http://localhost:5000/artworks/${name.split(':')[1]}?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`,
     );
     if (res.status === 200) {
         const data = await res.json();
@@ -12,7 +12,7 @@ export const getAllEntries = async (name, page, sortField, sortOrder) => {
 export const getAllEntriesByKeywords = async(keywords, page, sortField, sortOrder) => {
     if (!keywords.length) return;
 
-    const res = await fetch(`https://app.plus359gallery.com/artworks/artwork?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`, {
+    const res = await fetch(`http://localhost:5000/artworks/artwork?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

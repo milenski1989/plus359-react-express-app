@@ -65,7 +65,7 @@ function SearchAndFiltersBar({page, setPage, handlePagesCount, handleTotalCount,
     }, [name, page, sortField, sortOrder]); 
 
     const getArtists = async () => {
-        const res = await fetch('https://app.plus359gallery.com/artists/allFromArtworks')
+        const res = await fetch('http://localhost:5000/artists/allFromArtworks')
         const data = await res.json()
 
         const normalizedArtists = data.map(artist => artist.toLowerCase().trim());
@@ -82,7 +82,7 @@ function SearchAndFiltersBar({page, setPage, handlePagesCount, handleTotalCount,
             setPaginationDisabled(false);
             getAllData()
         } else {
-            const res = await fetch(`https://app.plus359gallery.com/artworks/artworksByArtist/${artist}`)
+            const res = await fetch(`http://localhost:5000/artworks/artworksByArtist/${artist}`)
             const data = await res.json()
             handleSearchResults(data.artworks);
             setPaginationDisabled(true)
