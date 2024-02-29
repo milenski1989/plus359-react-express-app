@@ -41,6 +41,13 @@
     padding: 1rem;
 }
 
+.navbar-elements-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 1rem;
+}
+
 .logo {
     width: 5rem;
     margin-right: 1rem;

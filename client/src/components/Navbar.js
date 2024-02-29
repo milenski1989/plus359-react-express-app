@@ -16,7 +16,6 @@ const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
 
     const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
-    console.log(isSmallDevice)
 
     const handleLogout = () => {
         window.localStorage.clear()
