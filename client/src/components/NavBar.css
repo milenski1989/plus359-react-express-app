@@ -6,7 +6,35 @@
  
 }
 
-.navbar-elements-container {
+.mobile-navbar-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 1.5rem;
+    background-color: black;
+    width: 100vw;
+
+}
+
+.mobile-nav-links-container {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    margin-right: -8rem;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.navbar-button {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    color: #40C8F4;
+}
+
+.navbar-container {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -16,6 +44,10 @@
 .logo {
     width: 5rem;
     margin-right: 1rem;
+}
+
+.mobile-logo {
+    width: 3.5rem;
 }
 
 .current-location {
@@ -31,6 +63,14 @@
     padding-right: 1rem;
     color: #40C8F4;
     font-size: 18px;
+}
+
+.mobile-nav-link {
+    color: #40C8F4;
+    margin-top: 1rem;
+    margin-right: 1rem;
+    text-decoration: none;
+    display: block;
 }
 
 .right-side {
