@@ -1,12 +1,17 @@
+/* eslint-disable no-undef */
 import { Alert, Box, Button, CircularProgress, Container, CssBaseline, Link, TextField } from "@mui/material"
 import { useState } from "react"
 import './App.css'
 import Message from "./Message"
 import { useNavigate } from "react-router-dom";
 import  './Login.css'
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
-import Avatar from '@mui/material/Avatar';
+import { useMediaQuery } from "@mui/material";
+
+
+const icons = {
+    logo: require('./assets/logo359 gallery-white1.png')
+}
 
 function Copyright(props) {
     return (
@@ -32,6 +37,8 @@ const Login = () => {
     let myStorage = window.localStorage
 
     let navigate = useNavigate();
+    const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
+
 
     const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -80,7 +87,7 @@ const Login = () => {
     }
 
     return <>
-        <div className="md:container md:mx-auto">
+        <div className="login-container">
 
             {<Message open={loginError.error} handleClose={() => setLoginError({error: false, message: ""})} message={loginError.message} severity="error"
             /> }
@@ -88,8 +95,19 @@ const Login = () => {
             { loading ? 
                 <CircularProgress className="loader" color="primary" /> 
                 : 
-                <Container component="main" maxWidth="xs">
+                <Container
+                    sx={{
+                        '& .MuiContainer-root': {
+                            width: '100%'
+                        }
+                    }}
+                    component="main">
                     <CssBaseline />
+                    <div className={isSmallDevice ? 'mobile-logo-container' :
+                        'logo-container'
+                    }>
+                        <img style={{width: '5rem'}} src={icons.logo} />
+                    </div>
                     <Box
                         sx={{
                             marginTop: 8,
@@ -98,9 +116,6 @@ const Login = () => {
                             alignItems: 'center',
                         }}
                     >
-                        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                            <LockOutlinedIcon />
-                        </Avatar>
                         <Typography component="h1" variant="h5">
                           Sign in
                         </Typography>

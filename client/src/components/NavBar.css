@@ -2,7 +2,7 @@
 
 .navbar {
     font-family: 'Montserrat';
-    background-color: black;
+    background-color: rgba(0, 0, 0, 0.80);
  
 }
 
@@ -11,13 +11,14 @@
     justify-content: space-between;
     flex-wrap: wrap;
     padding: 1.5rem;
-    background-color: black;
+    background-color: rgba(0, 0, 0, 0.80);
+
     width: 100vw;
 
 }
 
 .mobile-nav-links-container {
-    font-size: 0.875rem;
+    font-size: 18px;
     line-height: 1.25rem;
     margin-right: -8rem;
 }

@@ -1,7 +1,11 @@
 import React from 'react'
 import { Pagination } from '@mui/material';
+import { useMediaQuery } from "@mui/material";
+import './PaginationComponent.css'
 
 const PaginationComponent = ({page, handlePage, pagesCount, totalCount}) => {
+
+    const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
 
     
     const noNextPage = () => {
@@ -19,7 +23,8 @@ const PaginationComponent = ({page, handlePage, pagesCount, totalCount}) => {
         page={page}
         variant="outlined"
         color="primary"
-        sx={{ margin: "5rem" }}
+        className={isSmallDevice ? 'mobile-pagination-container' :
+            'pagination-container'}
         onChange={(event, page) => handlePage(page)}
         showFirstButton={isTherePrevPage && true}
         showLastButton={noNextPage && true}

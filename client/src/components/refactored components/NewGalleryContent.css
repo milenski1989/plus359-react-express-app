@@ -28,6 +28,7 @@
    .mobile-search-actions-container {
     display: flex;
     flex-direction: column;
+    align-items: center;
     margin-top: 4rem;
     margin-bottom: 4rem;
    }
@@ -49,5 +50,5 @@
     display: flex;
     align-self: flex-end;
     margin-top: 1rem;
-    margin-bottom: -2rem;
+    margin-bottom: -1rem;
    }

@@ -9,7 +9,7 @@ import DeleteIcon from '../components/assets/delete-solid.svg'
 import CancelIcon from '../components/assets/cancel-solid.svg'
 import SaveIcon from '../components/assets/save-solid.svg'
 import ReplaceIcon from '../components/assets/replace-solid.svg'
-
+import { useMediaQuery } from "@mui/material";
 
 import './ActionButtons.css'
 import Message from './Message';
@@ -18,7 +18,7 @@ import { TextField } from '@mui/material';
 import { getAllEntries } from '../utils/apiCalls';
 import { useParams } from 'react-router-dom';
 
-const ActionButtons = ({art, handleDialogOpen, searchResults, page, sortField, sortOrder, handleSearchResults, handlePagesCount, handleTotalCount, handleError, handleLoading}) => {
+const ActionButtons = ({art, handleDialogOpen, searchResults, page, sortField, sortOrder, handleSearchResults, handlePagesCount, handleTotalCount, handleError, handleLoading, className = ''}) => {
 
     const {
         currentImages,
@@ -30,6 +30,8 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, page, sortField, s
     } = useContext(ImageContext);
 
     const myStorage = window.localStorage;
+    const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
+
     const {name} = useParams()
     const [imageReplaceDialogisOpen, setImageReplaceDialogisOpen] = useState(false)
     const [uploading, setUploading] = useState(false)
@@ -190,7 +192,7 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, page, sortField, s
                                 Please upload an image
                         </p></>}
                 </CustomDialog>}
-        <div className="icons-container">
+        <div className={isSmallDevice && !className ? 'mobile-icons-container' : 'icons-container'}>
             
             <>
                 {!isEditMode || currentImages.length && currentImages[0].id !== art.id ?

@@ -8,7 +8,7 @@ import ActionButtons from "./ActionButtons";
 import './DetailsView.css'
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { generateBackGroundColor } from "./constants/constants";
-
+import Masonry from '@mui/lab/Masonry';
 
 const DetailsView = ({searchResults, handleDialogOpen, page, sortField, sortOrder, handleSearchResults, handlePagesCount, handleTotalCount, handleError, handleLoading}) => {
 
@@ -27,7 +27,7 @@ const DetailsView = ({searchResults, handleDialogOpen, page, sortField, sortOrde
     }
 
     return <>
-        <div className="cards">
+        <Masonry columns={{ xs: 1, sm: 2, md: 4, lg: 5, xl: 6}} spacing={2} sequential>
             {searchResults.map((art, id) => (
 
                 <div className="card" key={id}>
@@ -62,6 +62,7 @@ const DetailsView = ({searchResults, handleDialogOpen, page, sortField, sortOrde
                         height="auto"
                     />
                     <ActionButtons 
+                        className={'in-details-view'}
                         art={art}
                         handleDialogOpen={handleDialogOpen}
                         searchResults={searchResults}
@@ -79,7 +80,7 @@ const DetailsView = ({searchResults, handleDialogOpen, page, sortField, sortOrde
                     />
                 </div>
             ))}
-        </div>
+        </Masonry>
     </>
 }
 

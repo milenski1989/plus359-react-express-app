@@ -54,33 +54,26 @@ class S3Controller {
             }
         });
         this.replace = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            // Define a callback function to process the request body after file upload
             const processRequestBody = () => __awaiter(this, void 0, void 0, function* () {
                 const { id, old_image_key, old_download_key } = req.body;
-                console.log(old_image_key);
-                console.log(old_download_key);
                 let image_url;
                 let image_key;
                 let download_url;
                 let download_key;
-                // Extract information from the transformed file
                 image_url = req.file.transforms[0].location;
                 image_key = req.file.transforms[0].key;
                 download_url = req.file.transforms[1].location;
                 download_key = req.file.transforms[1].key;
-                // Update the file info into the database
                 const entryFound = yield ArtworksService_1.default.getInstance().getOneById(id);
                 if (entryFound)
                     yield ArtworksService_1.default.getInstance().updateImageData(old_image_key, old_download_key, entryFound.id, image_url, image_key, download_url, download_key);
                 res.status(200).json({ result: "Photo replaced successfuly" });
             });
             try {
-                // Use the processRequestBody callback in the upload middleware
                 s3Service.uploadSingleFile('file')(req, res, (uploadErr) => __awaiter(this, void 0, void 0, function* () {
                     if (uploadErr) {
                         return res.status(400).json({ error: 'File upload failed' });
                     }
-                    // Call the processRequestBody callback
                     yield processRequestBody();
                 }));
             }
@@ -89,19 +82,18 @@ class S3Controller {
             }
         });
         this.upload = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            // Define a callback function to process the request body after file upload
             const processRequestBody = () => __awaiter(this, void 0, void 0, function* () {
                 const { title, artist, technique, dimensions, price, notes, storageLocation, cell, position, by_user } = req.body;
                 let image_url;
                 let image_key;
                 let download_url;
                 let download_key;
-                // Extract information from the transformed file
                 image_url = req.file.transforms[0].location;
                 image_key = req.file.transforms[0].key;
-                download_url = req.file.transforms[1].location;
+                let originalString = req.file.transforms[1].location;
+                let removedString = originalString.replace(/plus359gallery\//, "");
+                download_url = "https://plus359gallery." + removedString;
                 download_key = req.file.transforms[1].key;
-                // Save the file info into the database
                 yield ArtworksService_1.default.getInstance().saveFileIntoDatabase(title, artist, technique, dimensions, price, notes, storageLocation, cell, position, image_url, image_key, download_url, download_key, by_user);
                 res.status(200).json({
                     results: {
@@ -113,12 +105,10 @@ class S3Controller {
                 });
             });
             try {
-                // Use the processRequestBody callback in the upload middleware
                 s3Service.uploadSingleFile('file')(req, res, (uploadErr) => __awaiter(this, void 0, void 0, function* () {
                     if (uploadErr) {
                         return res.status(400).json({ error: 'File upload failed' });
                     }
-                    // Call the processRequestBody callback
                     yield processRequestBody();
                 }));
             }

@@ -4,3 +4,50 @@
     border: 1px solid black;
     border-radius: 5px;
 }
+
+.list-item {
+    margin-bottom: 0.5rem;
+    border-radius: 10px;
+}
+
+.mobile-list-item {
+    margin-bottom: 3rem;
+    border-radius: 10px;
+}
+
+.list-item-button {
+    display: grid;
+    grid-template-columns: repeat(11, 9%);
+}
+
+
+.mobile-list-item-button {
+    display: grid;
+    grid-template-columns: repeat(6, 25%);
+
+}
+
+.list-view-editable-input {
+    border: none;
+    width: 70px;
+    border-radius: 5px;
+    padding: 5px;
+    text-align: center;
+}
+
+.mobile-list-view-editable-input {
+    border: none;
+    width: 50px;
+    border-radius: 5px;
+    padding: 5px;
+    text-align: center;
+}
+
+.truncated-art-info {
+    color: #40C8F4;
+    cursor: pointer;
+}
+
+.full-info {
+    cursor: auto;
+}

@@ -98,8 +98,8 @@ function SearchAndFiltersBar({page, setPage, handlePagesCount, handleTotalCount,
             'mobile-search-filters-container' :
             'search-filters-container'
         }>
-            <div className={isSmallDevice ? 'filter-container' : 'mobile-filter-container' }>
-                <img src={FilterIcon} style={{width: '39px', height: '39px'}}/>
+            <div className={!isSmallDevice ? 'filter-container' : '' }>
+                {!isSmallDevice ? <img src={FilterIcon} style={{width: '39px', height: '39px'}}/> : <></>}
                 <Autocomplete
                     className={isSmallDevice ? 'mobile-filter-input' :
                         'filter-input'}

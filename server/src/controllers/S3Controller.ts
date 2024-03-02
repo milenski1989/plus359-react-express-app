@@ -6,7 +6,6 @@ import { Artworks } from '../entities/Artworks';
 
 const s3Service = new S3Service()
 
-
 export class S3Controller{
 
     router: express.Router
@@ -35,25 +34,20 @@ this.initializeRoutes()
     }
 
     replace = async (req, res) => {
-          // Define a callback function to process the request body after file upload
           
           const processRequestBody = async () => {
             const {id, old_image_key, old_download_key} = req.body
-            console.log(old_image_key)
-            console.log(old_download_key)
+
             let image_url;
             let image_key;
             let download_url;
             let download_key;
     
-            // Extract information from the transformed file
             image_url = req.file.transforms[0].location;
             image_key = req.file.transforms[0].key;
             download_url = req.file.transforms[1].location;
             download_key = req.file.transforms[1].key;
     
-            // Update the file info into the database
-
             const entryFound = await ArtworksService.getInstance().getOneById(id)
             
 
@@ -63,13 +57,11 @@ this.initializeRoutes()
         };
     
         try {
-            // Use the processRequestBody callback in the upload middleware
             s3Service.uploadSingleFile('file')(req, res, async (uploadErr) => {
                 if (uploadErr) {
                     return res.status(400).json({ error: 'File upload failed' });
                 }
     
-                // Call the processRequestBody callback
                 await processRequestBody();
             });
         } catch (error) {
@@ -78,7 +70,6 @@ this.initializeRoutes()
     }
 
     upload = async (req, res) => {
-        // Define a callback function to process the request body after file upload
         const processRequestBody = async () => {
             const { title, artist, technique, dimensions, price, notes, storageLocation, cell, position, by_user } = req.body;
             let image_url;
@@ -86,13 +77,14 @@ this.initializeRoutes()
             let download_url;
             let download_key;
     
-            // Extract information from the transformed file
             image_url = req.file.transforms[0].location;
             image_key = req.file.transforms[0].key;
-            download_url = req.file.transforms[1].location;
+           
+            let originalString = req.file.transforms[1].location;
+            let removedString = originalString.replace(/plus359gallery\//, "");
+            download_url = "https://plus359gallery." + removedString;
             download_key = req.file.transforms[1].key;
-    
-            // Save the file info into the database
+        
             await ArtworksService.getInstance().saveFileIntoDatabase(
                 title,
                 artist,
@@ -121,13 +113,11 @@ this.initializeRoutes()
         };
     
         try {
-            // Use the processRequestBody callback in the upload middleware
             s3Service.uploadSingleFile('file')(req, res, async (uploadErr) => {
                 if (uploadErr) {
                     return res.status(400).json({ error: 'File upload failed' });
                 }
     
-                // Call the processRequestBody callback
                 await processRequestBody();
             });
         } catch (error) {

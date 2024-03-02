@@ -6,6 +6,7 @@ import { useContext } from 'react';
 import { ImageContext } from './contexts/ImageContext';
 import './ThumbnailView.css'
 import { LazyLoadImage } from 'react-lazy-load-image-component';
+import Masonry from '@mui/lab/Masonry';
 
 const ThumbnailView = ({searchResults}) => {
 
@@ -24,7 +25,7 @@ const ThumbnailView = ({searchResults}) => {
     }
 
     return <>
-        <div className="cards">
+        <Masonry columns={{ xs: 1, sm: 2, md: 4, lg: 5, xl: 6}} spacing={2} sequential>
             {searchResults.map((art, id) => (
                 <div
                     key={id}>
@@ -41,6 +42,7 @@ const ThumbnailView = ({searchResults}) => {
                         icon={<RadioButtonUncheckedIcon />}
                         checkedIcon={<CheckCircleOutlineIcon />}
                     />
+                    <image style={{width: '100%', height: 'auto'}} src={art.image_url}/>
                     <LazyLoadImage
                         src={art.image_url}
                         effect="blur"
@@ -49,8 +51,7 @@ const ThumbnailView = ({searchResults}) => {
                     />
                 </div>
             ))}
-                            
-        </div>
+        </Masonry>
     </>
 
 }

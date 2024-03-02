@@ -22,6 +22,7 @@ import PaginationComponent from './PaginationComponent'
 import { getAllEntries, getAllEntriesByKeywords } from "../../utils/apiCalls";
 import { useMediaQuery } from "@mui/material";
 import NewSort from "./NewSort";
+import MobileListView from "../MobileListView";
 
 
 const NewGalleryContent = () => {
@@ -151,8 +152,22 @@ const NewGalleryContent = () => {
                 handleError={setError}
                 handleLoading={setLoading}
             />
+        } else if (viewMode === 'list' && isSmallDevice) {
+            return  <MobileListView
+                searchResults={searchResults}
+                handleUpdatedEntry={setUpdatedEntry}
+                handleDialogOpen={handleDialogOpen}
+                page={page} 
+                sortField={sortField}
+                sortOrder={sortOrder} 
+                handleSearchResults={setSearchResults}
+                handlePagesCount={setPagesCount} 
+                handleTotalCount={setTotalCount}
+                handleError={setError}
+                handleLoading={setLoading}
+            /> 
         } else {
-            return  <ListView
+            return <ListView
                 searchResults={searchResults}
                 handleUpdatedEntry={setUpdatedEntry}
                 handleDialogOpen={handleDialogOpen}

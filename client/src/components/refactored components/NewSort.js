@@ -15,9 +15,7 @@ const boxShadow = '0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 
 
 const NewSort = ({ sortField, sortOrder, handleSortField, handleSortOrder }) => {
 
-
     const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
-
 
     const handleSortChange = (_, newValue) => {
         if (newValue) {
@@ -35,10 +33,10 @@ const NewSort = ({ sortField, sortOrder, handleSortField, handleSortOrder }) => 
 
     return (
         <> 
-            <div className={isSmallDevice ? 'mobile-sort-container' :
-                'sort-container'
+            <div className={!isSmallDevice ? 'sort-container' :
+                ''
             }>
-                <img src={SortIcon} style={{width: '39px', height: '39px'}}/>
+                {!isSmallDevice ? <img src={SortIcon} style={{width: '39px', height: '39px'}}/> : <></>}
                 <Autocomplete
                     className={isSmallDevice ? 'mobile-sort-input' :
                         'sort-input'}
@@ -59,13 +57,14 @@ const NewSort = ({ sortField, sortOrder, handleSortField, handleSortOrder }) => 
                             boxShadow
                         },
                     }}
-                    value={{ label: sortOptions.find(option => option.field === sortField).label, field: sortField, order: sortOrder }}
+                    value={{ label: `${sortOptions.find(option => option.field === sortField).label} ${sortOrder}`, field: sortField, order: sortOrder }}
                     options={sortOptions}
                     getOptionLabel={(option) => option.label}
+                    isOptionEqualToValue={(option, value) => option.id === value.id}
                     onChange={handleSortChange}
                     renderInput={(params) => <TextField {...params} />}
                     renderOption={(props, option) => (
-                        <li {...props}>
+                        <li {...props} style={{ backgroundColor: props['aria-selected'] && 'white'}}>
                             {option.label}
                             {sortField === option.field && sortOrder === 'asc' && ' desc'}
                             {sortField === option.field && sortOrder === 'desc' && ' asc'}

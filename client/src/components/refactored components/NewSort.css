@@ -9,7 +9,7 @@
 }
 
 .sort-input {
-    width: 150px;
+    width: 180px;
     background-color: white;
     border-radius: 4px;
     margin-right: 1rem;
@@ -18,9 +18,8 @@
 }
 
 .mobile-sort-input {
-    width: 80%;
+    width: 80vw;
     background-color: white;
     border-radius: 4px;
     margin-bottom: 1rem;
-    margin-left: 1rem;
 }
