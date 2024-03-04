@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import { Alert, Box, Button, CircularProgress, Container, CssBaseline, Link, TextField } from "@mui/material"
 import { useState } from "react"
 import './App.css'
@@ -6,12 +5,7 @@ import Message from "./Message"
 import { useNavigate } from "react-router-dom";
 import  './Login.css'
 import Typography from '@mui/material/Typography';
-import { useMediaQuery } from "@mui/material";
-
-
-const icons = {
-    logo: require('./assets/logo359 gallery-white1.png')
-}
+import Logo from '../components/assets/logo359 gallery-black.png'
 
 function Copyright(props) {
     return (
@@ -35,10 +29,7 @@ const Login = () => {
     const [emailError, setEmailError] = useState(false);
 
     let myStorage = window.localStorage
-
     let navigate = useNavigate();
-    const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
-
 
     const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -87,84 +78,74 @@ const Login = () => {
     }
 
     return <>
-        <div className="login-container">
-
-            {<Message open={loginError.error} handleClose={() => setLoginError({error: false, message: ""})} message={loginError.message} severity="error"
-            /> }
+        {<Message open={loginError.error} handleClose={() => setLoginError({error: false, message: ""})} message={loginError.message} severity="error"
+        /> }
                
-            { loading ? 
-                <CircularProgress className="loader" color="primary" /> 
-                : 
-                <Container
+        { loading ? 
+            <CircularProgress className="loader" color="primary" /> 
+            : 
+            <Container
+                sx={{
+                    '& .MuiContainer-root': {
+                        width: '100%'
+                    }
+                }}
+                component="main">
+                <CssBaseline />
+                <Box
                     sx={{
-                        '& .MuiContainer-root': {
-                            width: '100%'
-                        }
+                        marginTop: 16,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
                     }}
-                    component="main">
-                    <CssBaseline />
-                    <div className={isSmallDevice ? 'mobile-logo-container' :
-                        'logo-container'
-                    }>
-                        <img style={{width: '5rem'}} src={icons.logo} />
-                    </div>
-                    <Box
-                        sx={{
-                            marginTop: 8,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                        }}
-                    >
-                        <Typography component="h1" variant="h5">
+                >
+                    <img className="login-logo" style={{width: '5rem'}} src={Logo} />
+                    <Typography component="h1" variant="h5">
                           Sign in
-                        </Typography>
-                        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-                            {loginError.error && <Alert severity="error">{loginError.message}</Alert>}
-                            <TextField
-                                fullWidth
-                                label="email@example.com"
-                                variant="outlined"
-                                margin="normal"
-                                value={email}
-                                onChange={(e) => {
-                                    setEmail(e.target.value);
-                                    setEmailError(false);
-                                }}
-                                required
-                                error={emailError}
-                                helperText={emailError ? 'Invalid email format' : ''}
-                            />
-                            <TextField
-                                fullWidth
-                                label="Password"
-                                type="password"
-                                variant="outlined"
-                                margin="normal"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                            />
-                            <Button
-                                sx={{mt: 2}}
-                                type="submit"
-                                variant="contained"
-                                fullWidth
-                                disabled={!email || !password || loading || emailError}
-                            >
-                                {loading ? <CircularProgress size={24} /> : 'Sign in'}
-                            </Button>
-                        </Box>
+                    </Typography>
+                    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+                        {loginError.error && <Alert severity="error">{loginError.message}</Alert>}
+                        <TextField
+                            fullWidth
+                            label="email@example.com"
+                            variant="outlined"
+                            margin="normal"
+                            value={email}
+                            onChange={(e) => {
+                                setEmail(e.target.value);
+                                setEmailError(false);
+                            }}
+                            required
+                            error={emailError}
+                            helperText={emailError ? 'Invalid email format' : ''}
+                        />
+                        <TextField
+                            fullWidth
+                            label="Password"
+                            type="password"
+                            variant="outlined"
+                            margin="normal"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                        <Button
+                            sx={{mt: 2}}
+                            type="submit"
+                            variant="contained"
+                            fullWidth
+                            disabled={!email || !password || loading || emailError}
+                        >
+                            {loading ? <CircularProgress size={24} /> : 'Sign in'}
+                        </Button>
                     </Box>
-                    <Copyright sx={{ mt: 8, mb: 4 }} />
-                </Container>
+                </Box>
+                <Copyright sx={{ mt: 8, mb: 4 }} />
+            </Container>
 
                
-            }
-                
-            
-            
-        </div>
+        }
     </>
 }
 

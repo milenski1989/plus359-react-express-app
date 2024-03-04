@@ -5,18 +5,10 @@
     height: 100vh;
   }
 
-  .logo-container {
-    background-color: rgba(0, 0, 0, 0.8);
-    width: 100%; 
-    padding: 16px;
-    margin-bottom: -2rem;
-  }
-
-  .mobile-logo-container {
-    background-color: rgba(0, 0, 0, 0.8);
-    width: 100%; 
-    padding: 16px;
-    margin-bottom: -2rem;
+  .login-logo {
+   position: absolute;
+   top: 1rem;
+   left: 1rem;
   }
   
   
