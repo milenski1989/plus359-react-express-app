@@ -127,7 +127,7 @@ const ListView = ({searchResults, handleDialogOpen, handleSearchResults}) => {
                                                     />
                                                     
                                                 ) : (
-                                                    art.position && art[prop.key] === art.position ?
+                                                    art.position && art[prop.key] === art.position && art.position !== 0 ?
                                                         <div
                                                             style={{backgroundColor: generateBackGroundColor(art.cell), 
                                                                 color: "white", 

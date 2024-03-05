@@ -11,6 +11,7 @@ import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { Dialog, DialogContent } from "@mui/material";
 import './ListView.css'
+import { generateBackGroundColor } from "./constants/constants";
 
 const properties = [
     { key: 'position', label: 'Position', align: 'center' },
@@ -34,6 +35,7 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
                 const newObj =  {
                     ['id']: result.id,
                     ['position']: result.position,
+                    ['cell']: result.cell,
                     ['image_url']: result.image_url, 
                     ['download_key']: result.download_key,
                     ['download_url']: result.download_url,
@@ -143,12 +145,26 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
                                                         value={updatedEntry[prop.key] || currentImages[0][prop.key]} 
                                                         onChange={(event) => onChangeEditableInput(event, prop.key)} />
                                                 ) : (
+                                                    art.position && art[prop.key] === art.position ?
+                                                        <div
+                                                            style={{backgroundColor: generateBackGroundColor(art.cell), 
+                                                                color: "white", 
+                                                                height: "auto",
+                                                                marginRight: "1rem",
+                                                                marginLeft: "-1rem",
+                                                                padding: "1rem"
+                                                            }}>
+                                                            <p  className='full-info'>
+                                                                {art[prop.key]}
+                                                            </p>
+                                                        </div>
+                                                        :
                                                     
-                                                    <p  
-                                                        className={art[prop.key].length > 10 ? 'truncated-art-info' : 'full-info'}
-                                                        onClick={() => showAll(art[prop.key])}>
-                                                        {truncateInfoProp(art[prop.key])}
-                                                    </p>
+                                                        <p  
+                                                            className={art[prop.key].length > 10 ? 'truncated-art-info' : 'full-info'}
+                                                            onClick={() => showAll(art[prop.key])}>
+                                                            {truncateInfoProp(art[prop.key])}
+                                                        </p>
                                                        
                                                 )
                                             }
