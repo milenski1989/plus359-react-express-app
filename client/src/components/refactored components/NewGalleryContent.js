@@ -143,42 +143,21 @@ const NewGalleryContent = () => {
             return  <DetailsView
                 searchResults={searchResults}
                 handleDialogOpen={handleDialogOpen}
-                page={page} 
-                sortField={sortField}
-                sortOrder={sortOrder} 
                 handleSearchResults={setSearchResults}
-                handlePagesCount={setPagesCount} 
-                handleTotalCount={setTotalCount}
-                handleError={setError}
-                handleLoading={setLoading}
             />
         } else if (viewMode === 'list' && isSmallDevice) {
             return  <MobileListView
                 searchResults={searchResults}
                 handleUpdatedEntry={setUpdatedEntry}
                 handleDialogOpen={handleDialogOpen}
-                page={page} 
-                sortField={sortField}
-                sortOrder={sortOrder} 
                 handleSearchResults={setSearchResults}
-                handlePagesCount={setPagesCount} 
-                handleTotalCount={setTotalCount}
-                handleError={setError}
-                handleLoading={setLoading}
             /> 
         } else {
             return <ListView
                 searchResults={searchResults}
                 handleUpdatedEntry={setUpdatedEntry}
                 handleDialogOpen={handleDialogOpen}
-                page={page} 
-                sortField={sortField}
-                sortOrder={sortOrder} 
                 handleSearchResults={setSearchResults}
-                handlePagesCount={setPagesCount} 
-                handleTotalCount={setTotalCount}
-                handleError={setError}
-                handleLoading={setLoading}
             /> 
         }
     }

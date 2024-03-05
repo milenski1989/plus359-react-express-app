@@ -19,7 +19,7 @@ const properties = [
     { key: 'dimensions', label: 'Dimensions', align: 'center' },
 ];
 
-const MobileListView = ({searchResults, handleDialogOpen, page, sortField, sortOrder, handleSearchResults, handlePagesCount, handleTotalCount, handleError, handleLoading}) => {
+const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) => {
     const {isEditMode, updatedEntry, setUpdatedEntry, currentImages, setCurrentImages} = useContext(ImageContext)
     const [imagePreview, setImagePreview] = useState(false)
     const [isMoreInfoOpen, setIsMoreInfoOpen] = useState(false)
@@ -162,14 +162,7 @@ const MobileListView = ({searchResults, handleDialogOpen, page, sortField, sortO
                                 art={art}
                                 handleDialogOpen={handleDialogOpen}
                                 searchResults={searchResults}
-                                page={page}
-                                sortField={sortField}
-                                sortOrder={sortOrder}
                                 handleSearchResults={handleSearchResults}
-                                handlePagesCount={handlePagesCount}
-                                handleTotalCount={handleTotalCount}
-                                handleError={handleError}
-                                handleLoading={handleLoading}
                             />
                         </ListItemButton>
                     </ListItem>

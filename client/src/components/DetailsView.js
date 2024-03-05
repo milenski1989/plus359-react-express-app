@@ -10,7 +10,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { generateBackGroundColor } from "./constants/constants";
 import Masonry from '@mui/lab/Masonry';
 
-const DetailsView = ({searchResults, handleDialogOpen, page, sortField, sortOrder, handleSearchResults, handlePagesCount, handleTotalCount, handleError, handleLoading}) => {
+const DetailsView = ({searchResults, handleDialogOpen, handleSearchResults}) => {
 
     const {
         setCurrentImages,
@@ -66,14 +66,7 @@ const DetailsView = ({searchResults, handleDialogOpen, page, sortField, sortOrde
                         art={art}
                         handleDialogOpen={handleDialogOpen}
                         searchResults={searchResults}
-                        page={page} 
-                        sortField={sortField}
-                        sortOrder={sortOrder} 
                         handleSearchResults={handleSearchResults}
-                        handlePagesCount={handlePagesCount} 
-                        handleTotalCount={handleTotalCount}
-                        handleError={handleError}
-                        handleLoading={handleLoading}
                     />
                     <EditableContainer 
                         art={art}

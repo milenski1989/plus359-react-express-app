@@ -11,6 +11,7 @@ import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { Dialog, DialogContent } from "@mui/material";
 import './ListView.css'
+import { generateBackGroundColor } from "./constants/constants";
 
 const properties = [
     { key: 'position', label: 'Position', align: 'center' },
@@ -24,7 +25,7 @@ const properties = [
     { key: 'storageLocation', label: 'Storage Location', align: 'center' }
 ];
 
-const ListView = ({searchResults, handleDialogOpen, page, sortField, sortOrder, handleSearchResults, handlePagesCount, handleTotalCount, handleError, handleLoading}) => {
+const ListView = ({searchResults, handleDialogOpen, handleSearchResults}) => {
     const {isEditMode, updatedEntry, setUpdatedEntry, currentImages, setCurrentImages} = useContext(ImageContext)
     const [imagePreview, setImagePreview] = useState(false)
     const [isMoreInfoOpen, setIsMoreInfoOpen] = useState(false)
@@ -117,18 +118,33 @@ const ListView = ({searchResults, handleDialogOpen, page, sortField, sortOrder, 
                                         <ListItemText
                                             id={`${labelId}-${prop.key}`}
                                             primary={
-                                                isEditMode && currentImages.length && currentImages[0].id === art.id ? (
+                                                isEditMode && currentImages.length && currentImages[0].id === art.id && art[prop.key] !== currentImages[0].position ? (
+                                                    
                                                     <input 
                                                         className="list-view-editable-input" 
                                                         value={updatedEntry[prop.key] || currentImages[0][prop.key]} 
-                                                        onChange={(event) => onChangeEditableInput(event, prop.key)} />
-                                                ) : (
+                                                        onChange={(event) => onChangeEditableInput(event, prop.key)}
+                                                    />
                                                     
-                                                    <p  
-                                                        className={art[prop.key].length > 10 ? 'truncated-art-info' : 'full-info'}
-                                                        onClick={() => showAll(art[prop.key])}>
-                                                        {truncateInfoProp(art[prop.key])}
-                                                    </p>
+                                                ) : (
+                                                    art.position && art[prop.key] === art.position ?
+                                                        <div
+                                                            style={{backgroundColor: generateBackGroundColor(art.cell), 
+                                                                color: "white", 
+                                                                height: "auto",
+                                                                marginRight: "3rem",
+                                                                padding: "1rem"
+                                                            }}>
+                                                            <p  className='full-info'>
+                                                                {art[prop.key]}
+                                                            </p>
+                                                        </div>
+                                                        :
+                                                        <p  
+                                                            className={art[prop.key].length > 10 ? 'truncated-art-info' : 'full-info'}
+                                                            onClick={() => showAll(art[prop.key])}>
+                                                            {truncateInfoProp(art[prop.key])}
+                                                        </p>
                                                        
                                                 )
                                             }
@@ -142,14 +158,7 @@ const ListView = ({searchResults, handleDialogOpen, page, sortField, sortOrder, 
                                 art={art}
                                 handleDialogOpen={handleDialogOpen}
                                 searchResults={searchResults}
-                                page={page}
-                                sortField={sortField}
-                                sortOrder={sortOrder}
                                 handleSearchResults={handleSearchResults}
-                                handlePagesCount={handlePagesCount}
-                                handleTotalCount={handleTotalCount}
-                                handleError={handleError}
-                                handleLoading={handleLoading}
                             />
                         </ListItemButton>
                     </ListItem>
