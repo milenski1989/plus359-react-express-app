@@ -38,6 +38,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.StorageController = void 0;
 const express = __importStar(require("express"));
 const StorageService_1 = __importDefault(require("../services/StorageService"));
+const ArtworksService_1 = __importDefault(require("../services/ArtworksService"));
 class StorageController {
     constructor() {
         this.getFreeCells = (req, res) => __awaiter(this, void 0, void 0, function* () {
@@ -48,6 +49,31 @@ class StorageController {
             }
             catch (error) {
                 res.status(400).json(error);
+            }
+        });
+        this.getAllCellsFromCurrentStorage = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { currentStorage } = req.params;
+            let cells;
+            try {
+                if (currentStorage !== 'All') {
+                    const arts = yield ArtworksService_1.default.getInstance().getAllByCellFromCurrentStorage(currentStorage);
+                    cells = arts
+                        .map(art => art.cell)
+                        .filter(cell => cell !== "")
+                        .sort((a, b) => a.localeCompare(b));
+                }
+                else {
+                    const arts = yield ArtworksService_1.default.getInstance().getAll();
+                    cells = arts
+                        .map(art => art.cell)
+                        .filter(cell => cell !== "")
+                        .sort((a, b) => a.localeCompare(b));
+                }
+                res.status(200).json(cells);
+            }
+            catch (error) {
+                console.error(error);
+                res.status(500).json({ error: 'Internal Server Error' });
             }
         });
         this.updateLocation = (req, res) => __awaiter(this, void 0, void 0, function* () {
@@ -65,6 +91,7 @@ class StorageController {
     }
     initializeRoutes() {
         this.router.get('/:cell', this.getFreeCells);
+        this.router.get('/all/allCellsFromCurrentStorage/:currentStorage', this.getAllCellsFromCurrentStorage);
         this.router.put('/update-location', this.updateLocation);
     }
 }

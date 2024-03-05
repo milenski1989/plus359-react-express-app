@@ -50,6 +50,16 @@ class ArtworksController {
                 res.status(400).json(error);
             }
         });
+        this.getAllByCell = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { cell } = req.params;
+            try {
+                const artworks = yield ArtworksService_1.default.getInstance().getAllByCell(cell);
+                res.status(200).json({ artworks });
+            }
+            catch (error) {
+                res.status(400).json(error);
+            }
+        });
         this.getAllByStorage = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const { page, count, sortField, sortOrder } = req.query;
             const { name } = req.params;
@@ -87,6 +97,7 @@ class ArtworksController {
     }
     initializeRoutes() {
         this.router.get('/artworksByArtist/:artist', this.getAllByArtist);
+        this.router.get('/artworksByCell/:cell', this.getAllByCell);
         this.router.get('/:name', this.getAllByStorage);
         this.router.post('/artwork', this.searchAllByKeywords);
         this.router.delete('/artwork/:params', this.deleteFileFromS3andDB);

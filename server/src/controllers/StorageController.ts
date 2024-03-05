@@ -1,5 +1,6 @@
 import * as express from 'express'
 import StorageService from '../services/StorageService'
+import ArtworksService from '../services/ArtworksService'
 
 
 export class StorageController{
@@ -13,8 +14,8 @@ this.initializeRoutes()
 
     private initializeRoutes() {
         this.router.get('/:cell', this.getFreeCells)
+        this.router.get('/all/allCellsFromCurrentStorage/:currentStorage', this.getAllCellsFromCurrentStorage)
         this.router.put('/update-location', this.updateLocation)
-
     }
 
     getFreeCells = async (req, res) => {
@@ -31,6 +32,32 @@ this.initializeRoutes()
         }
       
       }
+
+      getAllCellsFromCurrentStorage = async (req, res) => {
+        const {currentStorage} = req.params
+        let cells;
+        try {
+          if (currentStorage !== 'All') {
+            const arts = await ArtworksService.getInstance().getAllByCellFromCurrentStorage(currentStorage);
+            cells = arts
+            .map(art => art.cell)
+            .filter(cell => cell !== "")
+            .sort((a, b) => a.localeCompare(b));
+          } else {
+            const arts = await ArtworksService.getInstance().getAll();
+            cells = arts
+            .map(art => art.cell)
+            .filter(cell => cell !== "")
+            .sort((a, b) => a.localeCompare(b));
+          }
+      
+            res.status(200).json(cells);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    }
+    
 
       updateLocation = async(req, res) => {
         const {ids, formControlData}  = req.body

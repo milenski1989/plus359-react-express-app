@@ -12,11 +12,13 @@ const boxShadow = '0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 
 function SearchAndFiltersBar({page, setPage, handlePagesCount, handleTotalCount, sortField, sortOrder, setPaginationDisabled, handleLoading, handleError, handleSearchResults, keywords, handleKeywords}) {
 
     const [artists, setArtists] = useState([])
+    const [cells, setCells] = useState([])
     const {name} = useParams()
     const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
 
     useEffect(() => {
         getArtists()
+        getCells()
     },[])
 
     const onChange = event => {
@@ -80,12 +82,32 @@ function SearchAndFiltersBar({page, setPage, handlePagesCount, handleTotalCount,
         setArtists(uniqueArtists);
     }
 
+    const getCells = async () => {
+        const res = await fetch(`http://localhost:5000/storage/all/allCellsFromCurrentStorage/${name.split(':')[1]}`)
+        const data = await res.json()
+        const uniqueCells = [...new Set(data)]
+        setCells(uniqueCells);
+    }
+
     const filterByArtist = async (event, artist) => {
         if (!artist && artist !== "-") {
             setPaginationDisabled(false);
             getAllData()
         } else {
             const res = await fetch(`http://localhost:5000/artworks/artworksByArtist/${artist}`)
+            const data = await res.json()
+            handleSearchResults(data.artworks);
+            setPaginationDisabled(true)
+        }
+        setPage(1);
+    };
+
+    const filterByCell = async (event, cell) => {
+        if (!cell) {
+            setPaginationDisabled(false);
+            getAllData()
+        } else {
+            const res = await fetch(`http://localhost:5000/artworks/artworksByCell/${cell}`)
             const data = await res.json()
             handleSearchResults(data.artworks);
             setPaginationDisabled(true)
@@ -121,6 +143,27 @@ function SearchAndFiltersBar({page, setPage, handlePagesCount, handleTotalCount,
                     options={artists}
                     renderInput={(params) => <TextField {...params} label="Select artist" />}
                     onChange={(event, newValue) => filterByArtist(event, newValue)} />
+                <Autocomplete
+                    className={isSmallDevice ? 'mobile-filter-input' :
+                        'filter-input'}
+                    sx={{
+                        "& .MuiOutlinedInput-notchedOutline": {
+                            border: 'none',
+                            boxShadow
+                        },
+                        "&:hover .MuiOutlinedInput-notchedOutline": {
+                            border: 'none',
+                            boxShadow
+                        },
+                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                            border: 'none',
+                            boxShadow
+                        },
+                    }}
+                    disablePortal
+                    options={cells}
+                    renderInput={(params) => <TextField {...params} label="Select cell" />}
+                    onChange={(event, newValue) => filterByCell(event, newValue)} />
             </div>
             <Paper
                 component="form"
