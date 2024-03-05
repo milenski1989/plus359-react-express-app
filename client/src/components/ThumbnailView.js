@@ -42,7 +42,6 @@ const ThumbnailView = ({searchResults}) => {
                         icon={<RadioButtonUncheckedIcon />}
                         checkedIcon={<CheckCircleOutlineIcon />}
                     />
-                    <image style={{width: '100%', height: 'auto'}} src={art.image_url}/>
                     <LazyLoadImage
                         src={art.image_url}
                         effect="blur"

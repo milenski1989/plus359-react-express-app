@@ -50,12 +50,14 @@
 }
 
 .logo {
-    width: 5rem;
+    width: 80px;
+    height: 55px;
     margin-right: 1rem;
 }
 
 .mobile-logo {
-    width: 3.5rem;
+    width: 56px;
+    height: 38px;
 }
 
 .current-location {

@@ -1,13 +1,9 @@
-/* eslint-disable no-undef */
 import { Link, useNavigate, useLocation } from "react-router-dom"
 import './NavBar.css'
 import { useMediaQuery } from "@mui/material";
 import { MenuIcon, XIcon } from "@heroicons/react/outline";
 import { useState } from "react";
-
-const icons = {
-    logo: require('./assets/logo359 gallery-white1.png')
-}
+import Logo from '../components/assets/logo359 gallery-white.png'
 
 const Navbar = () => {
 
@@ -26,7 +22,7 @@ const Navbar = () => {
     return  <>
         {isSmallDevice ?
             <nav className="mobile-navbar-container">
-                <Link to='/'><img className="mobile-logo" alt="logo" src={icons.logo}/></Link>   
+                <Link to='/'><img className="mobile-logo" alt="logo" src={Logo}/></Link>   
                 <div className={isOpen ? "mobile-nav-links-container" : "hidden"}>
                     <Link to='/' 
                         className="mobile-nav-link"
@@ -58,7 +54,7 @@ const Navbar = () => {
             :
             <nav className="navbar">
                 <div className="navbar-elements-container">
-                    <Link to='/'><img className="logo" alt="logo" src={icons.logo}/></Link>
+                    <Link to='/'><img className="logo" alt="logo" src={Logo}/></Link>
                     <p className="current-location">{pathname.slice(10).replace(/%20/g, ' ').replace(/([A-Z])/g, ' $1')}</p>
                     <div className="right-side">
                         <Link to='/' 
