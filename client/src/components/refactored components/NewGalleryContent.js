@@ -53,7 +53,9 @@ const NewGalleryContent = () => {
         error: false,
         message: "",
     });
+    const [imageLoaded, setImageLoaded] = useState({});
 
+    
     const getData = useCallback(async () => {
         setLoading(true);
         try {
@@ -64,7 +66,6 @@ const NewGalleryContent = () => {
             setTotalCount(artsCount);
         } catch (error) {
             setError({ error: true, message: error.message });
-        } finally {
             setLoading(false);
         }
     }, [name, page, sortField, sortOrder, locationChanged]);
@@ -79,11 +80,28 @@ const NewGalleryContent = () => {
             setTotalCount(artsCount);
         } catch(error) {
             setError({ error: true, message: error.message });
-        } finally {
-            setLoading(false);
+            setLoading(false)
         }
     };
     
+    useEffect(() => {
+    
+        const promises = searchResults.map((art) => {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.src = art.image_url;
+                img.onload = () => {
+                    resolve();
+                    setImageLoaded(prev => ({ ...prev, [art.id]: true }));
+                };
+            });
+        });
+
+        Promise.allSettled(promises).then(() => {
+            setLoading(false)
+        });
+    }, [searchResults]);
+
     useEffect(() => {
         keywords.length ? getDataFromSearch() : getData()
     }, [page, sortField, sortOrder, isDeleting, locationChanged]);
@@ -140,11 +158,13 @@ const NewGalleryContent = () => {
                 searchResults={searchResults}
             />  
         } else if (viewMode === 'details') {
-            return  <DetailsView
+            return <DetailsView
                 searchResults={searchResults}
                 handleDialogOpen={handleDialogOpen}
                 handleSearchResults={setSearchResults}
+                imageLoaded={imageLoaded}
             />
+          
         } else if (viewMode === 'list' && isSmallDevice) {
             return  <MobileListView
                 searchResults={searchResults}

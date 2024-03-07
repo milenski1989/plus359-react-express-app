@@ -66,6 +66,12 @@
     font-size: 20px;
 }
 
+.mobile-current-location {
+    color: white;
+    margin-left: -6rem;
+    align-self: center;
+}
+
 .nav-link {
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;

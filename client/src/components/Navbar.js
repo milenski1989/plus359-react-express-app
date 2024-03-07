@@ -23,6 +23,7 @@ const Navbar = () => {
         {isSmallDevice ?
             <nav className="mobile-navbar-container">
                 <Link to='/'><img className="mobile-logo" alt="logo" src={Logo}/></Link>   
+                <p className="mobile-current-location">{pathname.slice(10).replace(/%20/g, ' ').replace(/([A-Z])/g, ' $1')}</p>
                 <div className={isOpen ? "mobile-nav-links-container" : "hidden"}>
                     <Link to='/' 
                         className="mobile-nav-link"
