@@ -10,7 +10,6 @@ import SearchAndFiltersBar from "../SearchAndFiltersBar";
 import { useNavigate, useParams } from "react-router-dom";
 import ThumbnailView from "../ThumbnailView";
 import DetailsView from "../DetailsView";
-import Sort from "../Sort";
 import ListViewIcon from '../../components/assets/list-view-solid.svg';
 import ThumbnailViewIcon from '../../components/assets/thumbnail-view-solid.svg';
 import ListView from "../ListView";
@@ -21,6 +20,10 @@ import DeleteDialog from "./DeleteDialog";
 import LocationChangeDialog from "./LocationChangeDialog";
 import PaginationComponent from './PaginationComponent'
 import { getAllEntries, getAllEntriesByKeywords } from "../../utils/apiCalls";
+import { useMediaQuery } from "@mui/material";
+import NewSort from "./NewSort";
+import MobileListView from "../MobileListView";
+
 
 const NewGalleryContent = () => {
 
@@ -29,6 +32,7 @@ const NewGalleryContent = () => {
         setUpdatedEntry,
     } = useContext(ImageContext);
     const myStorage = window.localStorage;
+    const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
 
     const [page, setPage] = useState(1);
     const [sortField, setSortField] = useState('id')
@@ -49,7 +53,9 @@ const NewGalleryContent = () => {
         error: false,
         message: "",
     });
+    const [imageLoaded, setImageLoaded] = useState({});
 
+    
     const getData = useCallback(async () => {
         setLoading(true);
         try {
@@ -60,7 +66,6 @@ const NewGalleryContent = () => {
             setTotalCount(artsCount);
         } catch (error) {
             setError({ error: true, message: error.message });
-        } finally {
             setLoading(false);
         }
     }, [name, page, sortField, sortOrder, locationChanged]);
@@ -75,11 +80,28 @@ const NewGalleryContent = () => {
             setTotalCount(artsCount);
         } catch(error) {
             setError({ error: true, message: error.message });
-        } finally {
-            setLoading(false);
+            setLoading(false)
         }
     };
     
+    useEffect(() => {
+    
+        const promises = searchResults.map((art) => {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.src = art.image_url;
+                img.onload = () => {
+                    resolve();
+                    setImageLoaded(prev => ({ ...prev, [art.id]: true }));
+                };
+            });
+        });
+
+        Promise.allSettled(promises).then(() => {
+            setLoading(false)
+        });
+    }, [searchResults]);
+
     useEffect(() => {
         keywords.length ? getDataFromSearch() : getData()
     }, [page, sortField, sortOrder, isDeleting, locationChanged]);
@@ -136,31 +158,26 @@ const NewGalleryContent = () => {
                 searchResults={searchResults}
             />  
         } else if (viewMode === 'details') {
-            return  <DetailsView
+            return <DetailsView
                 searchResults={searchResults}
                 handleDialogOpen={handleDialogOpen}
-                page={page} 
-                sortField={sortField}
-                sortOrder={sortOrder} 
                 handleSearchResults={setSearchResults}
-                handlePagesCount={setPagesCount} 
-                handleTotalCount={setTotalCount}
-                handleError={setError}
-                handleLoading={setLoading}
+                imageLoaded={imageLoaded}
             />
-        } else {
-            return  <ListView
+          
+        } else if (viewMode === 'list' && isSmallDevice) {
+            return  <MobileListView
                 searchResults={searchResults}
                 handleUpdatedEntry={setUpdatedEntry}
                 handleDialogOpen={handleDialogOpen}
-                page={page} 
-                sortField={sortField}
-                sortOrder={sortOrder} 
                 handleSearchResults={setSearchResults}
-                handlePagesCount={setPagesCount} 
-                handleTotalCount={setTotalCount}
-                handleError={setError}
-                handleLoading={setLoading}
+            /> 
+        } else {
+            return <ListView
+                searchResults={searchResults}
+                handleUpdatedEntry={setUpdatedEntry}
+                handleDialogOpen={handleDialogOpen}
+                handleSearchResults={setSearchResults}
             /> 
         }
     }
@@ -196,7 +213,8 @@ const NewGalleryContent = () => {
                     
                 />
                 
-                <div className="search-actions-container">
+                <div className={isSmallDevice ? 'mobile-search-actions-container' :
+                    'search-actions-container'}>
                     <div className="main-actions-pdf-location-container">
                         <img src={PdfIcon} className='icon' onClick={() => navigate('/pdf')}/>
                         {currentImages.length ?
@@ -204,10 +222,10 @@ const NewGalleryContent = () => {
                     </div>
                 
                     <>
-                        <Sort
+                        <NewSort 
                             sortField={sortField}
-                            sortOrder={sortOrder}
                             handleSortField={setSortField}
+                            sortOrder={sortOrder}
                             handleSortOrder={setSortOrder}
                         />
                         <SearchAndFiltersBar
@@ -226,7 +244,9 @@ const NewGalleryContent = () => {
                          
                         />
 
-                        <div className="view-mode-icons-container">
+                        <div className={isSmallDevice ? 'mobile-view-mode-icons-container' :
+                            'view-mode-icons-container'
+                        }>
                             <img className={viewMode === 'thumbnail' ? 'selected icon' : 'icon'} src={ThumbnailViewIcon} onClick={() => setViewMode('thumbnail')}/>
                             <img className={viewMode === 'details' ? 'selected icon' : 'icon'} src={DetailsViewIcon} onClick={() => setViewMode('details')}/>
                             <img className={viewMode === 'list' ? 'selected icon' : 'icon'} src={ListViewIcon} onClick={() => setViewMode('list')}/>

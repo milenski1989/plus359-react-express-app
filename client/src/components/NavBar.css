@@ -2,8 +2,44 @@
 
 .navbar {
     font-family: 'Montserrat';
-    background-color: black;
+    background-color: rgba(0, 0, 0, 0.80);
  
+}
+
+.mobile-navbar-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 1.5rem;
+    background-color: rgba(0, 0, 0, 0.80);
+
+    width: 100vw;
+
+}
+
+.mobile-nav-links-container {
+    font-size: 18px;
+    line-height: 1.25rem;
+    margin-right: -8rem;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.navbar-button {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    color: #40C8F4;
+}
+
+.navbar-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 1rem;
 }
 
 .navbar-elements-container {
@@ -14,14 +50,26 @@
 }
 
 .logo {
-    width: 5rem;
+    width: 80px;
+    height: 55px;
     margin-right: 1rem;
+}
+
+.mobile-logo {
+    width: 56px;
+    height: 38px;
 }
 
 .current-location {
     color: white;
     margin-left: 1rem;
     font-size: 20px;
+}
+
+.mobile-current-location {
+    color: white;
+    margin-left: -6rem;
+    align-self: center;
 }
 
 .nav-link {
@@ -31,6 +79,14 @@
     padding-right: 1rem;
     color: #40C8F4;
     font-size: 18px;
+}
+
+.mobile-nav-link {
+    color: #40C8F4;
+    margin-top: 1rem;
+    margin-right: 1rem;
+    text-decoration: none;
+    display: block;
 }
 
 .right-side {

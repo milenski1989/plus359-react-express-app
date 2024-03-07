@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { ImageContext } from './contexts/ImageContext';
 import { saveAs } from "file-saver";
 import axios from "axios";
@@ -9,16 +9,14 @@ import DeleteIcon from '../components/assets/delete-solid.svg'
 import CancelIcon from '../components/assets/cancel-solid.svg'
 import SaveIcon from '../components/assets/save-solid.svg'
 import ReplaceIcon from '../components/assets/replace-solid.svg'
-
+import { useMediaQuery } from "@mui/material";
 
 import './ActionButtons.css'
 import Message from './Message';
 import CustomDialog from './CustomDialog';
 import { TextField } from '@mui/material';
-import { getAllEntries } from '../utils/apiCalls';
-import { useParams } from 'react-router-dom';
 
-const ActionButtons = ({art, handleDialogOpen, searchResults, page, sortField, sortOrder, handleSearchResults, handlePagesCount, handleTotalCount, handleError, handleLoading}) => {
+const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResults, className = ''}) => {
 
     const {
         currentImages,
@@ -30,7 +28,8 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, page, sortField, s
     } = useContext(ImageContext);
 
     const myStorage = window.localStorage;
-    const {name} = useParams()
+    const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
+
     const [imageReplaceDialogisOpen, setImageReplaceDialogisOpen] = useState(false)
     const [uploading, setUploading] = useState(false)
     const [file, setFile] = useState()
@@ -61,7 +60,9 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, page, sortField, s
             notes,
             storageLocation,
             cell,
-            position
+            position,
+            image_url,
+            download_url
         } = copyOfEntry;
         setUpdatedEntry({
             id: copyId,
@@ -73,7 +74,9 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, page, sortField, s
             notes,
             storageLocation,
             cell,
-            position
+            position,
+            image_url,
+            download_url
         });
     };
 
@@ -84,25 +87,29 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, page, sortField, s
 
     const saveUpdatedEntry = (id) => {
         updateEntry(id);
+        const updatedResults = searchResults.map((entry) =>
+            entry.id === id ? updatedEntry : entry
+        );
+        handleSearchResults(updatedResults);
         myStorage.removeItem("image");
         setCurrentImages([])
     };
 
     
-    const getAllData = useCallback(async () => {
-        handleLoading(true);
-        try {
-            const data = await getAllEntries(name, page, sortField, sortOrder);
-            const { arts, artsCount } = data;
-            handleSearchResults(arts);
-            handlePagesCount(Math.ceil(artsCount / 25));
-            handleTotalCount(artsCount);
-        } catch (error) {
-            handleError({ error: true, message: error.message });
-        } finally {
-            handleLoading(false);
-        }
-    }, [name, page, sortField, sortOrder]); 
+    // const getAllData = useCallback(async () => {
+    //     handleLoading(true);
+    //     try {
+    //         const data = await getAllEntries(name, page, sortField, sortOrder);
+    //         const { arts, artsCount } = data;
+    //         handleSearchResults(arts);
+    //         handlePagesCount(Math.ceil(artsCount / 25));
+    //         handleTotalCount(artsCount);
+    //     } catch (error) {
+    //         handleError({ error: true, message: error.message });
+    //     } finally {
+    //         handleLoading(false);
+    //     }
+    // }, [name, page, sortField, sortOrder]); 
 
     const updateEntry = async (id) => {
         const response = await axios.put(
@@ -113,7 +120,8 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, page, sortField, s
         if (response.status === 200) {
             setIsEditMode(false);
             setUpdatedEntry({});
-            getAllData()
+       
+            //getAllData()
         } else {
             setIsEditMode(false);
             setUpdatedEntry({});
@@ -190,7 +198,7 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, page, sortField, s
                                 Please upload an image
                         </p></>}
                 </CustomDialog>}
-        <div className="icons-container">
+        <div className={isSmallDevice && !className ? 'mobile-icons-container' : 'icons-container'}>
             
             <>
                 {!isEditMode || currentImages.length && currentImages[0].id !== art.id ?

@@ -47,11 +47,37 @@ class ArtworksService {
         });
     }
     ;
+    getAllByCellFromCurrentStorage(currentStorage) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield artsRepository.find({
+                    where: {
+                        storageLocation: currentStorage
+                    }
+                });
+            }
+            catch (_a) {
+                throw new Error("Fetch failed!");
+            }
+        });
+    }
     getAllByArtist(artist) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 return yield artsRepository.find({
                     where: { artist: artist }
+                });
+            }
+            catch (_a) {
+                throw new Error("Fetch failed!");
+            }
+        });
+    }
+    getAllByCell(cell) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield artsRepository.find({
+                    where: { cell: cell }
                 });
             }
             catch (_a) {

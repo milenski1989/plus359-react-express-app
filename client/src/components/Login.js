@@ -4,9 +4,8 @@ import './App.css'
 import Message from "./Message"
 import { useNavigate } from "react-router-dom";
 import  './Login.css'
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
-import Avatar from '@mui/material/Avatar';
+import Logo from '../components/assets/logo359 gallery-black.png'
 
 function Copyright(props) {
     return (
@@ -30,7 +29,6 @@ const Login = () => {
     const [emailError, setEmailError] = useState(false);
 
     let myStorage = window.localStorage
-
     let navigate = useNavigate();
 
     const validateEmail = (email) => {
@@ -80,76 +78,74 @@ const Login = () => {
     }
 
     return <>
-        <div className="md:container md:mx-auto">
-
-            {<Message open={loginError.error} handleClose={() => setLoginError({error: false, message: ""})} message={loginError.message} severity="error"
-            /> }
+        {<Message open={loginError.error} handleClose={() => setLoginError({error: false, message: ""})} message={loginError.message} severity="error"
+        /> }
                
-            { loading ? 
-                <CircularProgress className="loader" color="primary" /> 
-                : 
-                <Container component="main" maxWidth="xs">
-                    <CssBaseline />
-                    <Box
-                        sx={{
-                            marginTop: 8,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                        }}
-                    >
-                        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                            <LockOutlinedIcon />
-                        </Avatar>
-                        <Typography component="h1" variant="h5">
+        { loading ? 
+            <CircularProgress className="loader" color="primary" /> 
+            : 
+            <Container
+                sx={{
+                    '& .MuiContainer-root': {
+                        width: '100%'
+                    }
+                }}
+                component="main">
+                <CssBaseline />
+                <Box
+                    sx={{
+                        marginTop: 16,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                    }}
+                >
+                    <img className="login-logo" src={Logo} />
+                    <Typography component="h1" variant="h5">
                           Sign in
-                        </Typography>
-                        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-                            {loginError.error && <Alert severity="error">{loginError.message}</Alert>}
-                            <TextField
-                                fullWidth
-                                label="email@example.com"
-                                variant="outlined"
-                                margin="normal"
-                                value={email}
-                                onChange={(e) => {
-                                    setEmail(e.target.value);
-                                    setEmailError(false);
-                                }}
-                                required
-                                error={emailError}
-                                helperText={emailError ? 'Invalid email format' : ''}
-                            />
-                            <TextField
-                                fullWidth
-                                label="Password"
-                                type="password"
-                                variant="outlined"
-                                margin="normal"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                            />
-                            <Button
-                                sx={{mt: 2}}
-                                type="submit"
-                                variant="contained"
-                                fullWidth
-                                disabled={!email || !password || loading || emailError}
-                            >
-                                {loading ? <CircularProgress size={24} /> : 'Sign in'}
-                            </Button>
-                        </Box>
+                    </Typography>
+                    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+                        {loginError.error && <Alert severity="error">{loginError.message}</Alert>}
+                        <TextField
+                            fullWidth
+                            label="email@example.com"
+                            variant="outlined"
+                            margin="normal"
+                            value={email}
+                            onChange={(e) => {
+                                setEmail(e.target.value);
+                                setEmailError(false);
+                            }}
+                            required
+                            error={emailError}
+                            helperText={emailError ? 'Invalid email format' : ''}
+                        />
+                        <TextField
+                            fullWidth
+                            label="Password"
+                            type="password"
+                            variant="outlined"
+                            margin="normal"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                        <Button
+                            sx={{mt: 2}}
+                            type="submit"
+                            variant="contained"
+                            fullWidth
+                            disabled={!email || !password || loading || emailError}
+                        >
+                            {loading ? <CircularProgress size={24} /> : 'Sign in'}
+                        </Button>
                     </Box>
-                    <Copyright sx={{ mt: 8, mb: 4 }} />
-                </Container>
+                </Box>
+                <Copyright sx={{ mt: 8, mb: 4 }} />
+            </Container>
 
                
-            }
-                
-            
-            
-        </div>
+        }
     </>
 }
 

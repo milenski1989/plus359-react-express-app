@@ -44,10 +44,32 @@ export default class ArtworksService {
       }
      };
 
+     async getAllByCellFromCurrentStorage (currentStorage: string) {
+      try {
+        return await artsRepository.find({
+          where: {
+            storageLocation: currentStorage
+          }
+        })
+    } catch {
+     throw new Error("Fetch failed!");
+    }
+     }
+
      async getAllByArtist (artist: string) {
       try {
         return await artsRepository.find({
           where:{artist: artist}
+        })
+    } catch {
+     throw new Error("Fetch failed!");
+    }
+     }
+
+     async getAllByCell (cell) {
+      try {
+        return await artsRepository.find({
+          where:{cell: cell}
         })
     } catch {
      throw new Error("Fetch failed!");

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
@@ -17,20 +17,38 @@ const properties = [
     { key: 'position', label: 'Position', align: 'center' },
     { key: 'image_url', label: 'Image', align: 'center', isImage: true },
     { key: 'artist', label: 'Artist', align: 'center' },
-    { key: 'title', label: 'Title', align: 'center' },
     { key: 'dimensions', label: 'Dimensions', align: 'center' },
-    { key: 'technique', label: 'Technique', align: 'center' },
-    { key: 'price', label: 'Price', align: 'center' },
-    { key: 'notes', label: 'Notes', align: 'center' },
-    { key: 'storageLocation', label: 'Storage Location', align: 'center' }
 ];
 
-const ListView = ({searchResults, handleDialogOpen, handleSearchResults}) => {
+const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) => {
     const {isEditMode, updatedEntry, setUpdatedEntry, currentImages, setCurrentImages} = useContext(ImageContext)
     const [imagePreview, setImagePreview] = useState(false)
     const [isMoreInfoOpen, setIsMoreInfoOpen] = useState(false)
     const [selectedArt, setSelectedArt] = useState(null);
     const [selectedProp, setSelectedProp] = useState(null)
+    const [copyOfResults, setCopyOfResults] = useState([])
+
+    useEffect(() => {
+        if (searchResults.length) {
+            const _copyOfResults = []
+            for (let result of searchResults) {
+                const newObj =  {
+                    ['id']: result.id,
+                    ['position']: result.position,
+                    ['cell']: result.cell,
+                    ['image_url']: result.image_url, 
+                    ['download_key']: result.download_key,
+                    ['download_url']: result.download_url,
+                    ['artist']: result.artist, 
+                    ['dimensions']: result.dimensions
+                }
+
+                _copyOfResults.push(newObj)
+            }
+
+            setCopyOfResults(_copyOfResults)
+        }
+    },[searchResults])
 
     const checkBoxHandler = (e, id) => {
         const index = searchResults.findIndex(art => art.id === id)
@@ -56,7 +74,7 @@ const ListView = ({searchResults, handleDialogOpen, handleSearchResults}) => {
     };
 
     const showAll = (propKey) => {
-        if (propKey.length <=10) return;
+        if (propKey.length <=10 || propKey === 0) return;
         setSelectedProp(propKey)
         setIsMoreInfoOpen(true)
     }
@@ -71,7 +89,7 @@ const ListView = ({searchResults, handleDialogOpen, handleSearchResults}) => {
 
     return <>
         <List dense sx={{ width: "100%", maxWidth: "100vw", bgcolor: "background.paper" }}>
-            {searchResults.map((art, ind) => {
+            {copyOfResults.map((art, ind) => {
                 const labelId = `checkbox-list-secondary-label-${ind}`;
 
                 return (
@@ -81,7 +99,7 @@ const ListView = ({searchResults, handleDialogOpen, handleSearchResults}) => {
                                 backgroundColor: "black",
                             },
                         }}
-                        className={'list-item'}
+                        className='mobile-list-item'
                         key={art.id}
                         disablePadding
                     >
@@ -92,16 +110,19 @@ const ListView = ({searchResults, handleDialogOpen, handleSearchResults}) => {
                                 borderRadius: '10px',
                                 boxShadow: '0px 0px 19.100000381469727px 0px rgba(0, 0, 0, 0.25)',
                                 display: 'grid',
-                                gridTemplateColumns: 'repeat(11, 9%)',
+                                gridTemplateColumns: 'repeat(5, 20%)',
                                 "&:hover": {
-                                    backgroundColor: "#D5E8F2",
-                                }
+                                    backgroundColor: "#F7F9FA",
+                                },
+                                "&.Mui-focusVisible": {
+                                    backgroundColor: "#F7F9FA",
+                                },
                             }}
                         >
                             <Checkbox
                                 onChange={(e) => checkBoxHandler(e, art.id)}
                                 sx={{
-                                    justifySelf:  "flex-start",
+                                    justifySelf: "flex-start",
                                     "&.Mui-checked": {
                                         color: "black",
                                     },
@@ -118,21 +139,19 @@ const ListView = ({searchResults, handleDialogOpen, handleSearchResults}) => {
                                         <ListItemText
                                             id={`${labelId}-${prop.key}`}
                                             primary={
-                                                isEditMode && currentImages.length && currentImages[0].id === art.id && art[prop.key] !== currentImages[0].position ? (
-                                                    
+                                                isEditMode && currentImages.length && currentImages[0].id === art.id ? (
                                                     <input 
-                                                        className="list-view-editable-input" 
+                                                        className="mobile-list-view-editable-input" 
                                                         value={updatedEntry[prop.key] || currentImages[0][prop.key]} 
-                                                        onChange={(event) => onChangeEditableInput(event, prop.key)}
-                                                    />
-                                                    
+                                                        onChange={(event) => onChangeEditableInput(event, prop.key)} />
                                                 ) : (
-                                                    art.position && art[prop.key] === art.position && art.position !== 0 ?
+                                                    art.position && art[prop.key] === art.position ?
                                                         <div
                                                             style={{backgroundColor: generateBackGroundColor(art.cell), 
                                                                 color: "white", 
                                                                 height: "auto",
-                                                                marginRight: "3rem",
+                                                                marginRight: "1rem",
+                                                                marginLeft: "-1rem",
                                                                 padding: "1rem"
                                                             }}>
                                                             <p  className='full-info'>
@@ -140,6 +159,7 @@ const ListView = ({searchResults, handleDialogOpen, handleSearchResults}) => {
                                                             </p>
                                                         </div>
                                                         :
+                                                    
                                                         <p  
                                                             className={art[prop.key].length > 10 ? 'truncated-art-info' : 'full-info'}
                                                             onClick={() => showAll(art[prop.key])}>
@@ -184,4 +204,4 @@ const ListView = ({searchResults, handleDialogOpen, handleSearchResults}) => {
     </>
 }
 
-export default ListView
+export default MobileListView

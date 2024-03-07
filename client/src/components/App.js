@@ -23,16 +23,13 @@ const theme = createTheme({
                 },
             },
         },
-        MuiOutlinedInput: {
+        MuiMasonry: {
             styleOverrides: {
-                notchedOutline: {
-                    borderColor: '#000000',
-                    '&.Mui-focused': {
-                        borderColor: '#007bff !important',
-                    },
-                },
-            },
-        },
+                root: {
+                    margin: 0
+                }
+            }
+        }
     },
 });
 

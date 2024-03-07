@@ -13,6 +13,7 @@ this.initializeRoutes()
 
     private initializeRoutes() {
         this.router.get('/artworksByArtist/:artist', this.getAllByArtist)
+        this.router.get('/artworksByCell/:cell', this.getAllByCell)
         this.router.get('/:name', this.getAllByStorage)
         this.router.post('/artwork', this.searchAllByKeywords)
         this.router.delete('/artwork/:params', this.deleteFileFromS3andDB)
@@ -23,6 +24,17 @@ this.initializeRoutes()
       const {artist} = req.params
       try {
        const artworks = await ArtworksService.getInstance().getAllByArtist(artist)
+    
+       res.status(200).json({artworks});
+      } catch (error) {
+        res.status(400).json(error);
+      }
+    }
+
+    getAllByCell = async (req, res) => {
+      const {cell} = req.params
+      try {
+       const artworks = await ArtworksService.getInstance().getAllByCell(cell)
     
        res.status(200).json({artworks});
       } catch (error) {
