@@ -5,7 +5,7 @@ import { Artists } from "./Artists";
 export class ArtistsBios extends BaseEntity{
 
     @PrimaryGeneratedColumn()
-    artistId: number;
+    id: number;
 
     @Column("varchar", { length: 10000 })
     bio: string;

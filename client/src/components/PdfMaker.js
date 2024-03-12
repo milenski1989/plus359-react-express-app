@@ -38,7 +38,7 @@ const PdfMaker = () => {
         getBase64()
     },[])
 
-    const getBioOfArtist = async (name) => {
+    const getBio = async (name) => {
         const res = await fetch(`http://localhost:5000/bios/get/${name}`)
         const data = await res.json()
         return data
@@ -62,7 +62,7 @@ const PdfMaker = () => {
         if (response.status === 200) {
             setIsEditMode(false);
     
-            await getBioOfArtist(currentImages[0].artist)
+            await getBio(currentImages[0].artist)
         } else {
             setIsEditMode(false);
         }
@@ -122,7 +122,7 @@ const PdfMaker = () => {
             setUrls(responses)
 
             if (currentImages.length) {
-                const data = await getBioOfArtist(currentImages[0].artist)
+                const data = await getBio(currentImages[0].artist)
                 setBio(data)
             }
            
@@ -147,8 +147,6 @@ const PdfMaker = () => {
                     dimensions: currentImages[0].dimensions
                 })
             });
-
-            console.log(response)
       
             // Convert the response body to a ReadableStream
             const reader = response.body.getReader();
@@ -196,7 +194,7 @@ const PdfMaker = () => {
             console.log(error)
         }
         
-        //setCurrentImages([])
+        setCurrentImages([])
     }
 
     return <>

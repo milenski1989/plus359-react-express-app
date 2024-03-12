@@ -29,14 +29,16 @@ export default class BiosService {
       if (!artist) {
         throw new Error("Artist not found!");
       } else {
-        bio = await biosRepository.findOne({
-          where: {
-            artistId: artist.id,
-          },
-        });
-      }
+        const bio: ArtistsBios = await dbConnection
+          .createQueryBuilder()
+          .select("bio")
+          .from(ArtistsBios, "bio")
+          .leftJoin(Artists, "artist", "artist.id = bio.artistId")
+          .where("artistId = :id", { id: artist.id })
+          .getOne();
 
-      return bio;
+          return bio;
+      }
     } catch {
       throw new Error("No bio for this artist found!");
     }
@@ -45,7 +47,7 @@ export default class BiosService {
   async updateOne(id: number, bio: string) {
     try {
       const bioFound: ArtistsBios = await biosRepository.findOneBy({
-        artistId: id,
+        id: id,
       });
 
       biosRepository.merge(bioFound, { ...bioFound, bio: bio });
@@ -53,7 +55,6 @@ export default class BiosService {
       const results = await biosRepository.save(bioFound);
       return results;
     } catch (error) {
-      console.log({ error });
       throw new Error("Could not update bio!");
     }
   }

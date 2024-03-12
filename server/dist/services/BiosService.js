@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = require("../database");
+const Artists_1 = require("../entities/Artists");
 const ArtistsBios_1 = require("../entities/ArtistsBios");
 const ArtistsService_1 = __importDefault(require("./ArtistsService"));
 const biosRepository = database_1.dbConnection.getRepository(ArtistsBios_1.ArtistsBios);
@@ -33,13 +34,15 @@ class BiosService {
                     throw new Error("Artist not found!");
                 }
                 else {
-                    bio = yield biosRepository.findOne({
-                        where: {
-                            artistId: artist.id,
-                        },
-                    });
+                    const bio = yield database_1.dbConnection
+                        .createQueryBuilder()
+                        .select("bio")
+                        .from(ArtistsBios_1.ArtistsBios, "bio")
+                        .leftJoin(Artists_1.Artists, "artist", "artist.id = bio.artistId")
+                        .where("artistId = :id", { id: artist.id })
+                        .getOne();
+                    return bio;
                 }
-                return bio;
             }
             catch (_a) {
                 throw new Error("No bio for this artist found!");
@@ -50,7 +53,7 @@ class BiosService {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const bioFound = yield biosRepository.findOneBy({
-                    artistId: id,
+                    id: id,
                 });
                 biosRepository.merge(bioFound, Object.assign(Object.assign({}, bioFound), { bio: bio }));
                 const results = yield biosRepository.save(bioFound);
