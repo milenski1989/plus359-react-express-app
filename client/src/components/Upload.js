@@ -42,7 +42,7 @@ const Upload = () => {
     const [isArtistFromDropdown, setIsArtistFromDropDown] = useState(false)
 
     const getArtists = async () => {
-        const res = await fetch(`http://localhost:5000/artists/allFromArtworks`)
+        const res = await fetch(`http://localhost:5000/artists/all/relatedToEntries`)
         const data = await res.json()
         setArtists(data)
     }

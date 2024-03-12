@@ -8,11 +8,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = require("../database");
-const Artists_1 = require("../entities/Artists");
 const ArtistsBios_1 = require("../entities/ArtistsBios");
-const artistsRepository = database_1.dbConnection.getRepository(Artists_1.Artists);
+const ArtistsService_1 = __importDefault(require("./ArtistsService"));
 const biosRepository = database_1.dbConnection.getRepository(ArtistsBios_1.ArtistsBios);
 class BiosService {
     constructor() { }
@@ -26,13 +28,9 @@ class BiosService {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let bio;
-                const artist = yield artistsRepository.findOne({
-                    where: {
-                        artist: name
-                    }
-                });
+                const artist = yield ArtistsService_1.default.getInstance().getOneByName(name);
                 if (!artist) {
-                    throw new Error('Artist not found!');
+                    throw new Error("Artist not found!");
                 }
                 else {
                     bio = yield biosRepository.findOne({
@@ -44,7 +42,7 @@ class BiosService {
                 return bio;
             }
             catch (_a) {
-                throw new Error('No bio for this artist found!');
+                throw new Error("No bio for this artist found!");
             }
         });
     }
@@ -52,7 +50,7 @@ class BiosService {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const bioFound = yield biosRepository.findOneBy({
-                    id: id
+                    id: id,
                 });
                 yield biosRepository.merge(bioFound, Object.assign(Object.assign({}, bioFound), { bio: bio }));
                 const results = yield biosRepository.save(bioFound);

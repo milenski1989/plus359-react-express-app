@@ -70,7 +70,7 @@ function SearchAndFiltersBar({page, setPage, handlePagesCount, handleTotalCount,
     }, [name, page, sortField, sortOrder]); 
 
     const getArtists = async () => {
-        const res = await fetch('http://localhost:5000/artists/allFromArtworks')
+        const res = await fetch('http://localhost:5000/artists/all/relatedToEntries')
         const data = await res.json()
 
         const normalizedArtists = data.map(artist => artist.toLowerCase().trim());
