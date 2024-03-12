@@ -40,10 +40,21 @@ const express = __importStar(require("express"));
 const ArtworksService_1 = __importDefault(require("../services/ArtworksService"));
 class ArtistsController {
     constructor() {
-        this.getAllArtistsRelatedToEntries = (req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.getAllRelatedToEntries = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const arts = yield ArtworksService_1.default.getInstance().getAll();
                 const artists = Array.from(new Set(arts.map((art) => art.artist))).sort((a, b) => a.localeCompare(b));
+                res.status(200).json(artists);
+            }
+            catch (error) {
+                res.status(400).json(error);
+            }
+        });
+        this.getAllRelatedToEntriesInStorage = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { storage } = req.params;
+            try {
+                const arts = yield ArtworksService_1.default.getInstance().getAll();
+                const artists = Array.from(new Set(arts.filter(art => art.storageLocation === storage).map((art) => art.artist))).sort((a, b) => a.localeCompare(b));
                 res.status(200).json(artists);
             }
             catch (error) {
@@ -54,7 +65,8 @@ class ArtistsController {
         this.initializeRoutes();
     }
     initializeRoutes() {
-        this.router.get("/all/relatedToEntries", this.getAllArtistsRelatedToEntries);
+        this.router.get("/relatedToEntries", this.getAllRelatedToEntries);
+        this.router.get("/relatedToEntriesInStorage/:storage", this.getAllRelatedToEntriesInStorage);
     }
 }
 exports.ArtistsController = ArtistsController;

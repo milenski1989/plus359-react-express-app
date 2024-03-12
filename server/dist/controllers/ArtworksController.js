@@ -40,20 +40,20 @@ const express = __importStar(require("express"));
 const ArtworksService_1 = __importDefault(require("../services/ArtworksService"));
 class ArtworksController {
     constructor() {
-        this.getAllByArtist = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const { artist } = req.params;
+        this.getAllByArtistAndStorage = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { artist, storage } = req.params;
             try {
-                const artworks = yield ArtworksService_1.default.getInstance().getAllByArtist(artist);
+                const artworks = yield ArtworksService_1.default.getInstance().getAllByArtistAndStorage(artist, storage);
                 res.status(200).json({ artworks });
             }
             catch (error) {
                 res.status(400).json(error);
             }
         });
-        this.getAllByCell = (req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.getAllByCellInStorage = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const { cell } = req.params;
             try {
-                const artworks = yield ArtworksService_1.default.getInstance().getAllByCell(cell);
+                const artworks = yield ArtworksService_1.default.getInstance().getAllByCellInStorage(cell);
                 res.status(200).json({ artworks });
             }
             catch (error) {
@@ -96,8 +96,8 @@ class ArtworksController {
         this.initializeRoutes();
     }
     initializeRoutes() {
-        this.router.get('/artworksByArtist/:artist', this.getAllByArtist);
-        this.router.get('/artworksByCell/:cell', this.getAllByCell);
+        this.router.get('/filterByArtistAndStorage/:artist/:storage', this.getAllByArtistAndStorage);
+        this.router.get('/filterByCellInStorage/:cell', this.getAllByCellInStorage);
         this.router.get('/:name', this.getAllByStorage);
         this.router.post('/artwork', this.searchAllByKeywords);
         this.router.delete('/artwork/:params', this.deleteFileFromS3andDB);

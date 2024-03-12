@@ -70,7 +70,7 @@ function SearchAndFiltersBar({page, setPage, handlePagesCount, handleTotalCount,
     }, [name, page, sortField, sortOrder]); 
 
     const getArtists = async () => {
-        const res = await fetch('http://localhost:5000/artists/all/relatedToEntries')
+        const res = await fetch(`http://localhost:5000/artists/relatedToEntriesInStorage/${name.split(':')[1]}`)
         const data = await res.json()
 
         const normalizedArtists = data.map(artist => artist.toLowerCase().trim());
@@ -89,12 +89,12 @@ function SearchAndFiltersBar({page, setPage, handlePagesCount, handleTotalCount,
         setCells(uniqueCells);
     }
 
-    const filterByArtist = async (event, artist) => {
+    const filterByArtistAndStorage = async (event, artist) => {
         if (!artist && artist !== "-") {
             setPaginationDisabled(false);
             getAllData()
         } else {
-            const res = await fetch(`http://localhost:5000/artworks/artworksByArtist/${artist}`)
+            const res = await fetch(`http://localhost:5000/artworks/filterByArtistAndStorage/${artist}/${name.split(':')[1]}`)
             const data = await res.json()
             handleSearchResults(data.artworks);
             setPaginationDisabled(true)
@@ -107,7 +107,7 @@ function SearchAndFiltersBar({page, setPage, handlePagesCount, handleTotalCount,
             setPaginationDisabled(false);
             getAllData()
         } else {
-            const res = await fetch(`http://localhost:5000/artworks/artworksByCell/${cell}`)
+            const res = await fetch(`http://localhost:5000/artworks/filterByCellInStorage/${cell}`)
             const data = await res.json()
             handleSearchResults(data.artworks);
             setPaginationDisabled(true)
@@ -142,7 +142,7 @@ function SearchAndFiltersBar({page, setPage, handlePagesCount, handleTotalCount,
                     disablePortal
                     options={artists}
                     renderInput={(params) => <TextField {...params} label="Select artist" />}
-                    onChange={(event, newValue) => filterByArtist(event, newValue)} />
+                    onChange={(event, newValue) => filterByArtistAndStorage(event, newValue)} />
                 <Autocomplete
                     className={isSmallDevice ? 'mobile-filter-input' :
                         'filter-input'}

@@ -12,18 +12,18 @@ this.initializeRoutes()
     }
 
     private initializeRoutes() {
-        this.router.get('/artworksByArtist/:artist', this.getAllByArtist)
-        this.router.get('/artworksByCell/:cell', this.getAllByCell)
+        this.router.get('/filterByArtistAndStorage/:artist/:storage', this.getAllByArtistAndStorage)
+        this.router.get('/filterByCellInStorage/:cell', this.getAllByCellInStorage)
         this.router.get('/:name', this.getAllByStorage)
         this.router.post('/artwork', this.searchAllByKeywords)
         this.router.delete('/artwork/:params', this.deleteFileFromS3andDB)
         this.router.put('/artwork/:id', this.updateArtwork)
     }
 
-    getAllByArtist = async (req, res) => {
-      const {artist} = req.params
+    getAllByArtistAndStorage = async (req, res) => {
+      const {artist, storage} = req.params
       try {
-       const artworks = await ArtworksService.getInstance().getAllByArtist(artist)
+       const artworks = await ArtworksService.getInstance().getAllByArtistAndStorage(artist, storage)
     
        res.status(200).json({artworks});
       } catch (error) {
@@ -31,10 +31,10 @@ this.initializeRoutes()
       }
     }
 
-    getAllByCell = async (req, res) => {
+    getAllByCellInStorage = async (req, res) => {
       const {cell} = req.params
       try {
-       const artworks = await ArtworksService.getInstance().getAllByCell(cell)
+       const artworks = await ArtworksService.getInstance().getAllByCellInStorage(cell)
     
        res.status(200).json({artworks});
       } catch (error) {

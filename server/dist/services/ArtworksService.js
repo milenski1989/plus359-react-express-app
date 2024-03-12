@@ -27,8 +27,8 @@ class ArtworksService {
             try {
                 return yield artsRepository.findOne({
                     where: {
-                        id: id
-                    }
+                        id: id,
+                    },
                 });
             }
             catch (_a) {
@@ -46,14 +46,13 @@ class ArtworksService {
             }
         });
     }
-    ;
     getAllByCellFromCurrentStorage(currentStorage) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 return yield artsRepository.find({
                     where: {
-                        storageLocation: currentStorage
-                    }
+                        storageLocation: currentStorage,
+                    },
                 });
             }
             catch (_a) {
@@ -61,23 +60,30 @@ class ArtworksService {
             }
         });
     }
-    getAllByArtist(artist) {
+    getAllByArtistAndStorage(artist, storage) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return yield artsRepository.find({
-                    where: { artist: artist }
-                });
+                if (storage === "All") {
+                    return yield artsRepository.find({
+                        where: { artist: artist },
+                    });
+                }
+                else {
+                    return yield artsRepository.find({
+                        where: { artist: artist, storageLocation: storage },
+                    });
+                }
             }
             catch (_a) {
                 throw new Error("Fetch failed!");
             }
         });
     }
-    getAllByCell(cell) {
+    getAllByCellInStorage(cell) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 return yield artsRepository.find({
-                    where: { cell: cell }
+                    where: { cell: cell },
                 });
             }
             catch (_a) {
@@ -88,11 +94,11 @@ class ArtworksService {
     getAllByStorage(name, page, count, sortField, sortOrder) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                if (name === 'All') {
+                if (name === "All") {
                     const [arts, artsCount] = yield artsRepository.findAndCount({
                         order: { [sortField]: sortOrder.toUpperCase() },
                         take: parseInt(count),
-                        skip: (parseInt(count) * parseInt(page)) - parseInt(count)
+                        skip: parseInt(count) * parseInt(page) - parseInt(count),
                     });
                     return [arts, artsCount];
                 }
@@ -101,7 +107,7 @@ class ArtworksService {
                         order: { [sortField]: sortOrder.toUpperCase() },
                         where: { storageLocation: name },
                         take: parseInt(count),
-                        skip: (parseInt(count) * parseInt(page)) - parseInt(count)
+                        skip: parseInt(count) * parseInt(page) - parseInt(count),
                     });
                     return [arts, artsCount];
                 }
@@ -111,7 +117,6 @@ class ArtworksService {
             }
         });
     }
-    ;
     saveFileIntoDatabase(title, artist, technique, dimensions, price, notes, storageLocation, cell, position, image_url, image_key, download_url, download_key, by_user) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -157,8 +162,10 @@ class ArtworksService {
     }
     searchByKeywords(keywords, page, count, sortField, sortOrder) {
         return __awaiter(this, void 0, void 0, function* () {
-            const whereConditions = keywords.map(keyword => `(CONCAT(artworks.artist, ' ', artworks.title, ' ', artworks.technique, ' ', artworks.notes, ' ', artworks.storageLocation, ' ', artworks.cell) LIKE ?)`).join(' AND ');
-            const whereParams = keywords.map(keyword => `%${keyword}%`);
+            const whereConditions = keywords
+                .map((keyword) => `(CONCAT(artworks.artist, ' ', artworks.title, ' ', artworks.technique, ' ', artworks.notes, ' ', artworks.storageLocation, ' ', artworks.cell) LIKE ?)`)
+                .join(" AND ");
+            const whereParams = keywords.map((keyword) => `%${keyword}%`);
             const additionalCondition = `AND artworks.storageLocation NOT IN ('Sold')`;
             const query = `
             SELECT *
@@ -172,7 +179,10 @@ class ArtworksService {
             FROM artworks
             WHERE ${whereConditions}
           `;
-            const paginationParams = [parseInt(count), (parseInt(page) - 1) * parseInt(count)];
+            const paginationParams = [
+                parseInt(count),
+                (parseInt(page) - 1) * parseInt(count),
+            ];
             const finalParams = [...whereParams, ...paginationParams];
             const countResult = yield database_1.dbConnection.query(countQuery, whereParams);
             const total = countResult[0].total;
@@ -197,10 +207,10 @@ class ArtworksService {
             }
         });
     }
-    ;
     updateArtwork(title, artist, technique, dimensions, price, notes, storageLocation, cell, position, by_user, id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const updatedEntry = { title,
+            const updatedEntry = {
+                title,
                 artist,
                 technique,
                 dimensions,
@@ -209,10 +219,11 @@ class ArtworksService {
                 storageLocation,
                 cell,
                 position,
-                by_user };
+                by_user,
+            };
             try {
                 const item = yield artsRepository.findOneBy({
-                    id: id
+                    id: id,
                 });
                 yield artsRepository.merge(item, updatedEntry);
                 const results = yield artsRepository.save(item);
@@ -223,6 +234,5 @@ class ArtworksService {
             }
         });
     }
-    ;
 }
 exports.default = ArtworksService;
