@@ -31,7 +31,8 @@ export class ArtistsController {
     const {storage} = req.params
     try {
       const arts = await ArtworksService.getInstance().getAll();
-      const artists = Array.from(new Set(arts.filter(art => art.storageLocation === storage).map((art) => art.artist))).sort(
+      const artsByStorage = arts.filter(art => art.storageLocation === storage);
+      const artists = Array.from(new Set(artsByStorage.map((art) => art.artist))).sort(
         (a, b) => a.localeCompare(b)
       );
       res.status(200).json(artists);
