@@ -38,17 +38,24 @@ class ArtworksService {
     }
     filterAllByArtistAndCellInCurrentStorage(storage, cell, artist) {
         return __awaiter(this, void 0, void 0, function* () {
-            let query = database_1.dbConnection.createQueryBuilder(Artworks_1.Artworks, 'artwork');
-            if (storage !== 'All') {
-                query = query.where('artwork.storageLocation = :storageLocation', { storageLocation: storage });
+            try {
+                let query = database_1.dbConnection.createQueryBuilder(Artworks_1.Artworks, "artwork");
+                if (storage !== "All") {
+                    query = query.where("artwork.storageLocation = :storageLocation", {
+                        storageLocation: storage,
+                    });
+                }
+                if (cell) {
+                    query = query.andWhere("artwork.cell = :cell", { cell: cell });
+                }
+                if (artist) {
+                    query = query.andWhere("artwork.artist = :artist", { artist: artist });
+                }
+                return yield query.getMany();
             }
-            if (cell) {
-                query = query.andWhere('artwork.cell = :cell', { cell: cell });
+            catch (error) {
+                throw new Error("Fetch failed!");
             }
-            if (artist) {
-                query = query.andWhere('artwork.artist = :artist', { artist: artist });
-            }
-            return yield query.getMany();
         });
     }
     getAll() {

@@ -145,7 +145,6 @@ const ListView = ({searchResults, handleDialogOpen, handleSearchResults}) => {
                                                             onClick={() => showAll(art[prop.key])}>
                                                             {truncateInfoProp(art[prop.key])}
                                                         </p>
-                                                       
                                                 )
                                             }
                                             sx={{ textAlign: prop.align }}

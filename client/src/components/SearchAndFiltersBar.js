@@ -57,8 +57,7 @@ function SearchAndFiltersBar({page, setPage, handlePagesCount, handleTotalCount,
             handleError({ error: true, message: error.message });
         } finally {
             handleLoading(false);
-        }
-        
+        } 
     }
 
     const getAllData = useCallback(async () => {
@@ -78,7 +77,6 @@ function SearchAndFiltersBar({page, setPage, handlePagesCount, handleTotalCount,
 
     const filterByArtistAndCellInCurrentLocation = async () => {
         try {
-
             if (!selectedArtist && selectedArtist !== "-" && !selectedCell) {
                 setPaginationDisabled(false);
                 getAllData()
@@ -90,35 +88,42 @@ function SearchAndFiltersBar({page, setPage, handlePagesCount, handleTotalCount,
                         storage: name.split(':')[1]
                     },
                 });
-                console.log(response)
                 handleSearchResults(response.data.artworks);
                 setPaginationDisabled(true)
             }
 
             setPage(1)
         } catch (error) {
-            console.error('Error fetching artworks:', error);
+            handleError({ error: true, message: error.message });
         }
     };
 
     const getArtists = async () => {
-        const res = await fetch(`http://localhost:5000/artists/relatedToEntriesInStorage/${name.split(':')[1]}`)
-        const data = await res.json()
-
-        const normalizedArtists = data.map(artist => artist.toLowerCase().trim());
-        const uniqueNormalizedArtists = [...new Set(normalizedArtists)];
-        const uniqueArtists = uniqueNormalizedArtists.map(normalizedArtist => {
-            return data.find(artist => artist.toLowerCase().trim() === normalizedArtist);
-        });
-
-        setArtists(uniqueArtists);
+        try {
+            const res = await fetch(`http://localhost:5000/artists/relatedToEntriesInStorage/${name.split(':')[1]}`)
+            const data = await res.json()
+    
+            const normalizedArtists = data.map(artist => artist.toLowerCase().trim());
+            const uniqueNormalizedArtists = [...new Set(normalizedArtists)];
+            const uniqueArtists = uniqueNormalizedArtists.map(normalizedArtist => {
+                return data.find(artist => artist.toLowerCase().trim() === normalizedArtist);
+            });
+    
+            setArtists(uniqueArtists);
+        } catch (error) {
+            handleError({ error: true, message: error.message });
+        }
     }
 
     const getCells = async () => {
-        const res = await fetch(`http://localhost:5000/storage/all/allCellsFromCurrentStorage/${name.split(':')[1]}`)
-        const data = await res.json()
-        const uniqueCells = [...new Set(data)]
-        setCells(uniqueCells);
+        try {
+            const res = await fetch(`http://localhost:5000/storage/all/allCellsFromCurrentStorage/${name.split(':')[1]}`)
+            const data = await res.json()
+            const uniqueCells = [...new Set(data)]
+            setCells(uniqueCells);
+        } catch (error) {
+            handleError({ error: true, message: error.message });
+        }
     }
   
     return (

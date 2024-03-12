@@ -68,8 +68,6 @@ const Card = ({ searchResults, handleDialogOpen, handleSearchResults }) => {
             </div>
         ))}
     </>
-     
-    
 };
 
 export default Card

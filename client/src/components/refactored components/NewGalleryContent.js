@@ -39,7 +39,6 @@ const NewGalleryContent = () => {
     const [sortOrder, setSortOrder] = useState('desc')
     const [keywords, setKeywords] = useState([]);
     
-
     const {name} = useParams()
 
     const [loading, setLoading] = useState(false);
@@ -55,7 +54,6 @@ const NewGalleryContent = () => {
     });
     const [imageLoaded, setImageLoaded] = useState({});
 
-    
     const getData = useCallback(async () => {
         setLoading(true);
         try {
