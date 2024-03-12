@@ -6,6 +6,7 @@ import './SearchAndFiltersBar.css'
 import { getAllEntries, getAllEntriesByKeywords } from '../utils/apiCalls';
 import { useParams } from 'react-router-dom';
 import { useMediaQuery } from "@mui/material";
+import axios from 'axios';
 
 const boxShadow = '0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12)'
 
@@ -13,6 +14,8 @@ function SearchAndFiltersBar({page, setPage, handlePagesCount, handleTotalCount,
 
     const [artists, setArtists] = useState([])
     const [cells, setCells] = useState([])
+    const [selectedArtist, setSelectedArtist] = useState()
+    const [selectedCell, setSelectedCell] = useState()
     const {name} = useParams()
     const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
 
@@ -20,6 +23,10 @@ function SearchAndFiltersBar({page, setPage, handlePagesCount, handleTotalCount,
         getArtists()
         getCells()
     },[])
+
+    useEffect(() => {
+        filterByArtistAndCellInCurrentLocation();
+    }, [selectedCell, selectedArtist]);
 
     const onChange = event => {
         if (!event.target.value) {
@@ -67,7 +74,32 @@ function SearchAndFiltersBar({page, setPage, handlePagesCount, handleTotalCount,
         } finally {
             handleLoading(false);
         }
-    }, [name, page, sortField, sortOrder]); 
+    }, [name, page, sortField, sortOrder]);
+
+    const filterByArtistAndCellInCurrentLocation = async () => {
+        try {
+
+            if (!selectedArtist && selectedArtist !== "-" && !selectedCell) {
+                setPaginationDisabled(false);
+                getAllData()
+            } else {
+                const response = await axios.get('http://localhost:5000/artworks/filterByArtistAndCell', {
+                    params: {
+                        cell: selectedCell,
+                        artist: selectedArtist,
+                        storage: name.split(':')[1]
+                    },
+                });
+                console.log(response)
+                handleSearchResults(response.data.artworks);
+                setPaginationDisabled(true)
+            }
+
+            setPage(1)
+        } catch (error) {
+            console.error('Error fetching artworks:', error);
+        }
+    };
 
     const getArtists = async () => {
         const res = await fetch(`http://localhost:5000/artists/relatedToEntriesInStorage/${name.split(':')[1]}`)
@@ -88,32 +120,6 @@ function SearchAndFiltersBar({page, setPage, handlePagesCount, handleTotalCount,
         const uniqueCells = [...new Set(data)]
         setCells(uniqueCells);
     }
-
-    const filterByArtistAndStorage = async (event, artist) => {
-        if (!artist && artist !== "-") {
-            setPaginationDisabled(false);
-            getAllData()
-        } else {
-            const res = await fetch(`http://localhost:5000/artworks/filterByArtistAndStorage/${artist}/${name.split(':')[1]}`)
-            const data = await res.json()
-            handleSearchResults(data.artworks);
-            setPaginationDisabled(true)
-        }
-        setPage(1);
-    };
-
-    const filterByCell = async (event, cell) => {
-        if (!cell) {
-            setPaginationDisabled(false);
-            getAllData()
-        } else {
-            const res = await fetch(`http://localhost:5000/artworks/filterByCellInStorage/${cell}`)
-            const data = await res.json()
-            handleSearchResults(data.artworks);
-            setPaginationDisabled(true)
-        }
-        setPage(1);
-    };
   
     return (
         <div className={isSmallDevice ?
@@ -142,7 +148,7 @@ function SearchAndFiltersBar({page, setPage, handlePagesCount, handleTotalCount,
                     disablePortal
                     options={artists}
                     renderInput={(params) => <TextField {...params} label="Select artist" />}
-                    onChange={(event, newValue) => filterByArtistAndStorage(event, newValue)} />
+                    onChange={(event, newValue) => setSelectedArtist(newValue)} />
                 <Autocomplete
                     className={isSmallDevice ? 'mobile-filter-input' :
                         'filter-input'}
@@ -163,7 +169,7 @@ function SearchAndFiltersBar({page, setPage, handlePagesCount, handleTotalCount,
                     disablePortal
                     options={cells}
                     renderInput={(params) => <TextField {...params} label="Select cell" />}
-                    onChange={(event, newValue) => filterByCell(event, newValue)} />
+                    onChange={(event, newValue) => setSelectedCell(newValue)} />
             </div>
             <Paper
                 component="form"

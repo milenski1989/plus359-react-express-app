@@ -60,7 +60,6 @@ class BiosService {
                 return results;
             }
             catch (error) {
-                console.log({ error });
                 throw new Error("Could not update bio!");
             }
         });

@@ -40,20 +40,10 @@ const express = __importStar(require("express"));
 const ArtworksService_1 = __importDefault(require("../services/ArtworksService"));
 class ArtworksController {
     constructor() {
-        this.getAllByArtistAndStorage = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const { artist, storage } = req.params;
+        this.getAllByArtistAndCellInCurrentStorage = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { storage, cell, artist } = req.query;
             try {
-                const artworks = yield ArtworksService_1.default.getInstance().getAllByArtistAndStorage(artist, storage);
-                res.status(200).json({ artworks });
-            }
-            catch (error) {
-                res.status(400).json(error);
-            }
-        });
-        this.getAllByCellInStorage = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const { cell } = req.params;
-            try {
-                const artworks = yield ArtworksService_1.default.getInstance().getAllByCellInStorage(cell);
+                const artworks = yield ArtworksService_1.default.getInstance().filterAllByArtistAndCellInCurrentStorage(storage, cell, artist);
                 res.status(200).json({ artworks });
             }
             catch (error) {
@@ -96,8 +86,7 @@ class ArtworksController {
         this.initializeRoutes();
     }
     initializeRoutes() {
-        this.router.get("/filterByArtistAndStorage/:artist/:storage", this.getAllByArtistAndStorage);
-        this.router.get("/filterByCellInStorage/:cell", this.getAllByCellInStorage);
+        this.router.get("/filterByArtistAndCell", this.getAllByArtistAndCellInCurrentStorage);
         this.router.get("/filterByStorage/:name", this.getAllByStorage);
         this.router.post("/filterByKeywords", this.getAllByKeywords);
         this.router.delete("/deleteOne/:params", this.deleteOne);

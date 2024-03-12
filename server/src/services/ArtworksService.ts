@@ -1,8 +1,6 @@
-import { In, Like } from "typeorm";
 import { dbConnection } from "../database";
 import { Artworks } from "../entities/Artworks";
 import { S3Service } from "./S3Service";
-import ArtistsService from "./ArtistsService";
 
 const s3Client = new S3Service();
 
@@ -31,6 +29,26 @@ export default class ArtworksService {
     } catch {
       throw new Error("Fetch failed!");
     }
+  }
+
+  async filterAllByArtistAndCellInCurrentStorage(storage: string, cell?: string, artist?: string, ) {
+
+    let query = dbConnection.createQueryBuilder(Artworks, 'artwork');
+
+    if (storage !== 'All') {
+      query = query.where('artwork.storageLocation = :storageLocation', { storageLocation:  storage});
+    }
+
+    if (cell) {
+      query = query.andWhere('artwork.cell = :cell', { cell: cell });
+    }
+
+    if (artist) {
+      query = query.andWhere('artwork.artist = :artist', { artist: artist});
+
+    }
+
+    return await query.getMany();
   }
 
   async getAll() {

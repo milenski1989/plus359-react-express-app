@@ -11,36 +11,21 @@ export class ArtworksController {
 
   private initializeRoutes() {
     this.router.get(
-      "/filterByArtistAndStorage/:artist/:storage",
-      this.getAllByArtistAndStorage
+      "/filterByArtistAndCell",
+      this.getAllByArtistAndCellInCurrentStorage
     );
-    this.router.get("/filterByCellInStorage/:cell", this.getAllByCellInStorage);
+
     this.router.get("/filterByStorage/:name", this.getAllByStorage);
     this.router.post("/filterByKeywords", this.getAllByKeywords);
     this.router.delete("/deleteOne/:params", this.deleteOne);
     this.router.put("/updateOne/:id", this.updateOne);
   }
 
-  getAllByArtistAndStorage = async (req, res) => {
-    const { artist, storage } = req.params;
-    try {
-      const artworks =
-        await ArtworksService.getInstance().getAllByArtistAndStorage(
-          artist,
-          storage
-        );
+  getAllByArtistAndCellInCurrentStorage = async (req, res) => {
+    const { storage, cell, artist } = req.query;
 
-      res.status(200).json({ artworks });
-    } catch (error) {
-      res.status(400).json(error);
-    }
-  };
-
-  getAllByCellInStorage = async (req, res) => {
-    const { cell } = req.params;
     try {
-      const artworks =
-        await ArtworksService.getInstance().getAllByCellInStorage(cell);
+      const artworks = await ArtworksService.getInstance().filterAllByArtistAndCellInCurrentStorage(storage, cell, artist);
 
       res.status(200).json({ artworks });
     } catch (error) {
