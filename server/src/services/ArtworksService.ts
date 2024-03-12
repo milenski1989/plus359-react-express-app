@@ -31,24 +31,32 @@ export default class ArtworksService {
     }
   }
 
-  async filterAllByArtistAndCellInCurrentStorage(storage: string, cell?: string, artist?: string, ) {
+  async filterAllByArtistAndCellInCurrentStorage(
+    storage: string,
+    cell?: string,
+    artist?: string
+  ) {
+    try {
+      let query = dbConnection.createQueryBuilder(Artworks, "artwork");
 
-    let query = dbConnection.createQueryBuilder(Artworks, 'artwork');
+      if (storage !== "All") {
+        query = query.where("artwork.storageLocation = :storageLocation", {
+          storageLocation: storage,
+        });
+      }
 
-    if (storage !== 'All') {
-      query = query.where('artwork.storageLocation = :storageLocation', { storageLocation:  storage});
+      if (cell) {
+        query = query.andWhere("artwork.cell = :cell", { cell: cell });
+      }
+
+      if (artist) {
+        query = query.andWhere("artwork.artist = :artist", { artist: artist });
+      }
+
+      return await query.getMany();
+    } catch (error) {
+      throw new Error("Fetch failed!");
     }
-
-    if (cell) {
-      query = query.andWhere('artwork.cell = :cell', { cell: cell });
-    }
-
-    if (artist) {
-      query = query.andWhere('artwork.artist = :artist', { artist: artist});
-
-    }
-
-    return await query.getMany();
   }
 
   async getAll() {
