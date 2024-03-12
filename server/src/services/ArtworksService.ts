@@ -220,7 +220,7 @@ export default class ArtworksService {
     return [results, total];
   }
 
-  async deleteFileFromS3AndDB(originalFilename, filename, id) {
+  async deleteOne(originalFilename, filename, id) {
     try {
       await s3Client.deleteFile(originalFilename, filename);
     } catch {
@@ -235,7 +235,7 @@ export default class ArtworksService {
     }
   }
 
-  async updateArtwork(
+  async updateOne(
     title: string,
     artist: string,
     technique: string,
@@ -264,7 +264,7 @@ export default class ArtworksService {
       const item = await artsRepository.findOneBy({
         id: id,
       });
-      await artsRepository.merge(item, updatedEntry);
+      artsRepository.merge(item, updatedEntry);
       const results = await artsRepository.save(item);
       return results;
     } catch {

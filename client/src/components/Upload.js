@@ -143,11 +143,13 @@ const Upload = () => {
             handleClose={() => setUploadingError({ error: false, message: "" })}
             message={uploadingError.message}
             severity="error" />
+
         <Message
             open={uploadSuccessful}
             handleClose={() => setUploadSuccessful(false)}
             message="Entry uploaded successfully!"
             severity="success" />
+            
         <Navbar />
 
         {uploading ? 

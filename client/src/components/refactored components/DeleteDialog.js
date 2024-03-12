@@ -20,7 +20,7 @@ const DeleteDialog = ({isDialogOpen, handleDialogClose, isDeleting, handleIsDele
         try {
             const params = {originalFilename, filename, id}
             await axios.delete(
-                `http://localhost:5000/artworks/artwork/${params}`,
+                `http://localhost:5000/artworks/deleteOne/${params}`,
                 { params }
             );
         } catch(error) {
@@ -64,6 +64,7 @@ const DeleteDialog = ({isDialogOpen, handleDialogClose, isDeleting, handleIsDele
             onClose={() => setIsDeleteSuccessful(false)}
             message="Entry deleted successfully!"
             severity="success" />
+            
         {isDialogOpen &&
                 <CustomDialog
                     openModal={isDialogOpen}

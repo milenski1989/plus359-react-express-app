@@ -56,10 +56,19 @@ const Signup = () => {
 
     return(
         <div className="md:container md:mx-auto">
-            {<Message open={signupError.error} handleClose={() => setSignupError({error: false, message: ""})} message={signupError.message} severity="error"
-            /> }
-            {<Message open={signupSuccess.success} handleClose={() => setSignupSuccess(false)} message={signupSuccess.message} severity="success"
-            /> }
+            <Message 
+                open={signupError.error} 
+                handleClose={() => setSignupError({error: false, message: ""})} 
+                message={signupError.message} 
+                severity="error"
+            />
+            
+            <Message 
+                open={signupSuccess.success} 
+                handleClose={() => setSignupSuccess(false)} 
+                message={signupSuccess.message} 
+                severity="success"
+            />
 
             {loading ? 
                 <CircularProgress className="loader" color="primary" /> 

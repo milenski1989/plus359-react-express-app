@@ -190,7 +190,7 @@ class ArtworksService {
             return [results, total];
         });
     }
-    deleteFileFromS3AndDB(originalFilename, filename, id) {
+    deleteOne(originalFilename, filename, id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 yield s3Client.deleteFile(originalFilename, filename);
@@ -207,7 +207,7 @@ class ArtworksService {
             }
         });
     }
-    updateArtwork(title, artist, technique, dimensions, price, notes, storageLocation, cell, position, by_user, id) {
+    updateOne(title, artist, technique, dimensions, price, notes, storageLocation, cell, position, by_user, id) {
         return __awaiter(this, void 0, void 0, function* () {
             const updatedEntry = {
                 title,
@@ -225,7 +225,7 @@ class ArtworksService {
                 const item = yield artsRepository.findOneBy({
                     id: id,
                 });
-                yield artsRepository.merge(item, updatedEntry);
+                artsRepository.merge(item, updatedEntry);
                 const results = yield artsRepository.save(item);
                 return results;
             }

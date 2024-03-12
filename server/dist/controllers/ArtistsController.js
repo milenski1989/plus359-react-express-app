@@ -53,9 +53,15 @@ class ArtistsController {
         this.getAllRelatedToEntriesInStorage = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const { storage } = req.params;
             try {
+                let artists;
                 const arts = yield ArtworksService_1.default.getInstance().getAll();
-                const artsByStorage = arts.filter(art => art.storageLocation === storage);
-                const artists = Array.from(new Set(artsByStorage.map((art) => art.artist))).sort((a, b) => a.localeCompare(b));
+                if (storage === "All") {
+                    artists = Array.from(new Set(arts.map((art) => art.artist))).sort((a, b) => a.localeCompare(b));
+                }
+                else {
+                    const artsByStorage = arts.filter((art) => art.storageLocation === storage);
+                    artists = Array.from(new Set(artsByStorage.map((art) => art.artist))).sort((a, b) => a.localeCompare(b));
+                }
                 res.status(200).json(artists);
             }
             catch (error) {

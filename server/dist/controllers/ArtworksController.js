@@ -71,21 +71,21 @@ class ArtworksController {
                 res.status(400).json(error);
             }
         });
-        this.deleteFileFromS3andDB = (req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.deleteOne = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const { originalFilename, filename, id } = req.query;
             try {
-                const results = yield ArtworksService_1.default.getInstance().deleteFileFromS3AndDB(originalFilename, filename, id);
+                const results = yield ArtworksService_1.default.getInstance().deleteOne(originalFilename, filename, id);
                 res.send(results);
             }
             catch (error) {
                 res.send({ error: error.message });
             }
         });
-        this.updateArtwork = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const { title, artist, technique, dimensions, price, notes, storageLocation, cell, position, by_user } = req.body;
+        this.updateOne = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { title, artist, technique, dimensions, price, notes, storageLocation, cell, position, by_user, } = req.body;
             const { id } = req.params;
             try {
-                const results = yield ArtworksService_1.default.getInstance().updateArtwork(title, artist, technique, dimensions, price, notes, storageLocation, cell, position, by_user, id);
+                const results = yield ArtworksService_1.default.getInstance().updateOne(title, artist, technique, dimensions, price, notes, storageLocation, cell, position, by_user, id);
                 res.status(200).send(results);
             }
             catch (error) {
@@ -96,14 +96,14 @@ class ArtworksController {
         this.initializeRoutes();
     }
     initializeRoutes() {
-        this.router.get('/filterByArtistAndStorage/:artist/:storage', this.getAllByArtistAndStorage);
-        this.router.get('/filterByCellInStorage/:cell', this.getAllByCellInStorage);
-        this.router.get('/:name', this.getAllByStorage);
-        this.router.post('/artwork', this.searchAllByKeywords);
-        this.router.delete('/artwork/:params', this.deleteFileFromS3andDB);
-        this.router.put('/artwork/:id', this.updateArtwork);
+        this.router.get("/filterByArtistAndStorage/:artist/:storage", this.getAllByArtistAndStorage);
+        this.router.get("/filterByCellInStorage/:cell", this.getAllByCellInStorage);
+        this.router.get("/filterByStorage/:name", this.getAllByStorage);
+        this.router.post("/filterByKeywords", this.getAllByKeywords);
+        this.router.delete("/deleteOne/:params", this.deleteOne);
+        this.router.put("/updateOne/:id", this.updateOne);
     }
-    searchAllByKeywords(req, res) {
+    getAllByKeywords(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { keywords } = req.body;
             const { page, count, sortField, sortOrder } = req.query;
@@ -112,8 +112,8 @@ class ArtworksController {
                 res.json({ arts, artsCount });
             }
             catch (error) {
-                console.error('Error:', error);
-                res.status(404).json({ error: 'No results from the search!' });
+                console.error("Error:", error);
+                res.status(404).json({ error: "No results from the search!" });
             }
         });
     }

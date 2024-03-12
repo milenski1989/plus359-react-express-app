@@ -113,7 +113,7 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResult
 
     const updateEntry = async (id) => {
         const response = await axios.put(
-            `http://localhost:5000/artworks/artwork/${id}`,
+            `http://localhost:5000/artworks/updateOne/${id}`,
             updatedEntry
         );
 
