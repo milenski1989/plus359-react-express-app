@@ -18,18 +18,20 @@ export default class BiosService {
     return BiosService.biosService;
   }
 
-  async getBio(name: string) {
+  async getOne(name: string) {
     try {
       let bio: ArtistsBios;
 
-      const artist: Artists = await ArtistsService.getInstance().getOneByName(name);
+      const artist: Artists = await ArtistsService.getInstance().getOneByName(
+        name
+      );
 
       if (!artist) {
         throw new Error("Artist not found!");
       } else {
         bio = await biosRepository.findOne({
           where: {
-            id: artist.id,
+            artistId: artist.id,
           },
         });
       }
@@ -40,19 +42,19 @@ export default class BiosService {
     }
   }
 
-  async updateBio(id: number, bio: string) {
+  async updateOne(id: number, bio: string) {
     try {
-      const bioFound = await biosRepository.findOneBy({
-        id: id,
+      const bioFound: ArtistsBios = await biosRepository.findOneBy({
+        artistId: id,
       });
 
-      await biosRepository.merge(bioFound, { ...bioFound, bio: bio });
+      biosRepository.merge(bioFound, { ...bioFound, bio: bio });
 
       const results = await biosRepository.save(bioFound);
       return results;
     } catch (error) {
       console.log({ error });
-      throw new Error("Could not update entry");
+      throw new Error("Could not update bio!");
     }
   }
 }

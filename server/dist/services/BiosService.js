@@ -24,7 +24,7 @@ class BiosService {
         }
         return BiosService.biosService;
     }
-    getBio(name) {
+    getOne(name) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let bio;
@@ -35,7 +35,7 @@ class BiosService {
                 else {
                     bio = yield biosRepository.findOne({
                         where: {
-                            id: artist.id,
+                            artistId: artist.id,
                         },
                     });
                 }
@@ -46,19 +46,19 @@ class BiosService {
             }
         });
     }
-    updateBio(id, bio) {
+    updateOne(id, bio) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const bioFound = yield biosRepository.findOneBy({
-                    id: id,
+                    artistId: id,
                 });
-                yield biosRepository.merge(bioFound, Object.assign(Object.assign({}, bioFound), { bio: bio }));
+                biosRepository.merge(bioFound, Object.assign(Object.assign({}, bioFound), { bio: bio }));
                 const results = yield biosRepository.save(bioFound);
                 return results;
             }
             catch (error) {
                 console.log({ error });
-                throw new Error("Could not update entry");
+                throw new Error("Could not update bio!");
             }
         });
     }

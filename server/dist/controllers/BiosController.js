@@ -40,21 +40,21 @@ const express = __importStar(require("express"));
 const BiosService_1 = __importDefault(require("../services/BiosService"));
 class BiosController {
     constructor() {
-        this.getBio = (req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.getOne = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const { name } = req.params;
             try {
-                const bio = yield BiosService_1.default.getInstance().getBio(name);
+                const bio = yield BiosService_1.default.getInstance().getOne(name);
                 res.status(200).json(bio);
             }
             catch (error) {
                 res.status(400).json(error);
             }
         });
-        this.updateBio = (req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.updateOne = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const { bio } = req.body;
             const { id } = req.params;
             try {
-                const result = yield BiosService_1.default.getInstance().updateBio(id, bio);
+                const result = yield BiosService_1.default.getInstance().updateOne(id, bio);
                 res.status(200).json(result);
             }
             catch (error) {
@@ -65,8 +65,8 @@ class BiosController {
         this.initializeRoutes();
     }
     initializeRoutes() {
-        this.router.get('/bio/:name', this.getBio);
-        this.router.put('/bio/:id', this.updateBio);
+        this.router.get("/get/:name", this.getOne);
+        this.router.put("/update/:id", this.updateOne);
     }
 }
 exports.BiosController = BiosController;

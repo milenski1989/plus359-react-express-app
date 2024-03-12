@@ -17,7 +17,7 @@ let ArtistsBios = class ArtistsBios extends typeorm_1.BaseEntity {
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
-], ArtistsBios.prototype, "id", void 0);
+], ArtistsBios.prototype, "artistId", void 0);
 __decorate([
     (0, typeorm_1.Column)("varchar", { length: 10000 }),
     __metadata("design:type", String)
