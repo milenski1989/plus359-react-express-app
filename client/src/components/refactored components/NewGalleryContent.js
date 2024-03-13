@@ -30,6 +30,7 @@ const NewGalleryContent = () => {
     const {
         currentImages,
         setUpdatedEntry,
+        isEditMode
     } = useContext(ImageContext);
     const myStorage = window.localStorage;
     const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
@@ -207,7 +208,7 @@ const NewGalleryContent = () => {
                     'search-actions-container'}>
                     <div className="main-actions-pdf-location-container">
                         <img src={PdfIcon} className='icon' onClick={() => navigate('/pdf')}/>
-                        {currentImages.length ?
+                        {currentImages.length && !isEditMode ?
                             <img src={LocationIcon} className='icon' onClick={prepareImagesForLocationChange}/> : <></>}
                     </div>
                 

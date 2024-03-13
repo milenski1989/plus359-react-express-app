@@ -145,7 +145,7 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
                                                 width: '70px', 
                                                 height: '70px', 
                                                 objectFit: "cover", 
-                                                marginLeft: '-2.8rem' 
+                                                marginLeft: '-4rem' 
                                             }} 
                                             src={art[prop.key]} 
                                             alt={art[prop.key]} />
@@ -154,18 +154,21 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
                                             id={`${labelId}-${prop.key}`}
                                             sx={{textAlign: prop.align}}
                                             primary={
-                                                isEditMode && currentImages.length && currentImages[0].id === art.id ? (
-                                                    <input 
-                                                        className="mobile-list-view-editable-input" 
-                                                        value={updatedEntry[prop.key] || currentImages[0][prop.key]} 
-                                                        onChange={(event) => onChangeEditableInput(event, prop.key)} />
+                                                isEditMode && currentImages.length && currentImages[0].id === art.id? (
+                                                    prop.key === 'position' ? 
+                                                        null :
+                                                        <input 
+                                                            className="mobile-list-view-editable-input" 
+                                                            value={updatedEntry[prop.key] || currentImages[0][prop.key]} 
+                                                            onChange={(event) => onChangeEditableInput(event, prop.key)} />
                                                 ) : (
                                                     art.position && art[prop.key] === art.position ?
                                                         <p
                                                             style={{backgroundColor: generateBackGroundColor(art.cell), 
                                                                 color: "white", 
-                                                                marginLeft: "-3rem",
-                                                               
+                                                                marginLeft: "-2.8rem",
+                                                                marginRight: "5rem",
+                                                                padding: "1rem 0.2rem"
                                                             }}>
                                                             {art[prop.key]}
                                                         </p>

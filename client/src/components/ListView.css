@@ -41,6 +41,7 @@
     border-radius: 5px;
     padding: 5px;
     text-align: center;
+    margin-left: -7rem;
 }
 
 .truncated-art-info {
@@ -49,7 +50,7 @@
 }
 
 .text {
-    margin-left: -5rem;
+    margin-left: -7rem;
 }
 
 .bolded {

@@ -95,22 +95,6 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResult
         setCurrentImages([])
     };
 
-    
-    // const getAllData = useCallback(async () => {
-    //     handleLoading(true);
-    //     try {
-    //         const data = await getAllEntries(name, page, sortField, sortOrder);
-    //         const { arts, artsCount } = data;
-    //         handleSearchResults(arts);
-    //         handlePagesCount(Math.ceil(artsCount / 25));
-    //         handleTotalCount(artsCount);
-    //     } catch (error) {
-    //         handleError({ error: true, message: error.message });
-    //     } finally {
-    //         handleLoading(false);
-    //     }
-    // }, [name, page, sortField, sortOrder]); 
-
     const updateEntry = async (id) => {
         const response = await axios.put(
             `http://localhost:5000/artworks/updateOne/${id}`,
@@ -120,8 +104,6 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResult
         if (response.status === 200) {
             setIsEditMode(false);
             setUpdatedEntry({});
-       
-            //getAllData()
         } else {
             setIsEditMode(false);
             setUpdatedEntry({});
