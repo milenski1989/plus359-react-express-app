@@ -48,6 +48,14 @@
     cursor: pointer;
 }
 
-.full-info {
-    cursor: auto;
+.text {
+    margin-left: -5rem;
+}
+
+.bolded {
+    font-weight: bold;
+}
+
+.hide-info {
+    visibility: hidden;
 }

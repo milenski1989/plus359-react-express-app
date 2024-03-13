@@ -12,6 +12,7 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { Dialog, DialogContent } from "@mui/material";
 import './ListView.css'
 import { generateBackGroundColor } from "./constants/constants";
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 
 const properties = [
     { key: 'position', label: 'Position', align: 'center' },
@@ -25,8 +26,10 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
     const [imagePreview, setImagePreview] = useState(false)
     const [isMoreInfoOpen, setIsMoreInfoOpen] = useState(false)
     const [selectedArt, setSelectedArt] = useState(null);
-    const [selectedProp, setSelectedProp] = useState(null)
+    const [selectedRow, setSelectedRow] = useState(null)
     const [copyOfResults, setCopyOfResults] = useState([])
+
+    console.log(selectedRow)
 
     useEffect(() => {
         if (searchResults.length) {
@@ -40,7 +43,12 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
                     ['download_key']: result.download_key,
                     ['download_url']: result.download_url,
                     ['artist']: result.artist, 
-                    ['dimensions']: result.dimensions
+                    ['dimensions']: result.dimensions,
+                    ['title']: result.title,
+                    ['technique']: result.technique,
+                    ['price']: result.price,
+                    ['notes']: result.notes,
+                    ['location']: result.storageLocation,  
                 }
 
                 _copyOfResults.push(newObj)
@@ -73,15 +81,14 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
         setImagePreview(true);
     };
 
-    const showAll = (propKey) => {
-        if (propKey.length <=10 || propKey === 0) return;
-        setSelectedProp(propKey)
+    const showAll = (art) => {
+        setSelectedRow(art)
         setIsMoreInfoOpen(true)
     }
 
     const truncateInfoProp = (propKey) => {
-        if (propKey.length > 10) {
-            return `${propKey.slice(0, 10)}...`
+        if (propKey.length > 6) {
+            return `${propKey.slice(0, 6)}...`
         } else {
             return propKey
         }
@@ -91,7 +98,6 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
         <List dense sx={{ width: "100%", maxWidth: "100vw", bgcolor: "background.paper" }}>
             {copyOfResults.map((art, ind) => {
                 const labelId = `checkbox-list-secondary-label-${ind}`;
-
                 return (
                     <ListItem
                         sx={{
@@ -123,6 +129,7 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
                                 onChange={(e) => checkBoxHandler(e, art.id)}
                                 sx={{
                                     justifySelf: "flex-start",
+                                    marginLeft: "-1rem",
                                     "&.Mui-checked": {
                                         color: "black",
                                     },
@@ -134,10 +141,20 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
                             {properties.map(prop => (
                                 <React.Fragment key={prop.key}>
                                     {prop.isImage ? (
-                                        <img onClick={() => openImageDialog(art)} style={{ width: '70px', height: '70px', objectFit: "cover" }} src={art[prop.key]} alt={art[prop.key]} />
+                                        <img 
+                                            onClick={() => openImageDialog(art)} 
+                                            style={{
+                                                width: '70px', 
+                                                height: '70px', 
+                                                objectFit: "cover", 
+                                                marginLeft: '-2.8rem' 
+                                            }} 
+                                            src={art[prop.key]} 
+                                            alt={art[prop.key]} />
                                     ) : (
                                         <ListItemText
                                             id={`${labelId}-${prop.key}`}
+                                            sx={{textAlign: prop.align}}
                                             primary={
                                                 isEditMode && currentImages.length && currentImages[0].id === art.id ? (
                                                     <input 
@@ -146,34 +163,28 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
                                                         onChange={(event) => onChangeEditableInput(event, prop.key)} />
                                                 ) : (
                                                     art.position && art[prop.key] === art.position ?
-                                                        <div
+                                                        <p
                                                             style={{backgroundColor: generateBackGroundColor(art.cell), 
                                                                 color: "white", 
-                                                                height: "auto",
-                                                                marginRight: "1rem",
-                                                                marginLeft: "-1rem",
-                                                                padding: "1rem"
+                                                                marginLeft: "-3rem",
+                                                               
                                                             }}>
-                                                            <p  className='full-info'>
-                                                                {art[prop.key]}
-                                                            </p>
-                                                        </div>
-                                                        :
-                                                    
-                                                        <p  
-                                                            className={art[prop.key].length > 10 ? 'truncated-art-info' : 'full-info'}
-                                                            onClick={() => showAll(art[prop.key])}>
-                                                            {truncateInfoProp(art[prop.key])}
+                                                            {art[prop.key]}
                                                         </p>
-                                                       
+                                                        :
+                                                        !art.position && art[prop.key] === art.position ?
+                                                            null :
+                                                            <p className='text'>{truncateInfoProp(art[prop.key])}</p>
                                                 )
                                             }
-                                            sx={{ textAlign: prop.align }}
                                         />
                                     )}
                                 </React.Fragment>
                             ))}
-
+                            <MoreHorizIcon 
+                                sx={{position: "absolute", top: '0px', right: '5px'}}
+                                onClick={() => showAll(art)}
+                            />
                             <ActionButtons
                                 art={art}
                                 handleDialogOpen={handleDialogOpen}
@@ -195,8 +206,16 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
             <Dialog 
                 open={isMoreInfoOpen} 
                 onClose={() => setIsMoreInfoOpen(false)}>
-                <DialogContent >
-                    <p>{selectedProp}</p>
+                <DialogContent sx={{padding: '24px 28px', width: '300px'}}>
+                    <p><span className="bolded">Artist: </span>{selectedRow.artist}</p>
+                    <p><span className="bolded">Title: </span>{selectedRow.title}</p>
+                    <p><span className="bolded">Technique: </span>{selectedRow.technique}</p>
+                    <p><span className="bolded">Dimensions: </span>{selectedRow.dimensions}</p>
+                    <p><span className="bolded">Location: </span>{selectedRow.storageLocation}</p>
+                    <p><span className="bolded">Cell: </span>{selectedRow.cell}</p>
+                    <p><span className="bolded">Position: </span>{selectedRow.position}</p>
+                    <p><span className="bolded">Price: </span>{selectedRow.price}</p>
+                    <p><span className="bolded">Notes: </span>{selectedRow.notes}</p>
                 </DialogContent>
             </Dialog>
         )

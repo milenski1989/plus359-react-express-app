@@ -191,7 +191,7 @@ const NewGalleryContent = () => {
     return (
         <>
             <Navbar />
-            <div className="gallery">
+            <div className={isSmallDevice && viewMode === 'list' ? "mobile-gallery" : "gallery"}>
                 <Message
                     open={error.error}
                     handleClose={() => setError({ error: false, message: "" })}
