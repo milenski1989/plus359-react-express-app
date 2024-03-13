@@ -238,8 +238,10 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResult
                     src={DeleteIcon}
                     className='icon'
                     onClick={() => {
-                        setCurrentImages([art])
-                        handleDialogOpen()
+                        if (!currentImages.length) {
+                            setCurrentImages([art])   
+                        }
+                        handleDialogOpen(true)
                     } }/>
             </>
             

@@ -133,14 +133,6 @@ const NewGalleryContent = () => {
             );
         }
     }, [currentImages]);
-
-    const handleDialogOpen = () => {
-        setIsDeleteDialogOpen(true)
-    }
-
-    const handleDialogClose = () => {
-        setIsDeleteDialogOpen(false)
-    }
     
     const prepareImagesForLocationChange = async() => {
         setIsLocationChangeDialogOpen(true)
@@ -158,7 +150,7 @@ const NewGalleryContent = () => {
         } else if (viewMode === 'details') {
             return <DetailsView
                 searchResults={searchResults}
-                handleDialogOpen={handleDialogOpen}
+                handleDialogOpen={setIsDeleteDialogOpen}
                 handleSearchResults={setSearchResults}
                 imageLoaded={imageLoaded}
             />
@@ -167,14 +159,14 @@ const NewGalleryContent = () => {
             return  <MobileListView
                 searchResults={searchResults}
                 handleUpdatedEntry={setUpdatedEntry}
-                handleDialogOpen={handleDialogOpen}
+                handleDialogOpen={setIsDeleteDialogOpen}
                 handleSearchResults={setSearchResults}
             /> 
         } else {
             return <ListView
                 searchResults={searchResults}
                 handleUpdatedEntry={setUpdatedEntry}
-                handleDialogOpen={handleDialogOpen}
+                handleDialogOpen={setIsDeleteDialogOpen}
                 handleSearchResults={setSearchResults}
             /> 
         }
@@ -205,7 +197,7 @@ const NewGalleryContent = () => {
                 />
                 <DeleteDialog
                     isDialogOpen={isDeleteDialogOpen}
-                    handleDialogClose={handleDialogClose}
+                    handleDialogOpen={setIsDeleteDialogOpen}
                     isDeleting={isDeleting}
                     handleIsDeleting={setIsDeleting}
                     

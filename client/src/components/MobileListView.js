@@ -29,8 +29,6 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
     const [selectedRow, setSelectedRow] = useState(null)
     const [copyOfResults, setCopyOfResults] = useState([])
 
-    console.log(selectedRow)
-
     useEffect(() => {
         if (searchResults.length) {
             const _copyOfResults = []
