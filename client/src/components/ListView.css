@@ -49,8 +49,10 @@
     cursor: pointer;
 }
 
-.text {
-    margin-left: -7rem;
+
+.text-container {
+    display: flex;
+    justify-content: space-between;
 }
 
 .bolded {

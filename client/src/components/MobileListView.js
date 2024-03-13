@@ -2,7 +2,6 @@ import * as React from "react";
 import { useContext, useState, useEffect } from "react";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import Checkbox from "@mui/material/Checkbox";
 import ActionButtons from "./ActionButtons";
@@ -85,8 +84,8 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
     }
 
     const truncateInfoProp = (propKey) => {
-        if (propKey.length > 6) {
-            return `${propKey.slice(0, 6)}...`
+        if (propKey.length > 8) {
+            return `${propKey.slice(0, 8)}...`
         } else {
             return propKey
         }
@@ -107,18 +106,17 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
                         key={art.id}
                         disablePadding
                     >
-                        <ListItemButton
-                            sx={{
+                        <div
+                            style={{
                                 color: "black",
                                 backgroundColor: '#F7F9FA',
                                 borderRadius: '10px',
                                 boxShadow: '0px 0px 19.100000381469727px 0px rgba(0, 0, 0, 0.25)',
-                                display: 'grid',
-                                gridTemplateColumns: 'repeat(5, 20%)',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                width: '100%',
                                 "&:hover": {
-                                    backgroundColor: "#F7F9FA",
-                                },
-                                "&.Mui-focusVisible": {
                                     backgroundColor: "#F7F9FA",
                                 },
                             }}
@@ -127,7 +125,6 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
                                 onChange={(e) => checkBoxHandler(e, art.id)}
                                 sx={{
                                     justifySelf: "flex-start",
-                                    marginLeft: "-1rem",
                                     "&.Mui-checked": {
                                         color: "black",
                                     },
@@ -144,12 +141,12 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
                                             style={{
                                                 width: '70px', 
                                                 height: '70px', 
-                                                objectFit: "cover", 
-                                                marginLeft: '-4rem' 
+                                                objectFit: "cover",  
                                             }} 
                                             src={art[prop.key]} 
                                             alt={art[prop.key]} />
                                     ) : (
+                                       
                                         <ListItemText
                                             id={`${labelId}-${prop.key}`}
                                             sx={{textAlign: prop.align}}
@@ -166,24 +163,26 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
                                                         <p
                                                             style={{backgroundColor: generateBackGroundColor(art.cell), 
                                                                 color: "white", 
-                                                                marginLeft: "-2.8rem",
-                                                                marginRight: "5rem",
-                                                                padding: "1rem 0.2rem"
+                                                                padding: "0.5rem 0.2rem",
+                                                                marginRight: "0.3rem",
+                                                                marginLeft: "-0.5rem"
                                                             }}>
                                                             {art[prop.key]}
                                                         </p>
                                                         :
                                                         !art.position && art[prop.key] === art.position ?
                                                             null :
-                                                            <p className='text'>{truncateInfoProp(art[prop.key])}</p>
+                                                            <p>{truncateInfoProp(art[prop.key])}</p>
                                                 )
                                             }
                                         />
+                                     
+                                       
                                     )}
                                 </React.Fragment>
                             ))}
                             <MoreHorizIcon 
-                                sx={{position: "absolute", top: '0px', right: '5px'}}
+                                sx={{marginRight: "0.3rem"}}
                                 onClick={() => showAll(art)}
                             />
                             <ActionButtons
@@ -192,7 +191,7 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
                                 searchResults={searchResults}
                                 handleSearchResults={handleSearchResults}
                             />
-                        </ListItemButton>
+                        </div>
                     </ListItem>
                 );
             })}
@@ -207,7 +206,7 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
             <Dialog 
                 open={isMoreInfoOpen} 
                 onClose={() => setIsMoreInfoOpen(false)}>
-                <DialogContent sx={{padding: '24px 28px', width: '300px'}}>
+                <DialogContent sx={{width: '300px'}}>
                     <p><span className="bolded">Artist: </span>{selectedRow.artist}</p>
                     <p><span className="bolded">Title: </span>{selectedRow.title}</p>
                     <p><span className="bolded">Technique: </span>{selectedRow.technique}</p>
