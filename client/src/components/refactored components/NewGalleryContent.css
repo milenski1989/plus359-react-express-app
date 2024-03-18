@@ -35,7 +35,7 @@
     flex-direction: column;
     align-items: center;
     margin-top: 4rem;
-    margin-bottom: 4rem;
+    margin-bottom: 3rem;
    }
   
    .main-actions-pdf-location-container {
@@ -44,11 +44,19 @@
     margin-bottom: 2rem;
     margin-top: -2rem;
    }
+
+   .mobile-main-actions-pdf-location-container {
+    display: flex;
+    align-self: flex-start;
+   }
   
    .view-mode-icons-container {
     display: flex;
     margin-left: 1.2rem;
-  
+   }
+
+   .mobile-mode-icons {
+    display: flex;
    }
 
    .mobile-view-mode-icons-container {

@@ -206,12 +206,13 @@ const NewGalleryContent = () => {
                 
                 <div className={isSmallDevice ? 'mobile-search-actions-container' :
                     'search-actions-container'}>
-                    <div className="main-actions-pdf-location-container">
-                        <img src={PdfIcon} className='icon' onClick={() => navigate('/pdf')}/>
-                        {currentImages.length && !isEditMode ?
-                            <img src={LocationIcon} className='icon' onClick={prepareImagesForLocationChange}/> : <></>}
-                    </div>
-                
+                    {!isSmallDevice && 
+                             <div className="main-actions-pdf-location-container">
+                                 <img src={PdfIcon} className='icon' onClick={() => navigate('/pdf')}/>
+                                 {currentImages.length && !isEditMode ?
+                                     <img src={LocationIcon} className='icon' onClick={prepareImagesForLocationChange}/> : <></>}
+                             </div>
+                    }
                     <>
                         <NewSort 
                             sortField={sortField}
@@ -238,13 +239,32 @@ const NewGalleryContent = () => {
                         <div className={isSmallDevice ? 'mobile-view-mode-icons-container' :
                             'view-mode-icons-container'
                         }>
-                            <img className={viewMode === 'thumbnail' ? 'selected icon' : 'icon'} src={ThumbnailViewIcon} onClick={() => setViewMode('thumbnail')}/>
-                            <img className={viewMode === 'details' ? 'selected icon' : 'icon'} src={DetailsViewIcon} onClick={() => setViewMode('details')}/>
-                            <img className={viewMode === 'list' ? 'selected icon' : 'icon'} src={ListViewIcon} onClick={() => setViewMode('list')}/>
+                            {isSmallDevice ?
+                                <div className="mobile-main-actions-pdf-location-container">
+                                    {currentImages.length && !isEditMode ?
+                                        <img src={LocationIcon} className='icon' onClick={prepareImagesForLocationChange}/> : <></>}
+                                    <img src={PdfIcon} className='icon' onClick={() => navigate('/pdf')}/>
+                                </div>
+                                :
+                                null
+                            }
+                            {isSmallDevice ? 
+                                <div className="mobile-mode-icons">
+                                    <img className={viewMode === 'thumbnail' ? 'selected icon' : 'icon'} src={ThumbnailViewIcon} onClick={() => setViewMode('thumbnail')}/>
+                                    <img className={viewMode === 'details' ? 'selected icon' : 'icon'} src={DetailsViewIcon} onClick={() => setViewMode('details')}/>
+                                    <img className={viewMode === 'list' ? 'selected icon' : 'icon'} src={ListViewIcon} onClick={() => setViewMode('list')}/>
+                                </div> :
+                                <>
+                                    <img className={viewMode === 'thumbnail' ? 'selected icon' : 'icon'} src={ThumbnailViewIcon} onClick={() => setViewMode('thumbnail')} />
+                                    <img className={viewMode === 'details' ? 'selected icon' : 'icon'} src={DetailsViewIcon} onClick={() => setViewMode('details')} />
+                                    <img className={viewMode === 'list' ? 'selected icon' : 'icon'} src={ListViewIcon} onClick={() => setViewMode('list')} />
+                                </>
+                            }
                         </div>
                     </>
                 
-                </div>        
+                </div>   
+                 
                 {loading ? (
                     <CircularProgress className="loader" color="primary" />
                 ) : (

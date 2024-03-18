@@ -11,8 +11,14 @@
 }
 
 .mobile-list-item {
-    margin-bottom: 3rem;
+    margin-bottom: 0.5rem;
     border-radius: 10px;
+}
+
+.mobile-info-text {
+    white-space: nowrap;
+    margin-left: 0.2rem;
+    margin-right: 0.5rem;
 }
 
 .list-item-button {

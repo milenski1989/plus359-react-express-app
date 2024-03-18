@@ -12,7 +12,6 @@ import { Dialog, DialogContent } from "@mui/material";
 import './ListView.css'
 import { generateBackGroundColor } from "./constants/constants";
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import EditableContainer from "./EditableContainer";
 
 const properties = [
     { key: 'position', label: 'Position', align: 'center' },
@@ -22,7 +21,7 @@ const properties = [
 ];
 
 const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) => {
-    const {setCurrentImages} = useContext(ImageContext)
+    const {isEditMode, updatedEntry, setUpdatedEntry, currentImages, setCurrentImages} = useContext(ImageContext)
     const [imagePreview, setImagePreview] = useState(false)
     const [isMoreInfoOpen, setIsMoreInfoOpen] = useState(false)
     const [selectedArt, setSelectedArt] = useState(null);
@@ -65,6 +64,14 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
             setCurrentImages(prev => [...prev.filter(image => image.id !== id )])
         }
     }
+    
+    const onChangeEditableInput = (event, property) => {
+        const { value } = event.target;
+        setUpdatedEntry((prevState) => ({
+            ...prevState,
+            [property]: value,
+        }));
+    };
 
     const openImageDialog = (art) => {
         setSelectedArt(art);
@@ -76,9 +83,9 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
         setIsMoreInfoOpen(true)
     }
 
-    const truncateInfoProp = (propKey, symbolsCount) => {
-        if (propKey.length > symbolsCount) {
-            return `${propKey.slice(0, symbolsCount)}...`
+    const truncateInfoProp = (propKey) => {
+        if (propKey.length > 8) {
+            return `${propKey.slice(0, 8)}...`
         } else {
             return propKey
         }
@@ -144,26 +151,33 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
                                             id={`${labelId}-${prop.key}`}
                                             sx={{textAlign: prop.align}}
                                             primary={
-                                              
-                                                art.position && art[prop.key] === art.position ?
-                                                    <p
-                                                        style={{backgroundColor: generateBackGroundColor(art.cell), 
-                                                            color: "white", 
-                                                            padding: "0.5rem 0.2rem",
-                                                            marginRight: "0.3rem",
-                                                            marginLeft: "-0.5rem"
-                                                        }}>
-                                                        {art[prop.key]}
-                                                    </p>
-                                                    :
-                                                    !art.position && art[prop.key] === art.position ?
+                                                isEditMode && currentImages.length && currentImages[0].id === art.id? (
+                                                    prop.key === 'position' ? 
                                                         null :
-                                                        <p className="mobile-info-text">
-                                                            {art[prop.key] === art.artist ? 
-                                                                truncateInfoProp(art[prop.key], 10): 
-                                                                truncateInfoProp(art[prop.key], 8)}</p> 
+                                                        <input 
+                                                            className="mobile-list-view-editable-input" 
+                                                            value={updatedEntry[prop.key] || currentImages[0][prop.key]} 
+                                                            onChange={(event) => onChangeEditableInput(event, prop.key)} />
+                                                ) : (
+                                                    art.position && art[prop.key] === art.position ?
+                                                        <p
+                                                            style={{backgroundColor: generateBackGroundColor(art.cell), 
+                                                                color: "white", 
+                                                                padding: "0.5rem 0.2rem",
+                                                                marginRight: "0.3rem",
+                                                                marginLeft: "-0.5rem"
+                                                            }}>
+                                                            {art[prop.key]}
+                                                        </p>
+                                                        :
+                                                        !art.position && art[prop.key] === art.position ?
+                                                            null :
+                                                            <p>{truncateInfoProp(art[prop.key])}</p>
+                                                )
                                             }
                                         />
+                                     
+                                       
                                     )}
                                 </React.Fragment>
                             ))}
@@ -171,7 +185,12 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
                                 sx={{marginRight: "0.3rem"}}
                                 onClick={() => showAll(art)}
                             />
-                        
+                            <ActionButtons
+                                art={art}
+                                handleDialogOpen={handleDialogOpen}
+                                searchResults={searchResults}
+                                handleSearchResults={handleSearchResults}
+                            />
                         </div>
                     </ListItem>
                 );
@@ -188,13 +207,15 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
                 open={isMoreInfoOpen} 
                 onClose={() => setIsMoreInfoOpen(false)}>
                 <DialogContent sx={{width: '300px'}}>
-                    <ActionButtons
-                        art={selectedRow}
-                        handleDialogOpen={handleDialogOpen}
-                        searchResults={searchResults}
-                        handleSearchResults={handleSearchResults}
-                    />
-                    <EditableContainer art={selectedRow} />
+                    <p><span className="bolded">Artist: </span>{selectedRow.artist}</p>
+                    <p><span className="bolded">Title: </span>{selectedRow.title}</p>
+                    <p><span className="bolded">Technique: </span>{selectedRow.technique}</p>
+                    <p><span className="bolded">Dimensions: </span>{selectedRow.dimensions}</p>
+                    <p><span className="bolded">Location: </span>{selectedRow.storageLocation}</p>
+                    <p><span className="bolded">Cell: </span>{selectedRow.cell}</p>
+                    <p><span className="bolded">Position: </span>{selectedRow.position}</p>
+                    <p><span className="bolded">Price: </span>{selectedRow.price}</p>
+                    <p><span className="bolded">Notes: </span>{selectedRow.notes}</p>
                 </DialogContent>
             </Dialog>
         )
