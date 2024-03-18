@@ -30,7 +30,7 @@ const Thumbnail = ({searchResults}) => {
                     onChange={(e) => checkBoxHandler(e, art.id)}
                     sx={{
                         position: "absolute",
-                        zIndex: '9999',
+                        zIndex: '888',
                         color: "white",
                         "&.Mui-checked": {
                             color: "white",

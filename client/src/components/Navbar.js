@@ -21,10 +21,27 @@ const Navbar = () => {
 
     return  <>
         {isSmallDevice ?
-            <nav className="mobile-navbar-container">
+            <nav className="mobile-navbar">
                 <Link to='/'><img className="mobile-logo" alt="logo" src={Logo}/></Link>   
                 <p className="mobile-current-location">{pathname.slice(10).replace(/%20/g, ' ').replace(/([A-Z])/g, ' $1')}</p>
-                <div className={isOpen ? "mobile-nav-links-container" : "hidden"}>
+                <button
+                    onClick={() => {
+                        setIsOpen(!isOpen);
+                        if (!isOpen) {
+                            document.body.style.overflow = 'hidden';
+                        } else {
+                            document.body.style.overflow = '';
+                        }
+                    }}
+                    className="mobile-navbar-button"
+                >
+                    {isOpen ? (
+                        <XIcon className="h-6 w-6" aria-hidden="true" />
+                    ) : (
+                        <MenuIcon className="h-6 w-6" aria-hidden="true" />
+                    )}
+                </button>
+                <div className={isOpen ? "mobile-navlinks active overlay" : "mobile-navlinks"}>
                     <Link to='/' 
                         className="mobile-nav-link"
                     >Home</Link>
@@ -37,20 +54,9 @@ const Navbar = () => {
                     <Link to='/login'
                         onClick={handleLogout}
                         className="mobile-nav-link"
-                    >Log Out</Link>
+                    >Log Out</Link> 
                 </div>
-                <div className="block lg:hidden">
-                    <button
-                        onClick={() => setIsOpen(!isOpen)}
-                        className="navbar-button"
-                    >
-                        {isOpen ? (
-                            <XIcon className="h-6 w-6" aria-hidden="true" />
-                        ) : (
-                            <MenuIcon className="h-6 w-6" aria-hidden="true" />
-                        )}
-                    </button>
-                </div>
+               
             </nav> 
             :
             <nav className="navbar">
