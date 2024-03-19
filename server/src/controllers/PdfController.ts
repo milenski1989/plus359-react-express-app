@@ -16,9 +16,7 @@ this.initializeRoutes()
 }
 
 createCertificate = async (req, res) => {
-    const {imageSrc, bio, artist, title, technique, dimensions} = req.body
-  
-   
+    const {imageSrc, bio, artist, title, technique, dimensions} = req.body 
   
     try {
       PdfService.getInstance().createCertificate(

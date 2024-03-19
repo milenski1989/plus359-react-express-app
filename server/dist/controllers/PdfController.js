@@ -42,6 +42,7 @@ class PdfController {
     constructor() {
         this.createCertificate = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const { imageSrc, bio, artist, title, technique, dimensions } = req.body;
+            console.log(imageSrc);
             try {
                 PdfService_1.default.getInstance().createCertificate(imageSrc, bio, artist, title, technique, dimensions, (chunk) => stream.write(chunk), () => stream.end());
                 const stream = res.writeHead(200, {

@@ -2,7 +2,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom"
 import './NavBar.css'
 import { useMediaQuery } from "@mui/material";
 import { MenuIcon, XIcon } from "@heroicons/react/outline";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Logo from '../components/assets/logo359 gallery-white.png'
 
 const Navbar = () => {
@@ -10,6 +10,14 @@ const Navbar = () => {
     let navigate = useNavigate();
     const {pathname} = useLocation();
     const [isOpen, setIsOpen] = useState(false);
+    
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+    },[isOpen])
 
     const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
 
@@ -27,11 +35,6 @@ const Navbar = () => {
                 <button
                     onClick={() => {
                         setIsOpen(!isOpen);
-                        if (!isOpen) {
-                            document.body.style.overflow = 'hidden';
-                        } else {
-                            document.body.style.overflow = '';
-                        }
                     }}
                     className="mobile-navbar-button"
                 >

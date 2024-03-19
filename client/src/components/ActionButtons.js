@@ -6,11 +6,10 @@ import PdfIcon from '../components/assets/pdf-solid-small.svg'
 import DownloadIcon from '../components/assets/download-solid.svg'
 import EditIcon from '../components/assets/edit-solid.svg'
 import DeleteIcon from '../components/assets/delete-solid.svg'
-import CancelIcon from '../components/assets/cancel-solid.svg'
 import SaveIcon from '../components/assets/save-solid.svg'
-import ReplaceIcon from '../components/assets/replace-solid.svg'
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import { useMediaQuery } from "@mui/material";
-
+import CloseIcon from '@mui/icons-material/Close';
 import './ActionButtons.css'
 import Message from './Message';
 import CustomDialog from './CustomDialog';
@@ -193,8 +192,8 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResult
                 }
                 {isEditMode && currentImages.length && currentImages[0].id === art.id ?
                     <>
-                        <img src={CancelIcon} className='icon' onClick={cancelEditing}/>
-                        <img src={ReplaceIcon} className='icon' onClick={() => setImageReplaceDialogisOpen(true)}/>
+                        <CloseIcon className='icon' sx={{fontSize: "30px"}} onClick={cancelEditing}/>
+                        <SwapHorizIcon className='icon' sx={{fontSize: "32px"}} onClick={() => setImageReplaceDialogisOpen(true)}/>
                         <img src={SaveIcon} className='icon' onClick={() => saveUpdatedEntry(art.id)}/>
                     </>
                     :
@@ -216,15 +215,20 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResult
                     :
                     <></>
                 }
-                <img 
-                    src={DeleteIcon}
-                    className='icon'
-                    onClick={() => {
-                        if (!currentImages.length) {
-                            setCurrentImages([art])   
-                        }
-                        handleDialogOpen(true)
-                    } }/>
+                {!isEditMode || currentImages.length && currentImages[0].id !== art.id ? 
+                    <img 
+                        src={DeleteIcon}
+                        className='icon'
+                        onClick={() => {
+                            if (!currentImages.length) {
+                                setCurrentImages([art])   
+                            }
+                            handleDialogOpen(true)
+                        } }/>
+                    :
+                    <></>
+                }
+             
             </>
             
         </div>

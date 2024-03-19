@@ -29,6 +29,7 @@ const NewGalleryContent = () => {
 
     const {
         currentImages,
+        setCurrentImages,
         setUpdatedEntry,
         isEditMode
     } = useContext(ImageContext);
@@ -54,6 +55,9 @@ const NewGalleryContent = () => {
         message: "",
     });
     const [imageLoaded, setImageLoaded] = useState({});
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [viewMode, setViewMode] = useState('thumbnail')
+    const [paginationDisabled, setPaginationDisabled] = useState(false);
 
     const getData = useCallback(async () => {
         setLoading(true);
@@ -106,12 +110,6 @@ const NewGalleryContent = () => {
     }, [page, sortField, sortOrder, isDeleting, locationChanged]);
 
     let navigate = useNavigate();
-  
-    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-   
-    const [viewMode, setViewMode] = useState('thumbnail')
-
-    const [paginationDisabled, setPaginationDisabled] = useState(false);
 
     useEffect(() => {
         if (currentImages.length) {
@@ -181,10 +179,15 @@ const NewGalleryContent = () => {
         setLocationChanged(prev => !prev)
     }
 
+    const handleViewMode = (mode) => {
+        setViewMode(mode)
+        setCurrentImages([])
+    }
+
     return (
         <>
             <Navbar />
-            <div className={isSmallDevice && viewMode === 'list' ? "mobile-gallery" : "gallery"}>
+            <div className="gallery">
                 <Message
                     open={error.error}
                     handleClose={() => setError({ error: false, message: "" })}
@@ -208,9 +211,15 @@ const NewGalleryContent = () => {
                     'search-actions-container'}>
                     {!isSmallDevice && 
                              <div className="main-actions-pdf-location-container">
-                                 <img src={PdfIcon} className='icon' onClick={() => navigate('/pdf')}/>
                                  {currentImages.length && !isEditMode ?
-                                     <img src={LocationIcon} className='icon' onClick={prepareImagesForLocationChange}/> : <></>}
+                                     <><img
+                                         src={PdfIcon}
+                                         className='icon'
+                                         onClick={() => navigate('/pdf')} /><img
+                                         src={LocationIcon}
+                                         className='icon'
+                                         onClick={prepareImagesForLocationChange} /></> : <></>
+                                 }
                              </div>
                     }
                     <>
@@ -242,22 +251,30 @@ const NewGalleryContent = () => {
                             {isSmallDevice ?
                                 <div className="mobile-main-actions-pdf-location-container">
                                     {currentImages.length && !isEditMode ?
-                                        <img src={LocationIcon} className='icon' onClick={prepareImagesForLocationChange}/> : <></>}
-                                    <img src={PdfIcon} className='icon' onClick={() => navigate('/pdf')}/>
+                                        <>
+                                            <img 
+                                                src={LocationIcon} 
+                                                className='icon' 
+                                                onClick={prepareImagesForLocationChange}/>
+                                            <img src={PdfIcon} 
+                                                className='icon' 
+                                                onClick={() => navigate('/pdf')} />
+                                        </>
+                                        : <></> }
                                 </div>
                                 :
                                 null
                             }
                             {isSmallDevice ? 
                                 <div className="mobile-mode-icons">
-                                    <img className={viewMode === 'thumbnail' ? 'selected icon' : 'icon'} src={ThumbnailViewIcon} onClick={() => setViewMode('thumbnail')}/>
-                                    <img className={viewMode === 'details' ? 'selected icon' : 'icon'} src={DetailsViewIcon} onClick={() => setViewMode('details')}/>
-                                    <img className={viewMode === 'list' ? 'selected icon' : 'icon'} src={ListViewIcon} onClick={() => setViewMode('list')}/>
+                                    <img className={viewMode === 'thumbnail' ? 'selected icon' : 'icon'} src={ThumbnailViewIcon} onClick={() => handleViewMode('thumbnail')}/>
+                                    <img className={viewMode === 'details' ? 'selected icon' : 'icon'} src={DetailsViewIcon} onClick={() => handleViewMode('details')}/>
+                                    <img className={viewMode === 'list' ? 'selected icon' : 'icon'} src={ListViewIcon} onClick={() => handleViewMode('list')}/>
                                 </div> :
                                 <>
-                                    <img className={viewMode === 'thumbnail' ? 'selected icon' : 'icon'} src={ThumbnailViewIcon} onClick={() => setViewMode('thumbnail')} />
-                                    <img className={viewMode === 'details' ? 'selected icon' : 'icon'} src={DetailsViewIcon} onClick={() => setViewMode('details')} />
-                                    <img className={viewMode === 'list' ? 'selected icon' : 'icon'} src={ListViewIcon} onClick={() => setViewMode('list')} />
+                                    <img className={viewMode === 'thumbnail' ? 'selected icon' : 'icon'} src={ThumbnailViewIcon} onClick={() => handleViewMode('thumbnail')} />
+                                    <img className={viewMode === 'details' ? 'selected icon' : 'icon'} src={DetailsViewIcon} onClick={() => handleViewMode('details')} />
+                                    <img className={viewMode === 'list' ? 'selected icon' : 'icon'} src={ListViewIcon} onClick={() => handleViewMode('list')} />
                                 </>
                             }
                         </div>
