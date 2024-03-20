@@ -250,7 +250,7 @@ const NewGalleryContent = () => {
                         }>
                             {isSmallDevice ?
                                 <div className="mobile-main-actions-pdf-location-container">
-                                    {currentImages.length && !isEditMode ?
+                                    {currentImages.length  ?
                                         <>
                                             <img 
                                                 src={LocationIcon} 

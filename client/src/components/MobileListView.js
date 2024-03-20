@@ -134,7 +134,7 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
                                             style={{
                                                 width: '70px', 
                                                 height: '70px', 
-                                                objectFit: "cover",  
+                                                objectFit: "cover", 
                                             }} 
                                             src={art[prop.key]} 
                                             alt={art[prop.key]} />
@@ -142,16 +142,19 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
                                        
                                         <ListItemText
                                             id={`${labelId}-${prop.key}`}
-                                            sx={{textAlign: prop.align}}
+                                            sx={{
+                                                textAlign: prop.align,
+                                                '&.MuiListItemText-root': {
+                                                    marginRight: '0.5rem'
+                                                }
+                                            }}
                                             primary={
                                               
                                                 art.position && art[prop.key] === art.position ?
                                                     <p
                                                         style={{backgroundColor: generateBackGroundColor(art.cell), 
                                                             color: "white", 
-                                                            padding: "0.5rem 0.2rem",
-                                                            marginRight: "0.3rem",
-                                                            marginLeft: "-0.5rem"
+                                                            padding: "0.5rem 0.3rem",
                                                         }}>
                                                         {art[prop.key]}
                                                     </p>
@@ -187,7 +190,7 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
             <Dialog 
                 open={isMoreInfoOpen} 
                 onClose={() => setIsMoreInfoOpen(false)}>
-                <DialogContent sx={{width: '300px'}}>
+                <DialogContent>
                     <ActionButtons
                         art={selectedRow}
                         handleDialogOpen={handleDialogOpen}
