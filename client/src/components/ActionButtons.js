@@ -26,7 +26,6 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResult
         isEditMode,
     } = useContext(ImageContext);
 
-    const myStorage = window.localStorage;
     const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
 
     const [imageReplaceDialogisOpen, setImageReplaceDialogisOpen] = useState(false)
@@ -90,7 +89,6 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResult
             entry.id === id ? updatedEntry : entry
         );
         handleSearchResults(updatedResults);
-        myStorage.removeItem("image");
         setCurrentImages([])
     };
 

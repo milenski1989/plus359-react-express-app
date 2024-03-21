@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Navbar from "../Navbar";
 import "./NewGalleryContent.css";
 import "../App.css";
@@ -16,6 +16,8 @@ import ListView from "../ListView";
 import DetailsViewIcon from '../../components/assets/details-view-solid.svg';
 import LocationIcon from '../../components/assets/move-solid.svg'
 import PdfIcon from '../../components/assets/pdf-solid.svg'
+import SelectAllIcon from '../../components/assets/select-all.svg'
+import UnselectAllIcon from '../../components/assets/unselect-all.svg'
 import DeleteDialog from "./DeleteDialog";
 import LocationChangeDialog from "./LocationChangeDialog";
 import PaginationComponent from './PaginationComponent'
@@ -33,7 +35,7 @@ const NewGalleryContent = () => {
         setUpdatedEntry,
         isEditMode
     } = useContext(ImageContext);
-    const myStorage = window.localStorage;
+
     const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
 
     const [page, setPage] = useState(1);
@@ -58,35 +60,30 @@ const NewGalleryContent = () => {
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [viewMode, setViewMode] = useState('thumbnail')
     const [paginationDisabled, setPaginationDisabled] = useState(false);
-
-    const getData = useCallback(async () => {
+    let navigate = useNavigate();
+    
+    const getData = async (search = false) => {
         setLoading(true);
         try {
-            const data = await getAllEntries(name, page, sortField, sortOrder);
+            let data;
+            if (search && keywords.length) {
+                data = await getAllEntriesByKeywords(keywords, page, sortField, sortOrder);
+            } else {
+                console.log('invoked from gallery')
+
+                data = await getAllEntries(name, page, sortField, sortOrder);
+            }
             const { arts, artsCount } = data;
             setSearchResults(arts);
             setPagesCount(Math.ceil(artsCount / 25));
             setTotalCount(artsCount);
         } catch (error) {
             setError({ error: true, message: error.message });
+        } finally {
             setLoading(false);
         }
-    }, [name, page, sortField, sortOrder, locationChanged]);
+    }
 
-    const getDataFromSearch = async () => {
-        setLoading(true);
-        try {
-            const data = await getAllEntriesByKeywords(keywords, page, sortField, sortOrder);
-            const { arts, artsCount } = data;
-            setSearchResults(arts);
-            setPagesCount(Math.ceil(artsCount / 25));
-            setTotalCount(artsCount);
-        } catch(error) {
-            setError({ error: true, message: error.message });
-            setLoading(false)
-        }
-    };
-    
     useEffect(() => {
     
         const promises = searchResults.map((art) => {
@@ -106,32 +103,9 @@ const NewGalleryContent = () => {
     }, [searchResults]);
 
     useEffect(() => {
-        keywords.length ? getDataFromSearch() : getData()
-    }, [page, sortField, sortOrder, isDeleting, locationChanged]);
+        keywords.length ? getData(true) : getData();
+    }, [page, sortField, sortOrder, isDeleting, locationChanged, keywords]);
 
-    let navigate = useNavigate();
-
-    useEffect(() => {
-        if (currentImages.length) {
-            myStorage.setItem(
-                "image",
-                JSON.stringify({
-                    id: currentImages[0].id,
-                    thumbnail: currentImages[0].image_url,
-                    artist: currentImages[0].artist,
-                    title: currentImages[0].title,
-                    technique: currentImages[0].technique,
-                    dimensions: currentImages[0].dimensions,
-                    price: currentImages[0].price,
-                    notes: currentImages[0].notes,
-                    storageLocation: currentImages[0].storageLocation,
-                    cell: currentImages[0].cell,
-                    position: currentImages[0].position,
-                    downloadUrl: currentImages[0].download_url
-                })
-            );
-        }
-    }, [currentImages]);
     
     const prepareImagesForLocationChange = async() => {
         setIsLocationChangeDialogOpen(true)
@@ -184,6 +158,20 @@ const NewGalleryContent = () => {
         setCurrentImages([])
     }
 
+    const handleSelectAll = () => {
+        if (currentImages.length === searchResults.length) {
+            setCurrentImages([]);
+        } else {
+            setCurrentImages([
+                ...currentImages, 
+                ...searchResults.filter(image => 
+                    !currentImages.some(
+                        currentImage => currentImage.id === image.id
+                    ))
+            ]);
+        }
+    }
+    
     return (
         <>
             <Navbar />
@@ -211,6 +199,7 @@ const NewGalleryContent = () => {
                     'search-actions-container'}>
                     {!isSmallDevice && 
                              <div className="main-actions-pdf-location-container">
+                                 <img onClick={handleSelectAll} src={currentImages.length ? UnselectAllIcon : SelectAllIcon} className='icon' />
                                  {currentImages.length && !isEditMode ?
                                      <><img
                                          src={PdfIcon}
@@ -261,6 +250,7 @@ const NewGalleryContent = () => {
                                                 onClick={() => navigate('/pdf')} />
                                         </>
                                         : <></> }
+                                    <img onClick={handleSelectAll} src={currentImages.length ? UnselectAllIcon : SelectAllIcon} className='icon' />
                                 </div>
                                 :
                                 null

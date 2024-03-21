@@ -18,7 +18,15 @@ const ImageContainer = ({ imageSrc }) => {
     }, [imageSrc]);
   
     return <>
-        <img src={imageSrc} alt="image" style={{ objectFit: 'cover', width: '100%', height: 'auto', marginBottom: '1rem' }} />
+        <img 
+            src={imageSrc} 
+            alt="image" 
+            style={{ 
+                objectFit: 'cover', 
+                width: '100%', 
+                height: 'auto', 
+                marginBottom: '1rem' 
+            }} />
     </>  
 };
 

@@ -1,5 +1,5 @@
 import { Autocomplete, IconButton, InputBase, Paper, TextField } from '@mui/material'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import SearchIcon from "@mui/icons-material/Search";
 import FilterIcon from './assets/filter-solid.svg'
 import './SearchAndFiltersBar.css'
@@ -31,7 +31,7 @@ function SearchAndFiltersBar({page, setPage, handlePagesCount, handleTotalCount,
     const onChange = event => {
         if (!event.target.value) {
             setPage(1);
-            getAllData()
+            getDataFromSearch(false)
         }
         const inputKeywords = event.target.value.split(' ');
         handleKeywords(inputKeywords);
@@ -41,14 +41,20 @@ function SearchAndFiltersBar({page, setPage, handlePagesCount, handleTotalCount,
     const triggerSearchWithEnter = (e) => {
         if (e.charCode === 13) {
             e.preventDefault();
-            getDataFromSearch()
+            getDataFromSearch(true)
         }
     };
 
-    const getDataFromSearch = async () => {
+    const getDataFromSearch = async (isSearch) => {
         handleLoading(true);
         try {
-            const data = await getAllEntriesByKeywords(keywords, page, sortField, sortOrder)
+            let data;
+            if (isSearch) {
+                data = await getAllEntriesByKeywords(keywords, page, sortField, sortOrder);
+            } else {
+                console.log('invoked from searchbar')
+                data = await getAllEntries(name, page, sortField, sortOrder);
+            }
             const { arts, artsCount } = data;
             handleSearchResults(arts);
             handlePagesCount(Math.ceil(artsCount / 25));
@@ -60,26 +66,11 @@ function SearchAndFiltersBar({page, setPage, handlePagesCount, handleTotalCount,
         } 
     }
 
-    const getAllData = useCallback(async () => {
-        handleLoading(true);
-        try {
-            const data = await getAllEntries(name, page, sortField, sortOrder);
-            const { arts, artsCount } = data;
-            handleSearchResults(arts);
-            handlePagesCount(Math.ceil(artsCount / 25));
-            handleTotalCount(artsCount);
-        } catch (error) {
-            handleError({ error: true, message: error.message });
-        } finally {
-            handleLoading(false);
-        }
-    }, [name, page, sortField, sortOrder]);
-
     const filterByArtistAndCellInCurrentLocation = async () => {
         try {
             if (!selectedArtist && selectedArtist !== "-" && !selectedCell) {
                 setPaginationDisabled(false);
-                getAllData()
+                getDataFromSearch(false)
             } else {
                 const response = await axios.get('http://localhost:5000/artworks/filterByArtistAndCell', {
                     params: {
@@ -192,7 +183,7 @@ function SearchAndFiltersBar({page, setPage, handlePagesCount, handleTotalCount,
                     type="button"
                     sx={{ p: "10px" }}
                     aria-label="search"
-                    onClick={getDataFromSearch}
+                    onClick={() => getDataFromSearch(true)}
                 >
                     <SearchIcon />
                 </IconButton>

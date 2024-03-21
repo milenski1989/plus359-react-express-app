@@ -1,5 +1,3 @@
-import { useContext } from "react";
-import { ImageContext } from '../contexts/ImageContext';
 import { Checkbox } from "@mui/material";
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
@@ -8,19 +6,21 @@ import ActionButtons from "../ActionButtons";
 import '../DetailsView.css'
 import { generateBackGroundColor } from "../constants/constants";
 import ImageContainer from "./ImageContainer";
+import { useContext } from "react";
+import { ImageContext } from "../contexts/ImageContext";
 
 const Card = ({ searchResults, handleDialogOpen, handleSearchResults }) => {
+
     const {
+        currentImages,
         setCurrentImages,
     } = useContext(ImageContext);
 
-    const checkBoxHandler = (e, id) => {
-        const index = searchResults.findIndex(art => art.id === id)
-        if (e.target.checked) {
-           
-            setCurrentImages(prev => [...new Set(prev).add(searchResults[index])])
+    const checkBoxHandler = (id) => {
+        if (currentImages.some(image => image.id === id)) {
+            setCurrentImages(currentImages.filter(image => image.id !== id));
         } else {
-            setCurrentImages(prev => [...prev.filter(image => image.id !== id )])
+            setCurrentImages([...currentImages, searchResults.find(image => image.id === id)]);
         }
     }
  
@@ -42,7 +42,8 @@ const Card = ({ searchResults, handleDialogOpen, handleSearchResults }) => {
                         <></>
                     }
                     <Checkbox
-                        onChange={(e) => checkBoxHandler(e, art.id)}
+                        onChange={() => checkBoxHandler(art.id)}
+                        checked={currentImages.some(image => image.id === art.id)}
                         sx={{
                             "&.Mui-checked": {
                                 color: "black",

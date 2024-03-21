@@ -69,7 +69,10 @@ const DeleteDialog = ({isDialogOpen, handleDialogOpen, isDeleting, handleIsDelet
                 <CustomDialog
                     openModal={isDialogOpen}
                     setOpenModal={() => handleDialogOpen(true)}
-                    title="Are you sure you want to delete the entry ?"
+                    title={currentImages.length === 1 ? 
+                        "Are you sure you want to delete the entry ?" :
+                        "Are you sure you want to delete all selected entries ?"
+                    }
                     handleClickYes={() => {
                         if (currentImages.length > 1) {
                             handleDeleteMultiple();
@@ -83,6 +86,7 @@ const DeleteDialog = ({isDialogOpen, handleDialogOpen, isDeleting, handleIsDelet
                     } } 
                     confirmButtonText="Yes"
                     cancelButtonText="Cancel"
+                    style={{padding: '0'}}
                 />}
     </>
 }

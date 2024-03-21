@@ -22,7 +22,7 @@ const properties = [
 ];
 
 const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) => {
-    const {setCurrentImages} = useContext(ImageContext)
+    const {currentImages, setCurrentImages} = useContext(ImageContext)
     const [imagePreview, setImagePreview] = useState(false)
     const [isMoreInfoOpen, setIsMoreInfoOpen] = useState(false)
     const [selectedArt, setSelectedArt] = useState(null);
@@ -56,13 +56,11 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
         }
     },[searchResults])
 
-    const checkBoxHandler = (e, id) => {
-        const index = searchResults.findIndex(art => art.id === id)
-        if (e.target.checked) {
-           
-            setCurrentImages(prev => [...new Set(prev).add(searchResults[index])])
+    const checkBoxHandler = (id) => {
+        if (currentImages.some(image => image.id === id)) {
+            setCurrentImages(currentImages.filter(image => image.id !== id));
         } else {
-            setCurrentImages(prev => [...prev.filter(image => image.id !== id )])
+            setCurrentImages([...currentImages, searchResults.find(image => image.id === id)]);
         }
     }
 
@@ -115,7 +113,8 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
                             }}
                         >
                             <Checkbox
-                                onChange={(e) => checkBoxHandler(e, art.id)}
+                                onChange={() => checkBoxHandler(art.id)}
+                                checked={currentImages.some(image => image.id === art.id)}
                                 sx={{
                                     justifySelf: "flex-start",
                                     "&.Mui-checked": {
