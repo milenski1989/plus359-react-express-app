@@ -12,9 +12,6 @@
     width: 180px;
     background-color: white;
     border-radius: 4px;
-    margin-right: 1rem;
-    margin-left: 1rem;
-
 }
 
 .mobile-sort-input {
@@ -22,4 +19,9 @@
     background-color: white;
     border-radius: 4px;
     margin-bottom: 1rem;
+}
+
+.end-adornment {
+    position: absolute;
+    right: 10px;
 }

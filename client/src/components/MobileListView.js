@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState } from "react";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
@@ -24,37 +24,9 @@ const properties = [
 const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) => {
     const {currentImages, setCurrentImages} = useContext(ImageContext)
     const [imagePreview, setImagePreview] = useState(false)
-    const [isMoreInfoOpen, setIsMoreInfoOpen] = useState(false)
-    const [selectedArt, setSelectedArt] = useState(null);
+    const [fullInfoOpened, setFullInfoOpened] = useState(false)
+    const [selectedImage, setSelectedImage] = useState(null);
     const [selectedRow, setSelectedRow] = useState(null)
-    const [copyOfResults, setCopyOfResults] = useState([])
-
-    useEffect(() => {
-        if (searchResults.length) {
-            const _copyOfResults = []
-            for (let result of searchResults) {
-                const newObj =  {
-                    ['id']: result.id,
-                    ['position']: result.position,
-                    ['cell']: result.cell,
-                    ['image_url']: result.image_url, 
-                    ['download_key']: result.download_key,
-                    ['download_url']: result.download_url,
-                    ['artist']: result.artist, 
-                    ['dimensions']: result.dimensions,
-                    ['title']: result.title,
-                    ['technique']: result.technique,
-                    ['price']: result.price,
-                    ['notes']: result.notes,
-                    ['location']: result.storageLocation,  
-                }
-
-                _copyOfResults.push(newObj)
-            }
-
-            setCopyOfResults(_copyOfResults)
-        }
-    },[searchResults])
 
     const checkBoxHandler = (id) => {
         if (currentImages.some(image => image.id === id)) {
@@ -64,14 +36,14 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
         }
     }
 
-    const openImageDialog = (art) => {
-        setSelectedArt(art);
+    const openImagePreviewDialog = (art) => {
+        setSelectedImage(art);
         setImagePreview(true);
     };
 
-    const showAll = (art) => {
+    const openFullInfoDialog = (art) => {
         setSelectedRow(art)
-        setIsMoreInfoOpen(true)
+        setFullInfoOpened(true)
     }
 
     const truncateInfoProp = (propKey, symbolsCount) => {
@@ -84,7 +56,7 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
 
     return <>
         <List dense sx={{ width: "100%", maxWidth: "100vw", bgcolor: "background.paper" }}>
-            {copyOfResults.map((art, ind) => {
+            {searchResults.map((art, ind) => {
                 const labelId = `checkbox-list-secondary-label-${ind}`;
                 return (
                     <ListItem
@@ -129,7 +101,7 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
                                 <React.Fragment key={prop.key}>
                                     {prop.isImage ? (
                                         <img 
-                                            onClick={() => openImageDialog(art)} 
+                                            onClick={() => openImagePreviewDialog(art)} 
                                             style={{
                                                 width: '70px', 
                                                 height: '70px', 
@@ -171,7 +143,7 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
                             ))}
                             <MoreHorizIcon 
                                 sx={{marginRight: "0.3rem"}}
-                                onClick={() => showAll(art)}
+                                onClick={() => openFullInfoDialog(art)}
                             />
                         
                         </div>
@@ -180,15 +152,15 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
             })}
         </List>
 
-        {selectedArt && (
+        {selectedImage && (
             <Dialog open={imagePreview} onClose={() => setImagePreview(false)}>
-                <img onClick={() => setImagePreview(false)} src={selectedArt.image_url} style={{ width: "100%", height: "auto" }} />
+                <img onClick={() => setImagePreview(false)} src={selectedImage.image_url} style={{ width: "100%", height: "auto" }} />
             </Dialog>
         )}
-        {isMoreInfoOpen && (
+        {fullInfoOpened && (
             <Dialog 
-                open={isMoreInfoOpen} 
-                onClose={() => setIsMoreInfoOpen(false)}>
+                open={fullInfoOpened} 
+                onClose={() => setFullInfoOpened(false)}>
                 <DialogContent>
                     <ActionButtons
                         art={selectedRow}

@@ -7,7 +7,7 @@ import Message from "../Message";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { ImageContext } from "../contexts/ImageContext";
 import SearchAndFiltersBar from "../SearchAndFiltersBar";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ThumbnailView from "../ThumbnailView";
 import DetailsView from "../DetailsView";
 import ListViewIcon from '../../components/assets/list-view-solid.svg';
@@ -20,11 +20,10 @@ import SelectAllIcon from '../../components/assets/select-all.svg'
 import UnselectAllIcon from '../../components/assets/unselect-all.svg'
 import DeleteDialog from "./DeleteDialog";
 import LocationChangeDialog from "./LocationChangeDialog";
-import PaginationComponent from './PaginationComponent'
-import { getAllEntries, getAllEntriesByKeywords } from "../../utils/apiCalls";
 import { useMediaQuery } from "@mui/material";
 import NewSort from "./NewSort";
 import MobileListView from "../MobileListView";
+import PaginationComponent from "./PaginationComponent";
 
 
 const NewGalleryContent = () => {
@@ -38,13 +37,9 @@ const NewGalleryContent = () => {
 
     const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
 
-    const [page, setPage] = useState(1);
     const [sortField, setSortField] = useState('id')
     const [sortOrder, setSortOrder] = useState('desc')
     const [keywords, setKeywords] = useState([]);
-    
-    const {name} = useParams()
-
     const [loading, setLoading] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [locationChanged, setLocationChanged] = useState(false)
@@ -52,6 +47,8 @@ const NewGalleryContent = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [totalCount, setTotalCount] = useState(0);
     const [pagesCount, setPagesCount] = useState(0);
+    const [page, setPage] = useState(1);
+
     const [error, setError] = useState({
         error: false,
         message: "",
@@ -61,28 +58,6 @@ const NewGalleryContent = () => {
     const [viewMode, setViewMode] = useState('thumbnail')
     const [paginationDisabled, setPaginationDisabled] = useState(false);
     let navigate = useNavigate();
-    
-    const getData = async (search = false) => {
-        setLoading(true);
-        try {
-            let data;
-            if (search && keywords.length) {
-                data = await getAllEntriesByKeywords(keywords, page, sortField, sortOrder);
-            } else {
-                console.log('invoked from gallery')
-
-                data = await getAllEntries(name, page, sortField, sortOrder);
-            }
-            const { arts, artsCount } = data;
-            setSearchResults(arts);
-            setPagesCount(Math.ceil(artsCount / 25));
-            setTotalCount(artsCount);
-        } catch (error) {
-            setError({ error: true, message: error.message });
-        } finally {
-            setLoading(false);
-        }
-    }
 
     useEffect(() => {
     
@@ -102,17 +77,8 @@ const NewGalleryContent = () => {
         });
     }, [searchResults]);
 
-    useEffect(() => {
-        keywords.length ? getData(true) : getData();
-    }, [page, sortField, sortOrder, isDeleting, locationChanged, keywords]);
-
-    
     const prepareImagesForLocationChange = async() => {
         setIsLocationChangeDialogOpen(true)
-    }
-
-    const handlePage = (newPage) => {
-        setPage(newPage)
     }
 
     const renderViewMode = () => {
@@ -171,6 +137,10 @@ const NewGalleryContent = () => {
             ]);
         }
     }
+
+    const handlePage = (newPage) => {
+        setPage(newPage)
+    }
     
     return (
         <>
@@ -195,10 +165,10 @@ const NewGalleryContent = () => {
                     
                 />
                 
-                <div className={isSmallDevice ? 'mobile-search-actions-container' :
-                    'search-actions-container'}>
+                <div className={isSmallDevice ? 'mobile-search-filters-buttons-container' :
+                    'search-filters-buttons-container'}>
                     {!isSmallDevice && 
-                             <div className="main-actions-pdf-location-container">
+                             <div className="select-pdf-location-buttons-container">
                                  <img onClick={handleSelectAll} src={currentImages.length ? UnselectAllIcon : SelectAllIcon} className='icon' />
                                  {currentImages.length && !isEditMode ?
                                      <><img
@@ -219,10 +189,6 @@ const NewGalleryContent = () => {
                             handleSortOrder={setSortOrder}
                         />
                         <SearchAndFiltersBar
-                            page={page}
-                            setPage={setPage}
-                            handlePagesCount={setPagesCount}
-                            handleTotalCount={setTotalCount}
                             sortField={sortField}
                             sortOrder={sortOrder}
                             setPaginationDisabled={setPaginationDisabled}
@@ -231,14 +197,20 @@ const NewGalleryContent = () => {
                             handleSearchResults={setSearchResults}
                             keywords={keywords}
                             handleKeywords={handleKeywords}
-                         
+                            isDeleting={isDeleting}
+                            locationChanged={locationChanged}
+                            setTotalCount={setTotalCount}
+                            setPagesCount={setPagesCount}
+                            setPage={setPage}
+                            page={page}
+
                         />
 
-                        <div className={isSmallDevice ? 'mobile-view-mode-icons-container' :
+                        <div className={isSmallDevice ? 'mobile-view-mode-actions-container' :
                             'view-mode-icons-container'
                         }>
                             {isSmallDevice ?
-                                <div className="mobile-main-actions-pdf-location-container">
+                                <div className="mobile-select-pdf-location-buttons-container">
                                     {currentImages.length  ?
                                         <>
                                             <img 
@@ -256,7 +228,7 @@ const NewGalleryContent = () => {
                                 null
                             }
                             {isSmallDevice ? 
-                                <div className="mobile-mode-icons">
+                                <div className="mobile-view-mode-icons-container">
                                     <img className={viewMode === 'thumbnail' ? 'selected icon' : 'icon'} src={ThumbnailViewIcon} onClick={() => handleViewMode('thumbnail')}/>
                                     <img className={viewMode === 'details' ? 'selected icon' : 'icon'} src={DetailsViewIcon} onClick={() => handleViewMode('details')}/>
                                     <img className={viewMode === 'list' ? 'selected icon' : 'icon'} src={ListViewIcon} onClick={() => handleViewMode('list')}/>
