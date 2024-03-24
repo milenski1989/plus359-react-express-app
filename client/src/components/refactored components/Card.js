@@ -29,7 +29,7 @@ const Card = ({ searchResults, handleDialogOpen, handleSearchResults }) => {
 
             <div className="card" key={id}>
                 <div className="card-header-container">
-                    <p className="card-header">{art.artist}</p>
+                    <p className="card-header">{art.artist || 'No Artist'}</p>
                     {art.position !== 0 ?
                         <div
                             style={{backgroundColor: generateBackGroundColor(art.cell), 

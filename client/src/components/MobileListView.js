@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useContext, useState } from "react";
+import { useContext, useState, useRef } from "react";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
@@ -15,7 +15,6 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import EditableContainer from "./EditableContainer";
 
 const properties = [
-    { key: 'position', label: 'Position', align: 'center' },
     { key: 'image_url', label: 'Image', align: 'center', isImage: true },
     { key: 'artist', label: 'Artist', align: 'center' },
     { key: 'dimensions', label: 'Dimensions', align: 'center' },
@@ -27,6 +26,9 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
     const [fullInfoOpened, setFullInfoOpened] = useState(false)
     const [selectedImage, setSelectedImage] = useState(null);
     const [selectedRow, setSelectedRow] = useState(null)
+    const [showCheckbox, setShowCheckbox] = useState(false);
+
+    const timeoutRef = useRef(null);
 
     const checkBoxHandler = (id) => {
         if (currentImages.some(image => image.id === id)) {
@@ -37,8 +39,10 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
     }
 
     const openImagePreviewDialog = (art) => {
-        setSelectedImage(art);
-        setImagePreview(true);
+        if (!showCheckbox) {
+            setSelectedImage(art);
+            setImagePreview(true);
+        }
     };
 
     const openFullInfoDialog = (art) => {
@@ -54,100 +58,101 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
         }
     }
 
+    const handleLongPress = () => {
+        setShowCheckbox(true);
+    };
+  
+    const handleMouseDown = () => {
+        timeoutRef.current = setTimeout(handleLongPress, 700);
+    };
+  
+    const handleMouseUp = () => {
+        clearTimeout(timeoutRef.current);
+    };
+
     return <>
         <List dense sx={{ width: "100%", maxWidth: "100vw", bgcolor: "background.paper" }}>
             {searchResults.map((art, ind) => {
                 const labelId = `checkbox-list-secondary-label-${ind}`;
                 return (
-                    <ListItem
-                        sx={{
-                            "&:hover": {
-                                backgroundColor: "black",
-                            },
-                        }}
-                        className='mobile-list-item'
-                        key={art.id}
-                        disablePadding
-                    >
-                        <div
-                            style={{
-                                color: "black",
-                                backgroundColor: '#F7F9FA',
-                                borderRadius: '10px',
-                                boxShadow: '0px 0px 19.100000381469727px 0px rgba(0, 0, 0, 0.25)',
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
-                                width: '100%',
-                                "&:hover": {
-                                    backgroundColor: "#F7F9FA",
-                                },
-                            }}
-                        >
-                            <Checkbox
-                                onChange={() => checkBoxHandler(art.id)}
-                                checked={currentImages.some(image => image.id === art.id)}
-                                sx={{
-                                    justifySelf: "flex-start",
-                                    "&.Mui-checked": {
-                                        color: "black",
-                                    },
-                                }}
-                                icon={<RadioButtonUncheckedIcon />}
-                                checkedIcon={<CheckCircleOutlineIcon />}
-                            />
-
-                            {properties.map(prop => (
-                                <React.Fragment key={prop.key}>
-                                    {prop.isImage ? (
-                                        <img 
-                                            onClick={() => openImagePreviewDialog(art)} 
-                                            style={{
-                                                width: '70px', 
-                                                height: '70px', 
-                                                objectFit: "cover", 
-                                            }} 
-                                            src={art[prop.key]} 
-                                            alt={art[prop.key]} />
-                                    ) : (
-                                       
-                                        <ListItemText
-                                            id={`${labelId}-${prop.key}`}
-                                            sx={{
-                                                textAlign: prop.align,
-                                                '&.MuiListItemText-root': {
-                                                    marginRight: '0.5rem'
-                                                }
-                                            }}
-                                            primary={
-                                              
-                                                art.position && art[prop.key] === art.position ?
-                                                    <p
-                                                        style={{backgroundColor: generateBackGroundColor(art.cell), 
-                                                            color: "white", 
-                                                            padding: "0.5rem 0.3rem",
-                                                        }}>
-                                                        {art[prop.key]}
-                                                    </p>
-                                                    :
-                                                    !art.position && art[prop.key] === art.position ?
-                                                        null :
-                                                        <p className="mobile-info-text">
-                                                            {art[prop.key] === art.artist ? 
-                                                                truncateInfoProp(art[prop.key], 10): 
-                                                                truncateInfoProp(art[prop.key], 8)}</p> 
-                                            }
-                                        />
-                                    )}
-                                </React.Fragment>
-                            ))}
-                            <MoreHorizIcon 
-                                sx={{marginRight: "0.3rem"}}
-                                onClick={() => openFullInfoDialog(art)}
-                            />
-                        
+                    <div key={art.id} className="mobile-list-item-container">
+                        <div className={art.position ? "mobile-position-container" : "mobile-position-container black-text"} style={art.position ? 
+                            {backgroundColor: generateBackGroundColor(art.cell)} :
+                            {backgroundColor: '#F7F9FA'}
+                        }>
+                            <p >{art.position}</p>
                         </div>
-                    </ListItem>
+                        <ListItem
+                            className='mobile-list-item'
+                            disablePadding
+                        >
+                            <div className="mobile-list-item-elements"
+                            >
+                                {properties.map(prop => (
+                                    <React.Fragment key={prop.key}>
+                                        {prop.isImage ? (
+                                            <div className="mobile-image-checkbox-container">
+                                                <img 
+                                                    onMouseDown={handleMouseDown}
+                                                    onMouseUp={handleMouseUp}
+                                                    onMouseLeave={handleMouseUp}
+                                                    onClick={() => openImagePreviewDialog(art)}
+                                                    style={{
+                                                        width: '70px', 
+                                                        height: '70px', 
+                                                        objectFit: "cover", 
+                                                    }} 
+                                                    src={art[prop.key]} 
+                                                    alt={art[prop.key]} />
+                                                {showCheckbox &&
+                                                          <Checkbox
+                                                              onChange={() => checkBoxHandler(art.id)}
+                                                              checked={currentImages.some(image => image.id === art.id)}
+                                                              sx={{
+                                                                  position: "absolute",
+                                                                  top: "50%",
+                                                                  left: "50%",
+                                                                  transform: "translate(-50%, -50%)",
+                                                                  color: 'white',
+                                                                  "&.Mui-checked": {
+                                                                      color: "white",
+                                                                  },
+                                                              }}
+                                                              icon={<RadioButtonUncheckedIcon />}
+                                                              checkedIcon={<CheckCircleOutlineIcon />}
+                                                          />
+                                                }
+                                          
+                                            </div>
+                                        
+                                        ) : (
+                                       
+                                            <ListItemText
+                                                id={`${labelId}-${prop.key}`}
+                                                sx={{
+                                                    textAlign: prop.align,
+                                                    '&.MuiListItemText-root': {
+                                                        marginRight: '0.5rem'
+                                                    }
+                                                }}
+                                                primary={
+                                                    <p className="mobile-info-text">
+                                                        {art[prop.key] === art.artist ? 
+                                                            truncateInfoProp(art[prop.key], 10): 
+                                                            truncateInfoProp(art[prop.key], 8)}</p> 
+                                                }
+                                            />
+                                        )}
+                                    </React.Fragment>
+                                ))}
+                                <MoreHorizIcon 
+                                    sx={{marginRight: "0.3rem"}}
+                                    onClick={() => openFullInfoDialog(art)}
+                                />
+                        
+                            </div>
+                        </ListItem>
+                    </div>
                 );
             })}
         </List>
