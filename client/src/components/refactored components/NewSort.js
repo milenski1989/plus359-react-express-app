@@ -2,7 +2,8 @@ import React from 'react';
 import {Autocomplete, TextField} from '@mui/material';
 import { useMediaQuery } from "@mui/material";
 import './NewSort.css'
-import SortIcon from '../assets/sort-solid.svg'
+import AscIcon from '../assets/ascending-solid.svg'
+import DescIcon from '../assets/descending-solid.svg'
 
 const sortOptions = [
     { label: 'Date', field: 'id' },
@@ -36,13 +37,12 @@ const NewSort = ({ sortField, sortOrder, handleSortField, handleSortOrder }) => 
             <div className={!isSmallDevice ? 'sort-container' :
                 ''
             }>
-                {!isSmallDevice ? <img src={SortIcon} style={{width: '39px', height: '39px'}}/> : <></>}
                 <Autocomplete
                     className={isSmallDevice ? 'mobile-sort-input' :
-                        'sort-input'}
+                        'sort-input filter-item'}
                     sx={{
                         "& .MuiAutocomplete-root": {
-                            height: '60px'
+                            height: '60px',
                         },
                         "& .MuiOutlinedInput-notchedOutline": {
                             border: 'none',
@@ -57,19 +57,37 @@ const NewSort = ({ sortField, sortOrder, handleSortField, handleSortOrder }) => 
                             boxShadow
                         },
                     }}
-                    value={{ label: `${sortOptions.find(option => option.field === sortField).label} ${sortOrder}`, field: sortField, order: sortOrder }}
+                    value={{ label: `${sortOptions.find(option => option.field === sortField).label}`, field: sortField, order: sortOrder }}
                     options={sortOptions}
                     getOptionLabel={(option) => option.label}
                     isOptionEqualToValue={(option, value) => option.id === value.id}
                     onChange={handleSortChange}
-                    renderInput={(params) => <TextField {...params} />}
+                    renderInput={(params) => 
+                        <TextField
+                            {...params}
+                            InputProps={{
+                                ...params.InputProps,
+                                endAdornment: (
+                                    <>
+                                        {sortOrder === 'asc' && <img className='end-adornment' src={AscIcon} />}
+                                        {sortOrder === 'desc' && <img className='end-adornment' src={DescIcon} />}
+                                    </>
+                                )
+                            }}
+                        />
+                    }
                     renderOption={(props, option) => (
                         <li {...props} style={{ backgroundColor: props['aria-selected'] && 'white'}}>
                             {option.label}
-                            {sortField === option.field && sortOrder === 'asc' && ' desc'}
-                            {sortField === option.field && sortOrder === 'desc' && ' asc'}
+                            {sortField === option.field && (
+                                <>
+                                    {sortOrder === 'asc' && <img style={{position: 'absolute', right: '10px'}} src={DescIcon} />}
+                                    {sortOrder === 'desc' && <img style={{position: 'absolute', right: '10px'}} src={AscIcon} />}
+                                </>
+                            )}
                         </li>
-                    )} />
+                    )} 
+                />
             </div>
           
         </>

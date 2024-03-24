@@ -42,7 +42,7 @@ const Upload = () => {
     const [isArtistFromDropdown, setIsArtistFromDropDown] = useState(false)
 
     const getArtists = async () => {
-        const res = await fetch(`http://localhost:5000/artists/allFromArtworks`)
+        const res = await fetch(`http://localhost:5000/artists/relatedToEntries`)
         const data = await res.json()
         setArtists(data)
     }
@@ -143,11 +143,13 @@ const Upload = () => {
             handleClose={() => setUploadingError({ error: false, message: "" })}
             message={uploadingError.message}
             severity="error" />
+
         <Message
             open={uploadSuccessful}
             handleClose={() => setUploadSuccessful(false)}
             message="Entry uploaded successfully!"
             severity="success" />
+            
         <Navbar />
 
         {uploading ? 

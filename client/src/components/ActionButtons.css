@@ -6,15 +6,11 @@
 
 .mobile-icons-container {
     display: flex;
-    flex-direction: row;
     justify-content: center;
-    position: absolute;
-    top: -30px;
-    right: 0;
 }
 
 .icon {
-    margin-right: 0.5rem;
+    margin-right: 1rem;
     cursor: pointer;
 }
 

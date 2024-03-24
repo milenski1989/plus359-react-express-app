@@ -2,37 +2,12 @@
 
 .navbar {
     font-family: 'Montserrat';
-    background-color: rgba(0, 0, 0, 0.80);
- 
+    background-color: rgba(0, 0, 0, 1);
 }
 
-.mobile-navbar-container {
+.right-side {
     display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    padding: 1.5rem;
-    background-color: rgba(0, 0, 0, 0.80);
-
-    width: 100vw;
-
-}
-
-.mobile-nav-links-container {
-    font-size: 18px;
-    line-height: 1.25rem;
-    margin-right: -8rem;
-}
-
-.hidden {
-    visibility: hidden;
-}
-
-.navbar-button {
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
-    color: #40C8F4;
+    margin-left: auto;
 }
 
 .navbar-container {
@@ -55,15 +30,72 @@
     margin-right: 1rem;
 }
 
-.mobile-logo {
-    width: 56px;
-    height: 38px;
-}
-
 .current-location {
     color: white;
     margin-left: 1rem;
     font-size: 20px;
+}
+
+.nav-link {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 0.75rem;
+    padding-right: 1rem;
+    color: #FFFFFF;
+    font-size: 18px;
+}
+
+.nav-link:hover {
+    color: #40C8F4;
+    transition: 0.3s ease-in-out;
+}
+
+.mobile-navbar {
+    font-family: 'Montserrat';
+    background-color: rgba(0, 0, 0, 1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+}
+
+.mobile-navlinks {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    background-color: rgba(0, 0, 0, 0.9);
+    position: fixed;
+    top: 70px;
+    right: -100vw;
+    width: 100vw;
+    height: 100vh;
+    transition: all 0.3s ease-in-out;
+    padding: 40px 0 0 30px;
+}
+
+.active {
+    right: 0;
+    box-shadow: 0 40px 60px rgba(0, 0, 0, 0.9);
+    transition: all 0.3s ease-in-out;
+}
+
+.overlay {
+    position: absolute;
+    top: 70px;
+    right: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 999;
+  }
+
+.mobile-navbar-button {
+    color: #40C8F4;
+}
+
+.mobile-logo {
+    width: 56px;
 }
 
 .mobile-current-location {
@@ -72,25 +104,14 @@
     align-self: center;
 }
 
-.nav-link {
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    padding-left: 0.75rem;
-    padding-right: 1rem;
-    color: #40C8F4;
-    font-size: 18px;
-}
-
 .mobile-nav-link {
-    color: #40C8F4;
-    margin-top: 1rem;
-    margin-right: 1rem;
+    color: #FFFFFF;
+    margin-bottom: 25px;
     text-decoration: none;
     display: block;
 }
 
-.right-side {
-    display: flex;
-    margin-left: auto;
-   
+.mobile-nav-link:hover {
+    color: #40C8F4;
+    transition: 0.3s ease-in-out;
 }

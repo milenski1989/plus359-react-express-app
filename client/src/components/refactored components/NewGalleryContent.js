@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Navbar from "../Navbar";
 import "./NewGalleryContent.css";
 import "../App.css";
@@ -7,7 +7,7 @@ import Message from "../Message";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { ImageContext } from "../contexts/ImageContext";
 import SearchAndFiltersBar from "../SearchAndFiltersBar";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ThumbnailView from "../ThumbnailView";
 import DetailsView from "../DetailsView";
 import ListViewIcon from '../../components/assets/list-view-solid.svg';
@@ -16,32 +16,30 @@ import ListView from "../ListView";
 import DetailsViewIcon from '../../components/assets/details-view-solid.svg';
 import LocationIcon from '../../components/assets/move-solid.svg'
 import PdfIcon from '../../components/assets/pdf-solid.svg'
+import SelectAllIcon from '../../components/assets/select-all.svg'
+import UnselectAllIcon from '../../components/assets/unselect-all.svg'
 import DeleteDialog from "./DeleteDialog";
 import LocationChangeDialog from "./LocationChangeDialog";
-import PaginationComponent from './PaginationComponent'
-import { getAllEntries, getAllEntriesByKeywords } from "../../utils/apiCalls";
 import { useMediaQuery } from "@mui/material";
 import NewSort from "./NewSort";
 import MobileListView from "../MobileListView";
+import PaginationComponent from "./PaginationComponent";
 
 
 const NewGalleryContent = () => {
 
     const {
         currentImages,
+        setCurrentImages,
         setUpdatedEntry,
+        isEditMode
     } = useContext(ImageContext);
-    const myStorage = window.localStorage;
+
     const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
 
-    const [page, setPage] = useState(1);
     const [sortField, setSortField] = useState('id')
     const [sortOrder, setSortOrder] = useState('desc')
     const [keywords, setKeywords] = useState([]);
-    
-
-    const {name} = useParams()
-
     const [loading, setLoading] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [locationChanged, setLocationChanged] = useState(false)
@@ -49,41 +47,18 @@ const NewGalleryContent = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [totalCount, setTotalCount] = useState(0);
     const [pagesCount, setPagesCount] = useState(0);
+    const [page, setPage] = useState(1);
+
     const [error, setError] = useState({
         error: false,
         message: "",
     });
     const [imageLoaded, setImageLoaded] = useState({});
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [viewMode, setViewMode] = useState('thumbnail')
+    const [paginationDisabled, setPaginationDisabled] = useState(false);
+    let navigate = useNavigate();
 
-    
-    const getData = useCallback(async () => {
-        setLoading(true);
-        try {
-            const data = await getAllEntries(name, page, sortField, sortOrder);
-            const { arts, artsCount } = data;
-            setSearchResults(arts);
-            setPagesCount(Math.ceil(artsCount / 25));
-            setTotalCount(artsCount);
-        } catch (error) {
-            setError({ error: true, message: error.message });
-            setLoading(false);
-        }
-    }, [name, page, sortField, sortOrder, locationChanged]);
-
-    const getDataFromSearch = async () => {
-        setLoading(true);
-        try {
-            const data = await getAllEntriesByKeywords(keywords, page, sortField, sortOrder);
-            const { arts, artsCount } = data;
-            setSearchResults(arts);
-            setPagesCount(Math.ceil(artsCount / 25));
-            setTotalCount(artsCount);
-        } catch(error) {
-            setError({ error: true, message: error.message });
-            setLoading(false)
-        }
-    };
-    
     useEffect(() => {
     
         const promises = searchResults.map((art) => {
@@ -102,54 +77,8 @@ const NewGalleryContent = () => {
         });
     }, [searchResults]);
 
-    useEffect(() => {
-        keywords.length ? getDataFromSearch() : getData()
-    }, [page, sortField, sortOrder, isDeleting, locationChanged]);
-
-    let navigate = useNavigate();
-  
-    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-   
-    const [viewMode, setViewMode] = useState('thumbnail')
-
-    const [paginationDisabled, setPaginationDisabled] = useState(false);
-
-    useEffect(() => {
-        if (currentImages.length) {
-            myStorage.setItem(
-                "image",
-                JSON.stringify({
-                    id: currentImages[0].id,
-                    thumbnail: currentImages[0].image_url,
-                    artist: currentImages[0].artist,
-                    title: currentImages[0].title,
-                    technique: currentImages[0].technique,
-                    dimensions: currentImages[0].dimensions,
-                    price: currentImages[0].price,
-                    notes: currentImages[0].notes,
-                    storageLocation: currentImages[0].storageLocation,
-                    cell: currentImages[0].cell,
-                    position: currentImages[0].position,
-                    downloadUrl: currentImages[0].download_url
-                })
-            );
-        }
-    }, [currentImages]);
-
-    const handleDialogOpen = () => {
-        setIsDeleteDialogOpen(true)
-    }
-
-    const handleDialogClose = () => {
-        setIsDeleteDialogOpen(false)
-    }
-    
     const prepareImagesForLocationChange = async() => {
         setIsLocationChangeDialogOpen(true)
-    }
-
-    const handlePage = (newPage) => {
-        setPage(newPage)
     }
 
     const renderViewMode = () => {
@@ -160,7 +89,7 @@ const NewGalleryContent = () => {
         } else if (viewMode === 'details') {
             return <DetailsView
                 searchResults={searchResults}
-                handleDialogOpen={handleDialogOpen}
+                handleDialogOpen={setIsDeleteDialogOpen}
                 handleSearchResults={setSearchResults}
                 imageLoaded={imageLoaded}
             />
@@ -169,14 +98,14 @@ const NewGalleryContent = () => {
             return  <MobileListView
                 searchResults={searchResults}
                 handleUpdatedEntry={setUpdatedEntry}
-                handleDialogOpen={handleDialogOpen}
+                handleDialogOpen={setIsDeleteDialogOpen}
                 handleSearchResults={setSearchResults}
             /> 
         } else {
             return <ListView
                 searchResults={searchResults}
                 handleUpdatedEntry={setUpdatedEntry}
-                handleDialogOpen={handleDialogOpen}
+                handleDialogOpen={setIsDeleteDialogOpen}
                 handleSearchResults={setSearchResults}
             /> 
         }
@@ -190,6 +119,29 @@ const NewGalleryContent = () => {
         setLocationChanged(prev => !prev)
     }
 
+    const handleViewMode = (mode) => {
+        setViewMode(mode)
+        setCurrentImages([])
+    }
+
+    const handleSelectAll = () => {
+        if (currentImages.length === searchResults.length) {
+            setCurrentImages([]);
+        } else {
+            setCurrentImages([
+                ...currentImages, 
+                ...searchResults.filter(image => 
+                    !currentImages.some(
+                        currentImage => currentImage.id === image.id
+                    ))
+            ]);
+        }
+    }
+
+    const handlePage = (newPage) => {
+        setPage(newPage)
+    }
+    
     return (
         <>
             <Navbar />
@@ -207,20 +159,28 @@ const NewGalleryContent = () => {
                 />
                 <DeleteDialog
                     isDialogOpen={isDeleteDialogOpen}
-                    handleDialogClose={handleDialogClose}
+                    handleDialogOpen={setIsDeleteDialogOpen}
                     isDeleting={isDeleting}
                     handleIsDeleting={setIsDeleting}
                     
                 />
                 
-                <div className={isSmallDevice ? 'mobile-search-actions-container' :
-                    'search-actions-container'}>
-                    <div className="main-actions-pdf-location-container">
-                        <img src={PdfIcon} className='icon' onClick={() => navigate('/pdf')}/>
-                        {currentImages.length ?
-                            <img src={LocationIcon} className='icon' onClick={prepareImagesForLocationChange}/> : <></>}
-                    </div>
-                
+                <div className={isSmallDevice ? 'mobile-search-filters-buttons-container' :
+                    'search-filters-buttons-container'}>
+                    {!isSmallDevice && 
+                             <div className="select-pdf-location-buttons-container">
+                                 <img onClick={handleSelectAll} src={currentImages.length ? UnselectAllIcon : SelectAllIcon} className='icon' />
+                                 {currentImages.length && !isEditMode ?
+                                     <><img
+                                         src={PdfIcon}
+                                         className='icon'
+                                         onClick={() => navigate('/pdf')} /><img
+                                         src={LocationIcon}
+                                         className='icon'
+                                         onClick={prepareImagesForLocationChange} /></> : <></>
+                                 }
+                             </div>
+                    }
                     <>
                         <NewSort 
                             sortField={sortField}
@@ -229,10 +189,6 @@ const NewGalleryContent = () => {
                             handleSortOrder={setSortOrder}
                         />
                         <SearchAndFiltersBar
-                            page={page}
-                            setPage={setPage}
-                            handlePagesCount={setPagesCount}
-                            handleTotalCount={setTotalCount}
                             sortField={sortField}
                             sortOrder={sortOrder}
                             setPaginationDisabled={setPaginationDisabled}
@@ -241,19 +197,53 @@ const NewGalleryContent = () => {
                             handleSearchResults={setSearchResults}
                             keywords={keywords}
                             handleKeywords={handleKeywords}
-                         
+                            isDeleting={isDeleting}
+                            locationChanged={locationChanged}
+                            setTotalCount={setTotalCount}
+                            setPagesCount={setPagesCount}
+                            setPage={setPage}
+                            page={page}
+
                         />
 
-                        <div className={isSmallDevice ? 'mobile-view-mode-icons-container' :
+                        <div className={isSmallDevice ? 'mobile-view-mode-actions-container' :
                             'view-mode-icons-container'
                         }>
-                            <img className={viewMode === 'thumbnail' ? 'selected icon' : 'icon'} src={ThumbnailViewIcon} onClick={() => setViewMode('thumbnail')}/>
-                            <img className={viewMode === 'details' ? 'selected icon' : 'icon'} src={DetailsViewIcon} onClick={() => setViewMode('details')}/>
-                            <img className={viewMode === 'list' ? 'selected icon' : 'icon'} src={ListViewIcon} onClick={() => setViewMode('list')}/>
+                            {isSmallDevice ?
+                                <div className="mobile-select-pdf-location-buttons-container">
+                                    {currentImages.length  ?
+                                        <>
+                                            <img 
+                                                src={LocationIcon} 
+                                                className='icon' 
+                                                onClick={prepareImagesForLocationChange}/>
+                                            <img src={PdfIcon} 
+                                                className='icon' 
+                                                onClick={() => navigate('/pdf')} />
+                                        </>
+                                        : <></> }
+                                    <img onClick={handleSelectAll} src={currentImages.length ? UnselectAllIcon : SelectAllIcon} className='icon' />
+                                </div>
+                                :
+                                null
+                            }
+                            {isSmallDevice ? 
+                                <div className="mobile-view-mode-icons-container">
+                                    <img className={viewMode === 'thumbnail' ? 'selected icon' : 'icon'} src={ThumbnailViewIcon} onClick={() => handleViewMode('thumbnail')}/>
+                                    <img className={viewMode === 'details' ? 'selected icon' : 'icon'} src={DetailsViewIcon} onClick={() => handleViewMode('details')}/>
+                                    <img className={viewMode === 'list' ? 'selected icon' : 'icon'} src={ListViewIcon} onClick={() => handleViewMode('list')}/>
+                                </div> :
+                                <>
+                                    <img className={viewMode === 'thumbnail' ? 'selected icon' : 'icon'} src={ThumbnailViewIcon} onClick={() => handleViewMode('thumbnail')} />
+                                    <img className={viewMode === 'details' ? 'selected icon' : 'icon'} src={DetailsViewIcon} onClick={() => handleViewMode('details')} />
+                                    <img className={viewMode === 'list' ? 'selected icon' : 'icon'} src={ListViewIcon} onClick={() => handleViewMode('list')} />
+                                </>
+                            }
                         </div>
                     </>
                 
-                </div>        
+                </div>   
+                 
                 {loading ? (
                     <CircularProgress className="loader" color="primary" />
                 ) : (

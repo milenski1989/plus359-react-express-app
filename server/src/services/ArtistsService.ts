@@ -1,53 +1,32 @@
-import { dbConnection } from "../database"
-import { Artists } from "../entities/Artists"
+import { dbConnection } from "../database";
+import { Artists } from "../entities/Artists";
 
-const artistsRepository = dbConnection.getRepository(Artists)
+const artistsRepository = dbConnection.getRepository(Artists);
 
 export default class ArtistsService {
+  private static artistsService: ArtistsService;
 
-    private static artistsService: ArtistsService
+  private constructor() {}
 
-    private constructor() {}
-
-    static getInstance() {
-        if (!ArtistsService.artistsService) {
-            ArtistsService.artistsService = new ArtistsService()
-        }
-
-        return ArtistsService.artistsService
+  static getInstance() {
+    if (!ArtistsService.artistsService) {
+      ArtistsService.artistsService = new ArtistsService();
     }
 
-    async getAllArtists () {
-        try {
-          return await artistsRepository
-          .createQueryBuilder('artist')
-          .select('artist.artist', 'artist')
-          .orderBy('artist', 'ASC')
-          .getRawMany();
+    return ArtistsService.artistsService;
+  }
 
-        } catch {
-         throw new Error("Fetch failed!");
-        }
-       };
+  async getOneByName(name: string) {
+    try {
+      const artist: Artists = await artistsRepository.findOne({
+        where: {
+          artist: name,
+        },
+      });
 
-       async getArtistByName (name: string){
-        try {
-      
-        const artistFound = await artistsRepository.findOne({
-            where: {
-              artist: name
-            }
-          })
-
-          return artistFound
-      
-        } catch {
-          throw new Error('No bio for this artist found!')
-        }
-      }
-
-      async saveArtist (artist) {
-        await artistsRepository.save(artist);
-      }
-      
+      return artist;
+    } catch {
+      throw new Error("No bio for this artist found!");
+    }
+  }
 }

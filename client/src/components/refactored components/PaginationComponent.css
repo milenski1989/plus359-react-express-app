@@ -1,11 +1,11 @@
 .pagination-container {
-    margin-top: 3rem;
-    margin-bottom: 3rem;
+    margin: 3rem 0;
     display: flex;
     justify-content: center;
 }
 
 .mobile-pagination-container {
-    margin-top: 2rem;
-    margin-bottom: 2rem;
+    display: flex;
+    justify-content: center;
+    margin: 2rem 0;
 }

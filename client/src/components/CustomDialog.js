@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material'
 import React from 'react'
 
-function CustomDialog({children, openModal, setOpenModal, title, handleClickYes, handleClickNo, confirmButtonText, cancelButtonText, disabledConfirmButton}) {
+function CustomDialog({children, openModal, setOpenModal, title, handleClickYes, handleClickNo, confirmButtonText, cancelButtonText, disabledConfirmButton, style}) {
     return (
         <Dialog
             open={openModal}
@@ -12,7 +12,7 @@ function CustomDialog({children, openModal, setOpenModal, title, handleClickYes,
             <DialogTitle id="alert-dialog-title">
                 {title}
             </DialogTitle>
-            <DialogContent sx={{padding: "2rem"}}>
+            <DialogContent  sx={{padding: "2rem", ...style}}>
                 {children}
             </DialogContent>
 

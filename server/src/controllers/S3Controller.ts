@@ -80,9 +80,13 @@ this.initializeRoutes()
             image_url = req.file.transforms[0].location;
             image_key = req.file.transforms[0].key;
            
-            let originalString = req.file.transforms[1].location;
-            let removedString = originalString.replace(/plus359gallery\//, "");
-            download_url = "https://plus359gallery." + removedString;
+            // let originalString = req.file.transforms[1].location;
+            // console.log(originalString)
+            // let removedString = originalString.replace(/plus359gallery\//, "");
+            // console.log(removedString)
+            // download_url = "https://plus359gallery." + removedString;
+            download_url = req.file.transforms[1].location;
+            console.log(download_url)
             download_key = req.file.transforms[1].key;
         
             await ArtworksService.getInstance().saveFileIntoDatabase(

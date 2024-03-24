@@ -20,39 +20,19 @@ class ArtistsService {
         }
         return ArtistsService.artistsService;
     }
-    getAllArtists() {
+    getOneByName(name) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return yield artistsRepository
-                    .createQueryBuilder('artist')
-                    .select('artist.artist', 'artist')
-                    .orderBy('artist', 'ASC')
-                    .getRawMany();
-            }
-            catch (_a) {
-                throw new Error("Fetch failed!");
-            }
-        });
-    }
-    ;
-    getArtistByName(name) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const artistFound = yield artistsRepository.findOne({
+                const artist = yield artistsRepository.findOne({
                     where: {
-                        artist: name
-                    }
+                        artist: name,
+                    },
                 });
-                return artistFound;
+                return artist;
             }
             catch (_a) {
-                throw new Error('No bio for this artist found!');
+                throw new Error("No bio for this artist found!");
             }
-        });
-    }
-    saveArtist(artist) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield artistsRepository.save(artist);
         });
     }
 }

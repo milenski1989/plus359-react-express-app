@@ -1,6 +1,20 @@
 .editable-container {
     margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
+
+.editable-label-input {
+    margin-bottom: 0.2rem;
+    display: flex;
+    overflow: hidden;
+}
+
+.info-item {
+    overflow: hidden;
+}
+
 .input-label {
     font-weight: 600;
 }

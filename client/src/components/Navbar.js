@@ -2,7 +2,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom"
 import './NavBar.css'
 import { useMediaQuery } from "@mui/material";
 import { MenuIcon, XIcon } from "@heroicons/react/outline";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Logo from '../components/assets/logo359 gallery-white.png'
 
 const Navbar = () => {
@@ -10,6 +10,14 @@ const Navbar = () => {
     let navigate = useNavigate();
     const {pathname} = useLocation();
     const [isOpen, setIsOpen] = useState(false);
+    
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+    },[isOpen])
 
     const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
 
@@ -21,10 +29,22 @@ const Navbar = () => {
 
     return  <>
         {isSmallDevice ?
-            <nav className="mobile-navbar-container">
+            <nav className="mobile-navbar">
                 <Link to='/'><img className="mobile-logo" alt="logo" src={Logo}/></Link>   
                 <p className="mobile-current-location">{pathname.slice(10).replace(/%20/g, ' ').replace(/([A-Z])/g, ' $1')}</p>
-                <div className={isOpen ? "mobile-nav-links-container" : "hidden"}>
+                <button
+                    onClick={() => {
+                        setIsOpen(!isOpen);
+                    }}
+                    className="mobile-navbar-button"
+                >
+                    {isOpen ? (
+                        <XIcon className="h-6 w-6" aria-hidden="true" />
+                    ) : (
+                        <MenuIcon className="h-6 w-6" aria-hidden="true" />
+                    )}
+                </button>
+                <div className={isOpen ? "mobile-navlinks active overlay" : "mobile-navlinks"}>
                     <Link to='/' 
                         className="mobile-nav-link"
                     >Home</Link>
@@ -37,20 +57,9 @@ const Navbar = () => {
                     <Link to='/login'
                         onClick={handleLogout}
                         className="mobile-nav-link"
-                    >Log Out</Link>
+                    >Log Out</Link> 
                 </div>
-                <div className="block lg:hidden">
-                    <button
-                        onClick={() => setIsOpen(!isOpen)}
-                        className="navbar-button"
-                    >
-                        {isOpen ? (
-                            <XIcon className="h-6 w-6" aria-hidden="true" />
-                        ) : (
-                            <MenuIcon className="h-6 w-6" aria-hidden="true" />
-                        )}
-                    </button>
-                </div>
+               
             </nav> 
             :
             <nav className="navbar">

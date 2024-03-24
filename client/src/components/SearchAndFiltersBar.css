@@ -1,20 +1,28 @@
+.search-filters-buttons-container {
+    display: flex;
+    align-items: center;
+    margin: 2rem 1rem;
+}
+
+.mobile-search-filters-buttons-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 4rem;
+    margin-bottom: 3rem;
+   }
+
 .search-filters-container {
     display: flex;
     align-items: center;
 }
 
-.mobile-search-filters-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.filter-container {
+.filters-container {
     display: flex;
     align-items: center;
 }
 
-.mobile-filter-container {
+.mobile-filters-container {
     display: flex;
     align-items: center;
 }
@@ -24,8 +32,6 @@
     height: 54px;
     background-color: white;
     border-radius: 4px;
-    margin-right: 1rem;
-    margin-left: 1rem;
 }
 
 .mobile-filter-input {
@@ -61,3 +67,7 @@
     margin-bottom: 1rem;
     margin-top: 0.5rem;
 }
+
+.filter-item {
+    margin-left: 1rem;
+   }
