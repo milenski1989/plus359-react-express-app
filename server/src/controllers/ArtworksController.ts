@@ -54,18 +54,16 @@ export class ArtworksController {
 
   async getAllByKeywords(req, res) {
     const { keywords } = req.body;
-    const { page, count, sortField, sortOrder } = req.query;
+    const { sortField, sortOrder } = req.query;
 
     try {
-      const [arts, artsCount] =
+      const arts =
         await ArtworksService.getInstance().searchByKeywords(
           keywords,
-          page,
-          count,
           sortField,
           sortOrder
         );
-      res.json({ arts, artsCount });
+      res.json({ arts });
     } catch (error) {
       console.error("Error:", error);
       res.status(404).json({ error: "No results from the search!" });

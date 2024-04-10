@@ -203,8 +203,6 @@ export default class ArtworksService {
 
   async searchByKeywords(
     keywords: string[],
-    page: string,
-    count: string,
     sortField?: string,
     sortOrder?: string
   ) {
@@ -223,27 +221,13 @@ export default class ArtworksService {
             FROM artworks
             WHERE ${whereConditions} ${additionalCondition}
             ORDER BY ${sortField} ${sortOrder.toUpperCase()}
-            LIMIT ? OFFSET ?
           `;
 
-    const countQuery = `
-            SELECT COUNT(*) AS total
-            FROM artworks
-            WHERE ${whereConditions}
-          `;
-
-    const paginationParams = [
-      parseInt(count),
-      (parseInt(page) - 1) * parseInt(count),
-    ];
-    const finalParams = [...whereParams, ...paginationParams];
-
-    const countResult = await dbConnection.query(countQuery, whereParams);
-    const total = countResult[0].total;
+    const finalParams = [...whereParams];
 
     const results = await dbConnection.query(query, finalParams);
 
-    return [results, total];
+    return results ;
   }
 
   async deleteOne(originalFilename, filename, id) {
