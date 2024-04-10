@@ -9,10 +9,10 @@ export const getAllEntries = async (name, page, sortField, sortOrder) => {
     }     
 };
 
-export const getAllEntriesByKeywords = async(keywords, page, sortField, sortOrder) => {
+export const getAllEntriesByKeywords = async(keywords, sortField, sortOrder) => {
     if (!keywords.length) return;
 
-    const res = await fetch(`http://localhost:5000/artworks/filterByKeywords?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`, {
+    const res = await fetch(`http://localhost:5000/artworks/filterByKeywords?sortField=${sortField}&sortOrder=${sortOrder}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

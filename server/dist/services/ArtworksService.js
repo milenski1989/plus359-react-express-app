@@ -182,7 +182,7 @@ class ArtworksService {
             }
         });
     }
-    searchByKeywords(keywords, page, count, sortField, sortOrder) {
+    searchByKeywords(keywords, sortField, sortOrder) {
         return __awaiter(this, void 0, void 0, function* () {
             const whereConditions = keywords
                 .map((keyword) => `(CONCAT(artworks.artist, ' ', artworks.title, ' ', artworks.technique, ' ', artworks.notes, ' ', artworks.storageLocation, ' ', artworks.cell) LIKE ?)`)
@@ -194,22 +194,10 @@ class ArtworksService {
             FROM artworks
             WHERE ${whereConditions} ${additionalCondition}
             ORDER BY ${sortField} ${sortOrder.toUpperCase()}
-            LIMIT ? OFFSET ?
           `;
-            const countQuery = `
-            SELECT COUNT(*) AS total
-            FROM artworks
-            WHERE ${whereConditions}
-          `;
-            const paginationParams = [
-                parseInt(count),
-                (parseInt(page) - 1) * parseInt(count),
-            ];
-            const finalParams = [...whereParams, ...paginationParams];
-            const countResult = yield database_1.dbConnection.query(countQuery, whereParams);
-            const total = countResult[0].total;
+            const finalParams = [...whereParams];
             const results = yield database_1.dbConnection.query(query, finalParams);
-            return [results, total];
+            return results;
         });
     }
     deleteOne(originalFilename, filename, id) {

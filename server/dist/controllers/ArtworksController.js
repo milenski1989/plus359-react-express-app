@@ -95,10 +95,10 @@ class ArtworksController {
     getAllByKeywords(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { keywords } = req.body;
-            const { page, count, sortField, sortOrder } = req.query;
+            const { sortField, sortOrder } = req.query;
             try {
-                const [arts, artsCount] = yield ArtworksService_1.default.getInstance().searchByKeywords(keywords, page, count, sortField, sortOrder);
-                res.json({ arts, artsCount });
+                const arts = yield ArtworksService_1.default.getInstance().searchByKeywords(keywords, sortField, sortOrder);
+                res.json({ arts });
             }
             catch (error) {
                 console.error("Error:", error);

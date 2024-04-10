@@ -31,6 +31,7 @@ function SearchAndFiltersBar({
 
     const onChange = event => {
         if (!event.target.value) {
+            setPaginationDisabled(false)
             setPage(1);
             getDataFromSearch(false);
         }
@@ -50,14 +51,18 @@ function SearchAndFiltersBar({
         try {
             let data;
             if (isSearch) {
-                data = await getAllEntriesByKeywords(keywords, page, sortField, sortOrder);
+                data = await getAllEntriesByKeywords(keywords, sortField, sortOrder);
+                const {arts} = data;
+                handleSearchResults(arts);
+                setPaginationDisabled(true)
             } else {
                 data = await getAllEntries(name, page, sortField, sortOrder);
+                const { arts, artsCount } = data;
+                handleSearchResults(arts);
+                setPagesCount(Math.ceil(artsCount / 25));
+                setTotalCount(artsCount);
             }
-            const { arts, artsCount } = data;
-            handleSearchResults(arts);
-            setPagesCount(Math.ceil(artsCount / 25));
-            setTotalCount(artsCount);
+
         } catch(error) {
             handleError({ error: true, message: error.message });
         } finally {
