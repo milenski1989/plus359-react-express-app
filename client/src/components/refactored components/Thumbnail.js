@@ -23,7 +23,7 @@ const Thumbnail = ({searchResults}) => {
     }
     
     return <>
-        {searchResults.map((art, id) => (
+        {searchResults && searchResults.map((art, id) => (
             <div
                 key={id}>
                 <Checkbox

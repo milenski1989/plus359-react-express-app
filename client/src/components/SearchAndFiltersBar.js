@@ -1,11 +1,12 @@
-import { IconButton, InputBase, Paper } from '@mui/material'
+import { Autocomplete, IconButton, InputBase, Paper, TextField } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import SearchIcon from "@mui/icons-material/Search";
 import './SearchAndFiltersBar.css'
-import { getAllEntries, getAllEntriesByKeywords } from '../utils/apiCalls';
+import { getPaginatedEntries, filterAllEntries } from '../utils/apiCalls';
 import { useParams } from 'react-router-dom';
 import { useMediaQuery } from "@mui/material";
-import Filters from './Filters';
+
+const boxShadow = '0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12)'
 
 function SearchAndFiltersBar({
     sortField, 
@@ -20,49 +21,74 @@ function SearchAndFiltersBar({
     locationChanged,
     setTotalCount,
     setPagesCount,
-    setPage,
     page
 }) {
 
+    const [artists, setArtists] = useState([])
+    const [cells, setCells] = useState([])
     const [selectedArtist, setSelectedArtist] = useState()
     const [selectedCell, setSelectedCell] = useState()
     const {name} = useParams()
     const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
 
-    const onChange = event => {
-        if (!event.target.value) {
-            setPaginationDisabled(false)
-            setPage(1);
-            getDataFromSearch(false);
+    const getArtists = async () => {
+        try {
+            const res = await fetch(`http://localhost:5000/artists/relatedToEntriesInStorage/${name.split(':')[1]}`)
+            const data = await res.json()
+    
+            const normalizedArtists = data.map(artist => artist.toLowerCase().trim());
+            const uniqueNormalizedArtists = [...new Set(normalizedArtists)];
+            const uniqueArtists = uniqueNormalizedArtists.map(normalizedArtist => {
+                return data.find(artist => artist.toLowerCase().trim() === normalizedArtist);
+            });
+    
+            setArtists(uniqueArtists);
+        } catch (error) {
+            handleError({ error: true, message: error.message });
         }
+    }
+
+    const getCells = async () => {
+        try {
+            const res = await fetch(`http://localhost:5000/storage/all/allCellsFromCurrentStorage/${name.split(':')[1]}`)
+            const data = await res.json()
+            const uniqueCells = [...new Set(data)]
+            setCells(uniqueCells);
+        } catch (error) {
+            handleError({ error: true, message: error.message });
+        }
+    }
+
+    const onChange = event => {
+
+        if (!event.target.value) return handleKeywords([])
+
         const inputKeywords = event.target.value.split(' ');
         handleKeywords(inputKeywords);
-       
     };
 
-    const triggerSearchWithEnter = (e) => {
-        if (e.charCode === 13) {
-            e.preventDefault();
-            getDataFromSearch(true)
-        }
-    };
-
-    const getDataFromSearch = async (isSearch) => {
+    const getPaginatedData = async () => {
+        handleLoading(true)
         try {
-            let data;
-            if (isSearch) {
-                data = await getAllEntriesByKeywords(keywords, sortField, sortOrder);
-                const {arts} = data;
-                handleSearchResults(arts);
-                setPaginationDisabled(true)
-            } else {
-                data = await getAllEntries(name, page, sortField, sortOrder);
-                const { arts, artsCount } = data;
-                handleSearchResults(arts);
-                setPagesCount(Math.ceil(artsCount / 25));
-                setTotalCount(artsCount);
-            }
+            const data = await getPaginatedEntries(name, page, sortField, sortOrder);
+            const { arts, artsCount } = data;
+            handleSearchResults(arts);
+            setPaginationDisabled(false)
+            setPagesCount(Math.ceil(artsCount / 25));
+            setTotalCount(artsCount);
+        } catch(error) {
+            handleError({ error: true, message: error.message });
+        } finally {
+            handleLoading(false);
+        }
+    }
 
+    const filterData = async () => {
+        handleLoading(true)
+        try {
+            const data = await filterAllEntries(keywords, sortField, sortOrder, selectedArtist, selectedCell);
+            handleSearchResults(data);
+            setPaginationDisabled(true)
         } catch(error) {
             handleError({ error: true, message: error.message });
         } finally {
@@ -71,24 +97,74 @@ function SearchAndFiltersBar({
     }
 
     useEffect(() => {
-        if (!selectedArtist && !selectedCell) getDataFromSearch(false);
-    }, [page, sortField, sortOrder, isDeleting, locationChanged, selectedArtist, selectedCell]);
+        getArtists()
+        getCells()
+    },[])
+
+    useEffect(() => {
+        let filterTimeOut = null;
+        if (!selectedArtist && !selectedCell && !keywords.length) {
+            getPaginatedData()
+        }
+        else {
+            filterTimeOut = setTimeout(() => {
+                filterData()
+            }, 500)
+        }
+
+        return () =>  clearTimeout(filterTimeOut)
+    }, [page, sortField, sortOrder, isDeleting, locationChanged, selectedArtist, selectedCell, keywords]);
   
     return <>
         <div className={!isSmallDevice ?
             'search-filters-container' :
             null
         }>
-            <Filters
-                selectedCell={selectedCell}
-                setSelectedCell={setSelectedCell}
-                selectedArtist={selectedArtist}
-                setSelectedArtist={setSelectedArtist}
-                handleError={handleError}
-                setPaginationDisabled={setPaginationDisabled}
-                setPage={setPage}
-                handleSearchResults={handleSearchResults}
-            />
+
+            <div className={!isSmallDevice ? 'filters-container' : null }>
+                <Autocomplete
+                    className={isSmallDevice ? 'mobile-filter-input' :
+                        'filter-input filter-item'}
+                    sx={{
+                        "& .MuiOutlinedInput-notchedOutline": {
+                            border: 'none',
+                            boxShadow
+                        },
+                        "&:hover .MuiOutlinedInput-notchedOutline": {
+                            border: 'none',
+                            boxShadow
+                        },
+                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                            border: 'none',
+                            boxShadow
+                        },
+                    }}
+                    disablePortal
+                    options={artists}
+                    renderInput={(params) => <TextField {...params} label="Select artist" />}
+                    onChange={(event, newValue) => setSelectedArtist(newValue)} />
+                <Autocomplete
+                    className={isSmallDevice ? 'mobile-filter-input' :
+                        'filter-input filter-item'}
+                    sx={{
+                        "& .MuiOutlinedInput-notchedOutline": {
+                            border: 'none',
+                            boxShadow
+                        },
+                        "&:hover .MuiOutlinedInput-notchedOutline": {
+                            border: 'none',
+                            boxShadow
+                        },
+                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                            border: 'none',
+                            boxShadow
+                        },
+                    }}
+                    disablePortal
+                    options={cells}
+                    renderInput={(params) => <TextField {...params} label="Select cell" />}
+                    onChange={(event, newValue) => setSelectedCell(newValue)} />
+            </div>
             <Paper
                 component="form"
                 className={isSmallDevice ? 'mobile-search-input' :
@@ -99,13 +175,12 @@ function SearchAndFiltersBar({
                     placeholder="Search..."
                     inputProps={{ "aria-label": "search" }}
                     onChange={onChange}
-                    onKeyPress={triggerSearchWithEnter}
+                    //onKeyPress={triggerSearchWithEnter}
                 />
                 <IconButton
                     type="button"
                     sx={{ p: "10px" }}
                     aria-label="search"
-                    onClick={() => getDataFromSearch(true)}
                 >
                     <SearchIcon />
                 </IconButton>
