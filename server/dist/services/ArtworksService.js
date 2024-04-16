@@ -36,28 +36,6 @@ class ArtworksService {
             }
         });
     }
-    filterAllByArtistAndCellInCurrentStorage(storage, cell, artist) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                let query = database_1.dbConnection.createQueryBuilder(Artworks_1.Artworks, "artwork");
-                if (storage !== "All") {
-                    query = query.where("artwork.storageLocation = :storageLocation", {
-                        storageLocation: storage,
-                    });
-                }
-                if (cell) {
-                    query = query.andWhere("artwork.cell = :cell", { cell: cell });
-                }
-                if (artist) {
-                    query = query.andWhere("artwork.artist = :artist", { artist: artist });
-                }
-                return yield query.getMany();
-            }
-            catch (error) {
-                throw new Error("Fetch failed!");
-            }
-        });
-    }
     getAll() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -182,21 +160,74 @@ class ArtworksService {
             }
         });
     }
-    searchByKeywords(keywords, sortField, sortOrder) {
+    filterAllEntries(keywords = [], sortField, sortOrder, selectedArtist, selectedCell) {
         return __awaiter(this, void 0, void 0, function* () {
-            const whereConditions = keywords
-                .map((keyword) => `(CONCAT(artworks.artist, ' ', artworks.title, ' ', artworks.technique, ' ', artworks.notes, ' ', artworks.storageLocation, ' ', artworks.cell) LIKE ?)`)
-                .join(" AND ");
-            const whereParams = keywords.map((keyword) => `%${keyword}%`);
-            const additionalCondition = `AND artworks.storageLocation NOT IN ('Sold')`;
-            const query = `
-            SELECT *
-            FROM artworks
-            WHERE ${whereConditions} ${additionalCondition}
-            ORDER BY ${sortField} ${sortOrder.toUpperCase()}
-          `;
-            const finalParams = [...whereParams];
-            const results = yield database_1.dbConnection.query(query, finalParams);
+            let query;
+            let results;
+            let whereConditions;
+            let additionalCondition;
+            let whereParams;
+            if (selectedArtist && !selectedCell && !keywords.length) {
+                additionalCondition = `artworks.artist = '${selectedArtist}' AND artworks.storageLocation NOT IN ('Sold')`;
+            }
+            else if (selectedArtist && selectedCell && !keywords.length) {
+                additionalCondition = `artworks.artist = '${selectedArtist}' AND artworks.cell = '${selectedCell}' AND artworks.storageLocation NOT IN ('Sold')`;
+            }
+            else if (!selectedArtist && !selectedCell && keywords.length) {
+                whereConditions = keywords
+                    .map((keyword) => `(CONCAT(artworks.artist, ' ', artworks.title, ' ', artworks.technique, ' ', artworks.notes, ' ', artworks.storageLocation, ' ', artworks.cell) LIKE ?)`)
+                    .join(" AND ");
+                whereParams = keywords.map((keyword) => `%${keyword}%`);
+                additionalCondition = `AND artworks.storageLocation NOT IN ('Sold')`;
+            }
+            else if (!selectedArtist && selectedCell && keywords.length) {
+                whereConditions = keywords
+                    .map((keyword) => `(CONCAT(artworks.artist, ' ', artworks.title, ' ', artworks.technique, ' ', artworks.notes, ' ', artworks.storageLocation) LIKE ?)`)
+                    .join(" AND ");
+                whereParams = keywords.map((keyword) => `%${keyword}%`);
+                additionalCondition = `AND artworks.cell = '${selectedCell}' AND artworks.storageLocation NOT IN ('Sold')`;
+            }
+            else if (!selectedArtist && selectedCell && !keywords.length) {
+                additionalCondition = `artworks.cell = '${selectedCell}' AND artworks.storageLocation NOT IN ('Sold')`;
+            }
+            else if (selectedArtist && !selectedCell && keywords.length) {
+                whereConditions = keywords
+                    .map((keyword) => `(CONCAT(artworks.title, ' ', artworks.technique, ' ', artworks.notes, ' ', artworks.storageLocation, ' ', artworks.cell) LIKE ?)`)
+                    .join(" AND ");
+                whereParams = keywords.map((keyword) => `%${keyword}%`);
+                additionalCondition = `AND artworks.artist = '${selectedArtist}' AND artworks.storageLocation NOT IN ('Sold')`;
+            }
+            else {
+                whereConditions = keywords
+                    .map((keyword) => `(CONCAT(artworks.title, ' ', artworks.technique, ' ', artworks.notes, ' ', artworks.storageLocation) LIKE ?)`)
+                    .join(" AND ");
+                whereParams = keywords.map((keyword) => `%${keyword}%`);
+                additionalCondition = `AND artworks.artist = '${selectedArtist}' AND artworks.cell = '${selectedCell}' AND artworks.storageLocation NOT IN ('Sold')`;
+            }
+            if (whereConditions) {
+                query = `
+      SELECT *
+      FROM artworks
+      WHERE ${whereConditions} ${additionalCondition}
+      ORDER BY ${sortField} ${sortOrder.toUpperCase()}
+    `;
+                console.log('QUERY', query);
+            }
+            else {
+                query = `
+      SELECT *
+      FROM artworks
+      WHERE ${additionalCondition}
+      ORDER BY ${sortField} ${sortOrder.toUpperCase()}
+    `;
+            }
+            if (whereParams) {
+                const finalParams = [...whereParams];
+                results = yield database_1.dbConnection.query(query, finalParams);
+            }
+            else {
+                results = yield database_1.dbConnection.query(query);
+            }
             return results;
         });
     }

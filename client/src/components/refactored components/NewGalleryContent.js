@@ -61,7 +61,7 @@ const NewGalleryContent = () => {
 
     useEffect(() => {
     
-        const promises = searchResults.map((art) => {
+        const promises = searchResults && searchResults.map((art) => {
             return new Promise((resolve) => {
                 const img = new Image();
                 img.src = art.image_url;
@@ -72,9 +72,12 @@ const NewGalleryContent = () => {
             });
         });
 
-        Promise.allSettled(promises).then(() => {
-            setLoading(false)
-        });
+        if (promises) {
+            Promise.allSettled(promises).then(() => {
+                setLoading(false)
+            });
+        }
+
     }, [searchResults]);
 
     const prepareImagesForLocationChange = async() => {
@@ -201,7 +204,6 @@ const NewGalleryContent = () => {
                             locationChanged={locationChanged}
                             setTotalCount={setTotalCount}
                             setPagesCount={setPagesCount}
-                            setPage={setPage}
                             page={page}
 
                         />
@@ -249,10 +251,10 @@ const NewGalleryContent = () => {
                 ) : (
                     <>
                         {renderViewMode()}
-                        {!searchResults.length && <div className="flex flex-row justify-center content-center max-sm:ml-20 max-sm:mr-20">Nothing was found!</div>}
+                        {!searchResults && <div className="flex flex-row justify-center content-center max-sm:ml-20 max-sm:mr-20">Nothing was found!</div>}
                     </>
                 )}
-                {searchResults.length && !paginationDisabled && !loading ? (
+                {searchResults && !paginationDisabled && !loading ? (
                     <PaginationComponent 
                         page={page}
                         handlePage={handlePage}

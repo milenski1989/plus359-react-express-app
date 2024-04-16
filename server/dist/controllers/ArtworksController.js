@@ -40,16 +40,6 @@ const express = __importStar(require("express"));
 const ArtworksService_1 = __importDefault(require("../services/ArtworksService"));
 class ArtworksController {
     constructor() {
-        this.getAllByArtistAndCellInCurrentStorage = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const { storage, cell, artist } = req.query;
-            try {
-                const artworks = yield ArtworksService_1.default.getInstance().filterAllByArtistAndCellInCurrentStorage(storage, cell, artist);
-                res.status(200).json({ artworks });
-            }
-            catch (error) {
-                res.status(400).json(error);
-            }
-        });
         this.getAllByStorage = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const { page, count, sortField, sortOrder } = req.query;
             const { name } = req.params;
@@ -86,18 +76,16 @@ class ArtworksController {
         this.initializeRoutes();
     }
     initializeRoutes() {
-        this.router.get("/filterByArtistAndCell", this.getAllByArtistAndCellInCurrentStorage);
         this.router.get("/filterByStorage/:name", this.getAllByStorage);
-        this.router.post("/filterByKeywords", this.getAllByKeywords);
+        this.router.get("/filter", this.filterAllEntries);
         this.router.delete("/deleteOne/:params", this.deleteOne);
         this.router.put("/updateOne/:id", this.updateOne);
     }
-    getAllByKeywords(req, res) {
+    filterAllEntries(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { keywords } = req.body;
-            const { sortField, sortOrder } = req.query;
+            const { sortField, sortOrder, keywords, selectedArtist, selectedCell } = req.query;
             try {
-                const arts = yield ArtworksService_1.default.getInstance().searchByKeywords(keywords, sortField, sortOrder);
+                const arts = yield ArtworksService_1.default.getInstance().filterAllEntries(keywords, sortField, sortOrder, selectedArtist, selectedCell);
                 res.json({ arts });
             }
             catch (error) {

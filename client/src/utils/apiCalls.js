@@ -1,5 +1,6 @@
+import axios from "axios";
 
-export const getAllEntries = async (name, page, sortField, sortOrder) => {
+export const getPaginatedEntries = async (name, page, sortField, sortOrder) => {
     const res = await fetch(
         `http://localhost:5000/artworks/filterByStorage/${name.split(':')[1]}?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`,
     );
@@ -9,19 +10,18 @@ export const getAllEntries = async (name, page, sortField, sortOrder) => {
     }     
 };
 
-export const getAllEntriesByKeywords = async(keywords, sortField, sortOrder) => {
-    if (!keywords.length) return;
+export const filterAllEntries = async(keywords, sortField, sortOrder, selectedArtist, selectedCell) => {
 
-    const res = await fetch(`http://localhost:5000/artworks/filterByKeywords?sortField=${sortField}&sortOrder=${sortOrder}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ keywords }),
+    const res = await axios.get(`http://localhost:5000/artworks/filter?sortField=${sortField}&sortOrder=${sortOrder}`, {
+        params: {
+            keywords: keywords,
+            selectedArtist: selectedArtist,
+            selectedCell: selectedCell
+        }
     })
 
     if (res.status === 200) {
-        const data = await res.json();
+        const data = await res.data.arts
         return data
     }  
 };
