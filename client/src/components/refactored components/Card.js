@@ -9,7 +9,7 @@ import ImageContainer from "./ImageContainer";
 import { useContext } from "react";
 import { ImageContext } from "../contexts/ImageContext";
 
-const Card = ({ searchResults, handleDialogOpen, handleSearchResults }) => {
+const Card = ({ searchResults, handleDialogOpen, handleSearchResults, setIsLocationChangeDialogOpen, setShowCheckbox }) => {
 
     const {
         currentImages,
@@ -54,14 +54,17 @@ const Card = ({ searchResults, handleDialogOpen, handleSearchResults }) => {
                     /> 
                 </div>
                
-                <ImageContainer imageSrc={art.image_url}/>
-                
+                <ImageContainer 
+                    setShowCheckbox={setShowCheckbox}
+                    imageSrc={art.image_url}/>
+            
                 <ActionButtons 
                     className={'in-details-view'}
                     art={art}
                     handleDialogOpen={handleDialogOpen}
                     searchResults={searchResults}
                     handleSearchResults={handleSearchResults}
+                    setIsLocationChangeDialogOpen={setIsLocationChangeDialogOpen}
                 />
                 <EditableContainer 
                     art={art}

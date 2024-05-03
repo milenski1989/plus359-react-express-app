@@ -20,7 +20,13 @@ export class ArtworksController {
     const { page, count, sortField, sortOrder } = req.query;
     const { name } = req.params;
     try {
-      const [arts, artsCount] =
+
+      if (!page && !count && !sortField && !sortOrder) {
+        const [artsCount] =
+        await ArtworksService.getInstance().getAllByStorage(name);
+        res.status(200).json({ artsCount });
+      } else {
+        const [arts, artsCount] =
         await ArtworksService.getInstance().getAllByStorage(
           name,
           page,
@@ -28,8 +34,8 @@ export class ArtworksController {
           sortField,
           sortOrder
         );
-
-      res.status(200).json({ arts, artsCount });
+        res.status(200).json({ arts, artsCount });
+      }
     } catch (error) {
       res.status(400).json(error);
     }

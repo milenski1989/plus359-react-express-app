@@ -1,10 +1,18 @@
 import { dbConnection } from "../database";
 import { Artworks } from "../entities/Artworks";
+import { Cells } from "../entities/Cells";
+import { Positions } from "../entities/Positions";
+import { Storages } from "../entities/Storages";
 import { S3Service } from "./S3Service";
+import StorageService from "./StorageService";
 
 const s3Client = new S3Service();
 
 const artsRepository = dbConnection.getRepository(Artworks);
+const cellsRepository = dbConnection.getRepository(Cells);
+const positionsRepository = dbConnection.getRepository(Positions);
+const storagesRepository = dbConnection.getRepository(Storages)
+
 
 export default class ArtworksService {
   private static authenticationService: ArtworksService;
@@ -79,14 +87,24 @@ export default class ArtworksService {
 
   async getAllByStorage(
     name: string,
-    page: string,
-    count: string,
+    page?: string,
+    count?: string,
     sortField?: string,
     sortOrder?: string
   ) {
     try {
+      if (!page && !count) {
+        const whereCondition = { storage: { name: name } };
+
+        const artsCount = await artsRepository.count({
+          where: whereCondition
+        });
+        
+        return [artsCount];
+      }
       if (name === "All") {
         const [arts, artsCount] = await artsRepository.findAndCount({
+          relations: ["storage", "cell_t", "position_t"],
           order: { [sortField]: sortOrder.toUpperCase() },
           take: parseInt(count),
           skip: parseInt(count) * parseInt(page) - parseInt(count),
@@ -94,11 +112,14 @@ export default class ArtworksService {
 
         return [arts, artsCount];
       } else {
+        const whereCondition = { storage: { name: name } };
+
         const [arts, artsCount] = await artsRepository.findAndCount({
+          where: whereCondition,
+          relations: ["storage", "cell_t", "position_t"],
           order: { [sortField]: sortOrder.toUpperCase() },
-          where: { storageLocation: name },
           take: parseInt(count),
-          skip: parseInt(count) * parseInt(page) - parseInt(count),
+          skip: parseInt(count) * (parseInt(page) - 1),
         });
 
         return [arts, artsCount];
@@ -108,7 +129,7 @@ export default class ArtworksService {
     }
   }
 
-  async saveFileIntoDatabase(
+  async saveEntryInDb(
     title,
     artist,
     technique,
@@ -125,6 +146,20 @@ export default class ArtworksService {
     by_user
   ) {
     try {
+
+      const foundStorage = await storagesRepository.findOne({
+        where: {name: storageLocation}
+      })
+
+      const foundCell = await cellsRepository.findOne({
+        where: {name: cell}
+      })
+
+      const foundPosition = await positionsRepository.findOne({
+          where: {cell_id: foundCell.id, cell: {storage_id: foundStorage.id}}
+        })
+      
+      
       const newArtwork = artsRepository.create({
         title,
         artist,
@@ -140,6 +175,9 @@ export default class ArtworksService {
         download_url,
         download_key,
         by_user,
+        storage_id: foundStorage.id,
+        cell_id: foundCell.id,
+        position_id: foundPosition.id
       });
 
       const savedArtwork = await artsRepository.save(newArtwork);

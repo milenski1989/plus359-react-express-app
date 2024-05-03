@@ -2,7 +2,6 @@ import * as React from "react";
 import { useContext, useState } from "react";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import Checkbox from "@mui/material/Checkbox";
 import ActionButtons from "./ActionButtons";
@@ -12,6 +11,7 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { Dialog, DialogContent } from "@mui/material";
 import './ListView.css'
 import { generateBackGroundColor } from "./constants/constants";
+import { useLongPress } from "use-long-press";
 
 const properties = [
     { key: 'image_url', label: 'Image', align: 'center', isImage: true },
@@ -24,12 +24,21 @@ const properties = [
     { key: 'storageLocation', label: 'Storage Location', align: 'center' }
 ];
 
-const ListView = ({searchResults, handleDialogOpen, handleSearchResults}) => {
+const ListView = ({searchResults, handleDialogOpen, handleSearchResults, setIsLocationChangeDialogOpen, showCheckbox, setShowCheckbox}) => {
     const {isEditMode, updatedEntry, setUpdatedEntry, currentImages, setCurrentImages} = useContext(ImageContext)
     const [imagePreview, setImagePreview] = useState(false)
     const [isMoreInfoOpen, setIsMoreInfoOpen] = useState(false)
     const [selectedArt, setSelectedArt] = useState(null);
     const [selectedProp, setSelectedProp] = useState(null)
+
+    const bind = useLongPress(() => {
+        if (!setShowCheckbox) return;
+        setShowCheckbox(prev => !prev);
+    }, {
+        onStart: (event) => {
+            event.preventDefault();
+        }
+    });
 
     const checkBoxHandler = (id) => {
         if (currentImages.some(image => image.id === id)) {
@@ -70,15 +79,14 @@ const ListView = ({searchResults, handleDialogOpen, handleSearchResults}) => {
         <List dense sx={{ width: "100%", maxWidth: "100vw", bgcolor: "background.paper" }}>
             {searchResults.map((art, ind) => {
                 const labelId = `checkbox-list-secondary-label-${ind}`;
-
                 return (
                     <div key={art.id} className="list-item-container">
-                        {art.position ?
-                            <div style={{backgroundColor: generateBackGroundColor(art.cell), height: '70px', padding: '0.5rem'}}>
-                                <p style={{marginTop: '50%', paddingLeft: '0.2rem', paddingRight: '0.2rem'}}>{art.position}</p>
-                            </div> :
-                            <></>
-                        }
+                        {<div {...bind()} className={art.position ? "mobile-position-container" : "mobile-position-container black-text"} style={art.position ? 
+                            {backgroundColor: generateBackGroundColor(art.cell)} :
+                            {backgroundColor: '#5A5A5A'}
+                        }>
+                            <p>{art.position ? art.position : ''}</p>
+                        </div> }
                         <ListItem
                             sx={{
                                 "&:hover": {
@@ -89,35 +97,42 @@ const ListView = ({searchResults, handleDialogOpen, handleSearchResults}) => {
                             key={art.id}
                             disablePadding
                         >
-                            <ListItemButton
-                                sx={{
-                                    color: "black",
-                                    backgroundColor: '#F7F9FA',
-                                    boxShadow: '0px 0px 19.100000381469727px 0px rgba(0, 0, 0, 0.25)',
-                                    display: 'grid',
-                                    gridTemplateColumns: 'repeat(11, 9%)',
-                                    "&:hover": {
-                                        backgroundColor: "#D5E8F2",
-                                    }
-                                }}
+                            <div className="list-item-elements"
                             >
-                                <Checkbox
-                                    onChange={() => checkBoxHandler(art.id)}
-                                    checked={currentImages.some(image => image.id === art.id)}
-                                    sx={{
-                                        justifySelf:  "flex-start",
-                                        "&.Mui-checked": {
-                                            color: "black",
-                                        },
-                                    }}
-                                    icon={<RadioButtonUncheckedIcon />}
-                                    checkedIcon={<CheckCircleOutlineIcon />}
-                                />
-
                                 {properties.map(prop => (
                                     <React.Fragment key={prop.key}>
                                         {prop.isImage ? (
-                                            <img onClick={() => openImageDialog(art)} style={{ width: '70px', height: '70px', objectFit: "cover" }} src={art[prop.key]} alt={art[prop.key]} />
+                                            <div className="mobile-image-checkbox-container">
+                                                <img 
+                                                    onClick={() => openImageDialog(art)}
+                                                    style={{
+                                                        width: '70px', 
+                                                        height: '70px', 
+                                                        objectFit: "cover",
+                                                        cursor: 'pointer'
+                                                    }} 
+                                                    src={art[prop.key]} 
+                                                    alt={art[prop.key]} />
+                                                {showCheckbox &&
+                                                     <Checkbox
+                                                         onChange={() => checkBoxHandler(art.id)}
+                                                         checked={currentImages.some(image => image.id === art.id)}
+                                                         sx={{
+                                                             position: "absolute",
+                                                             top: "50%",
+                                                             left: "50%",
+                                                             transform: "translate(-50%, -50%)",
+                                                             color: 'white',
+                                                             "&.Mui-checked": {
+                                                                 color: "white",
+                                                             },
+                                                         }}
+                                                         icon={<RadioButtonUncheckedIcon />}
+                                                         checkedIcon={<CheckCircleOutlineIcon />}
+                                                     />
+                                                }
+                                     
+                                            </div>
                                         ) : (
                                             <ListItemText
                                                 id={`${labelId}-${prop.key}`}
@@ -131,19 +146,12 @@ const ListView = ({searchResults, handleDialogOpen, handleSearchResults}) => {
                                                         />
                                                     
                                                     ) : (
-                                                        art.position && art[prop.key] === art.position && art.position !== 0 ?
-                                                            <div
-                                                                style={{backgroundColor: generateBackGroundColor(art.cell), 
-                                                                    color: "white", 
-                                                                    height: "auto",
-                                                                    marginRight: "3rem",
-                                                                    padding: "1rem"
-                                                                }}>
-                                                                <p  className='full-info'>
-                                                                    {art[prop.key]}
-                                                                </p>
-                                                            </div>
-                                                            :
+                                                       
+                                                        prop.key === 'storageLocation' ? (
+                                                            <p className={art[prop.key].length > 10 ? 'truncated-art-info' : 'full-info'}>
+                                                                {art.storage.name}
+                                                            </p>
+                                                        ) :
                                                             <p  
                                                                 className={art[prop.key].length > 10 ? 'truncated-art-info' : 'full-info'}
                                                                 onClick={() => showAll(art[prop.key])}>
@@ -162,8 +170,9 @@ const ListView = ({searchResults, handleDialogOpen, handleSearchResults}) => {
                                     handleDialogOpen={handleDialogOpen}
                                     searchResults={searchResults}
                                     handleSearchResults={handleSearchResults}
+                                    setIsLocationChangeDialogOpen={setIsLocationChangeDialogOpen}
                                 />
-                            </ListItemButton>
+                            </div>
                         </ListItem>
                     </div>
                 );

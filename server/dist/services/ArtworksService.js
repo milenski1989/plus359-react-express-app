@@ -11,9 +11,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = require("../database");
 const Artworks_1 = require("../entities/Artworks");
+const Cells_1 = require("../entities/Cells");
+const Positions_1 = require("../entities/Positions");
+const Storages_1 = require("../entities/Storages");
 const S3Service_1 = require("./S3Service");
 const s3Client = new S3Service_1.S3Service();
 const artsRepository = database_1.dbConnection.getRepository(Artworks_1.Artworks);
+const cellsRepository = database_1.dbConnection.getRepository(Cells_1.Cells);
+const positionsRepository = database_1.dbConnection.getRepository(Positions_1.Positions);
+const storagesRepository = database_1.dbConnection.getRepository(Storages_1.Storages);
 class ArtworksService {
     constructor() { }
     static getInstance() {
@@ -94,8 +100,16 @@ class ArtworksService {
     getAllByStorage(name, page, count, sortField, sortOrder) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                if (!page && !count) {
+                    const whereCondition = { storage: { name: name } };
+                    const artsCount = yield artsRepository.count({
+                        where: whereCondition
+                    });
+                    return [artsCount];
+                }
                 if (name === "All") {
                     const [arts, artsCount] = yield artsRepository.findAndCount({
+                        relations: ["storage", "cell_t", "position_t"],
                         order: { [sortField]: sortOrder.toUpperCase() },
                         take: parseInt(count),
                         skip: parseInt(count) * parseInt(page) - parseInt(count),
@@ -103,11 +117,13 @@ class ArtworksService {
                     return [arts, artsCount];
                 }
                 else {
+                    const whereCondition = { storage: { name: name } };
                     const [arts, artsCount] = yield artsRepository.findAndCount({
+                        where: whereCondition,
+                        relations: ["storage", "cell_t", "position_t"],
                         order: { [sortField]: sortOrder.toUpperCase() },
-                        where: { storageLocation: name },
                         take: parseInt(count),
-                        skip: parseInt(count) * parseInt(page) - parseInt(count),
+                        skip: parseInt(count) * (parseInt(page) - 1),
                     });
                     return [arts, artsCount];
                 }
@@ -117,9 +133,18 @@ class ArtworksService {
             }
         });
     }
-    saveFileIntoDatabase(title, artist, technique, dimensions, price, notes, storageLocation, cell, position, image_url, image_key, download_url, download_key, by_user) {
+    saveEntryInDb(title, artist, technique, dimensions, price, notes, storageLocation, cell, position, image_url, image_key, download_url, download_key, by_user) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                const foundStorage = yield storagesRepository.findOne({
+                    where: { name: storageLocation }
+                });
+                const foundCell = yield cellsRepository.findOne({
+                    where: { name: cell }
+                });
+                const foundPosition = yield positionsRepository.findOne({
+                    where: { cell_id: foundCell.id, cell: { storage_id: foundStorage.id } }
+                });
                 const newArtwork = artsRepository.create({
                     title,
                     artist,
@@ -135,6 +160,9 @@ class ArtworksService {
                     download_url,
                     download_key,
                     by_user,
+                    storage_id: foundStorage.id,
+                    cell_id: foundCell.id,
+                    position_id: foundPosition.id
                 });
                 const savedArtwork = yield artsRepository.save(newArtwork);
                 return savedArtwork;
@@ -211,7 +239,6 @@ class ArtworksService {
       WHERE ${whereConditions} ${additionalCondition}
       ORDER BY ${sortField} ${sortOrder.toUpperCase()}
     `;
-                console.log('QUERY', query);
             }
             else {
                 query = `

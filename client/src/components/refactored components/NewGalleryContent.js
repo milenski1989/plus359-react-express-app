@@ -24,6 +24,8 @@ import { useMediaQuery } from "@mui/material";
 import NewSort from "./NewSort";
 import MobileListView from "../MobileListView";
 import PaginationComponent from "./PaginationComponent";
+import DownloadIcon from '../../components/assets/download-solid.svg'
+import { saveAs } from "file-saver";
 
 
 const NewGalleryContent = () => {
@@ -48,6 +50,7 @@ const NewGalleryContent = () => {
     const [totalCount, setTotalCount] = useState(0);
     const [pagesCount, setPagesCount] = useState(0);
     const [page, setPage] = useState(1);
+    const [showCheckbox, setShowCheckbox] = useState(false)
 
     const [error, setError] = useState({
         error: false,
@@ -55,9 +58,11 @@ const NewGalleryContent = () => {
     });
     const [imageLoaded, setImageLoaded] = useState({});
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-    const [viewMode, setViewMode] = useState('thumbnail')
+    const [viewMode, setViewMode] = useState('details')
     const [paginationDisabled, setPaginationDisabled] = useState(false);
     let navigate = useNavigate();
+
+    const user = JSON.parse(localStorage.getItem('user'))
 
     useEffect(() => {
     
@@ -88,6 +93,8 @@ const NewGalleryContent = () => {
         if (viewMode === 'thumbnail') {
             return  <ThumbnailView
                 searchResults={searchResults}
+                showCheckbox={showCheckbox}
+                setShowCheckbox={setShowCheckbox}
             />  
         } else if (viewMode === 'details') {
             return <DetailsView
@@ -95,6 +102,8 @@ const NewGalleryContent = () => {
                 handleDialogOpen={setIsDeleteDialogOpen}
                 handleSearchResults={setSearchResults}
                 imageLoaded={imageLoaded}
+                setIsLocationChangeDialogOpen={setIsLocationChangeDialogOpen}
+                showCheckbox={showCheckbox}
             />
           
         } else if (viewMode === 'list' && isSmallDevice) {
@@ -103,6 +112,9 @@ const NewGalleryContent = () => {
                 handleUpdatedEntry={setUpdatedEntry}
                 handleDialogOpen={setIsDeleteDialogOpen}
                 handleSearchResults={setSearchResults}
+                setIsLocationChangeDialogOpen={setIsLocationChangeDialogOpen}
+                showCheckbox={showCheckbox}
+                setShowCheckbox={setShowCheckbox}
             /> 
         } else {
             return <ListView
@@ -110,6 +122,9 @@ const NewGalleryContent = () => {
                 handleUpdatedEntry={setUpdatedEntry}
                 handleDialogOpen={setIsDeleteDialogOpen}
                 handleSearchResults={setSearchResults}
+                setIsLocationChangeDialogOpen={setIsLocationChangeDialogOpen}
+                showCheckbox={showCheckbox}
+                setShowCheckbox={setShowCheckbox}
             /> 
         }
     }
@@ -144,6 +159,12 @@ const NewGalleryContent = () => {
     const handlePage = (newPage) => {
         setPage(newPage)
     }
+
+    const downloadOriginalImage = () => {
+        for (let currentImage of currentImages) {
+            saveAs(currentImage.download_url, currentImage.download_key);
+        }
+    };
     
     return (
         <>
@@ -167,20 +188,36 @@ const NewGalleryContent = () => {
                     handleIsDeleting={setIsDeleting}
                     
                 />
-                
                 <div className={isSmallDevice ? 'mobile-search-filters-buttons-container' :
                     'search-filters-buttons-container'}>
                     {!isSmallDevice && 
                              <div className="select-pdf-location-buttons-container">
-                                 <img onClick={handleSelectAll} src={currentImages.length ? UnselectAllIcon : SelectAllIcon} className='icon' />
+                                 {searchResults.length && showCheckbox || searchResults.length && viewMode === 'details' ?
+                                     <img onClick={handleSelectAll} src={currentImages.length ? UnselectAllIcon : SelectAllIcon} className='icon' /> :
+                                     <></>
+                                 }
                                  {currentImages.length && !isEditMode ?
                                      <><img
                                          src={PdfIcon}
                                          className='icon'
-                                         onClick={() => navigate('/pdf')} /><img
-                                         src={LocationIcon}
+                                         onClick={() => navigate('/pdf')} />
+                                     {user.superUser ?
+                                         <img 
+                                             src={LocationIcon} 
+                                             className='icon' 
+                                             onClick={prepareImagesForLocationChange}/> :
+                                         <></>
+                                     }
+                                     </> : <></>
+                                 }
+                                 {currentImages.length > 1 ?
+                                     <img 
+                                         style={{width: '39px'}}
+                                         src={DownloadIcon} 
                                          className='icon'
-                                         onClick={prepareImagesForLocationChange} /></> : <></>
+                                         onClick={downloadOriginalImage}/>
+                                     :
+                                     <></>
                                  }
                              </div>
                     }
@@ -215,15 +252,27 @@ const NewGalleryContent = () => {
                                 <div className="mobile-select-pdf-location-buttons-container">
                                     {currentImages.length  ?
                                         <>
-                                            <img 
-                                                src={LocationIcon} 
-                                                className='icon' 
-                                                onClick={prepareImagesForLocationChange}/>
+                                            {user.superUser ?
+                                                <img 
+                                                    src={LocationIcon} 
+                                                    className='icon' 
+                                                    onClick={prepareImagesForLocationChange}/> :
+                                                <></>
+                                            }
                                             <img src={PdfIcon} 
                                                 className='icon' 
                                                 onClick={() => navigate('/pdf')} />
                                         </>
                                         : <></> }
+                                    {currentImages.length > 1 ?
+                                        <img 
+                                            style={{width: '39px'}}
+                                            src={DownloadIcon} 
+                                            className='icon'
+                                            onClick={downloadOriginalImage}/>
+                                        :
+                                        <></>
+                                    }
                                     <img onClick={handleSelectAll} src={currentImages.length ? UnselectAllIcon : SelectAllIcon} className='icon' />
                                 </div>
                                 :
@@ -231,13 +280,13 @@ const NewGalleryContent = () => {
                             }
                             {isSmallDevice ? 
                                 <div className="mobile-view-mode-icons-container">
-                                    <img className={viewMode === 'thumbnail' ? 'selected icon' : 'icon'} src={ThumbnailViewIcon} onClick={() => handleViewMode('thumbnail')}/>
                                     <img className={viewMode === 'details' ? 'selected icon' : 'icon'} src={DetailsViewIcon} onClick={() => handleViewMode('details')}/>
+                                    <img className={viewMode === 'thumbnail' ? 'selected icon' : 'icon'} src={ThumbnailViewIcon} onClick={() => handleViewMode('thumbnail')}/>
                                     <img className={viewMode === 'list' ? 'selected icon' : 'icon'} src={ListViewIcon} onClick={() => handleViewMode('list')}/>
                                 </div> :
                                 <>
-                                    <img className={viewMode === 'thumbnail' ? 'selected icon' : 'icon'} src={ThumbnailViewIcon} onClick={() => handleViewMode('thumbnail')} />
                                     <img className={viewMode === 'details' ? 'selected icon' : 'icon'} src={DetailsViewIcon} onClick={() => handleViewMode('details')} />
+                                    <img className={viewMode === 'thumbnail' ? 'selected icon' : 'icon'} src={ThumbnailViewIcon} onClick={() => handleViewMode('thumbnail')} />
                                     <img className={viewMode === 'list' ? 'selected icon' : 'icon'} src={ListViewIcon} onClick={() => handleViewMode('list')} />
                                 </>
                             }

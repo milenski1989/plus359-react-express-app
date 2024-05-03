@@ -44,8 +44,14 @@ class ArtworksController {
             const { page, count, sortField, sortOrder } = req.query;
             const { name } = req.params;
             try {
-                const [arts, artsCount] = yield ArtworksService_1.default.getInstance().getAllByStorage(name, page, count, sortField, sortOrder);
-                res.status(200).json({ arts, artsCount });
+                if (!page && !count && !sortField && !sortOrder) {
+                    const [artsCount] = yield ArtworksService_1.default.getInstance().getAllByStorage(name);
+                    res.status(200).json({ artsCount });
+                }
+                else {
+                    const [arts, artsCount] = yield ArtworksService_1.default.getInstance().getAllByStorage(name, page, count, sortField, sortOrder);
+                    res.status(200).json({ arts, artsCount });
+                }
             }
             catch (error) {
                 res.status(400).json(error);

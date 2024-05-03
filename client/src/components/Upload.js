@@ -42,7 +42,7 @@ const Upload = () => {
     const [isArtistFromDropdown, setIsArtistFromDropDown] = useState(false)
 
     const getArtists = async () => {
-        const res = await fetch(`http://localhost:5000/artists/relatedToEntries`)
+        const res = await fetch(`https://app.plus359gallery.com/artists/relatedToEntries`)
         const data = await res.json()
         setArtists(data)
     }
@@ -76,7 +76,7 @@ const Upload = () => {
             data.append("position", formControlData.position)
             data.append("by_user", user.userName)
     
-            await axios.post("http://localhost:5000/s3/upload", data, {
+            await axios.post("https://app.plus359gallery.com/s3/upload", data, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -84,27 +84,32 @@ const Upload = () => {
             });
             getArtists()
             setNewArtistFromInput("")
+
+            setProgress(0)
+
+            setUploading(false);
+            setUploadSuccessful(true);
+            setInputsData({
+                title: "",
+                technique: "",
+                dimensions: "",
+                price: 0,
+                notes: ""
+            })
+
+            setFormControlData({
+                storageLocation: "",
+                cell: "",
+                position: 0
+            })
             
         } catch (error) {
-            console.log(error)
-        }
+            setProgress(0)
 
-        setProgress(0)
-        setUploading(false);
-        setUploadSuccessful(true);
-        setInputsData({
-            title: "",
-            technique: "",
-            dimensions: "",
-            price: 0,
-            notes: ""
-        })
-    
-        setFormControlData({
-            storageLocation: "",
-            cell: "",
-            position: 0
-        })
+            setUploading(false);
+            setUploadSuccessful(false);
+            setUploadingError({error: true, message: error.response.data.error})
+        }
     };
 
     const handleInputChange = (key, event) => {

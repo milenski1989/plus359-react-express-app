@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useContext, useState, useRef } from "react";
+import { useContext, useState } from "react";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
@@ -13,6 +13,8 @@ import './ListView.css'
 import { generateBackGroundColor } from "./constants/constants";
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import EditableContainer from "./EditableContainer";
+import { useLongPress } from 'use-long-press';
+
 
 const properties = [
     { key: 'image_url', label: 'Image', align: 'center', isImage: true },
@@ -20,15 +22,21 @@ const properties = [
     { key: 'dimensions', label: 'Dimensions', align: 'center' },
 ];
 
-const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) => {
+const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults, setIsLocationChangeDialogOpen, showCheckbox, setShowCheckbox}) => {
     const {currentImages, setCurrentImages} = useContext(ImageContext)
     const [imagePreview, setImagePreview] = useState(false)
     const [fullInfoOpened, setFullInfoOpened] = useState(false)
     const [selectedImage, setSelectedImage] = useState(null);
     const [selectedRow, setSelectedRow] = useState(null)
-    const [showCheckbox, setShowCheckbox] = useState(false);
 
-    const timeoutRef = useRef(null);
+    const bind = useLongPress(() => {
+        if (!setShowCheckbox) return;
+        setShowCheckbox(prev => !prev);
+    }, {
+        onStart: (event) => {
+            event.preventDefault();
+        }
+    });
 
     const checkBoxHandler = (id) => {
         if (currentImages.some(image => image.id === id)) {
@@ -38,11 +46,11 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
         }
     }
 
+   
     const openImagePreviewDialog = (art) => {
-        if (!showCheckbox) {
-            setSelectedImage(art);
-            setImagePreview(true);
-        }
+        setSelectedImage(art);
+        setImagePreview(true);
+        
     };
 
     const openFullInfoDialog = (art) => {
@@ -58,29 +66,17 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
         }
     }
 
-    const handleLongPress = () => {
-        setShowCheckbox(true);
-    };
-  
-    const handleMouseDown = () => {
-        timeoutRef.current = setTimeout(handleLongPress, 700);
-    };
-  
-    const handleMouseUp = () => {
-        clearTimeout(timeoutRef.current);
-    };
-
     return <>
         <List dense sx={{ width: "100%", maxWidth: "100vw", bgcolor: "background.paper" }}>
             {searchResults.map((art, ind) => {
                 const labelId = `checkbox-list-secondary-label-${ind}`;
                 return (
                     <div key={art.id} className="mobile-list-item-container">
-                        <div className={art.position ? "mobile-position-container" : "mobile-position-container black-text"} style={art.position ? 
+                        <div {...bind()} className={art.position ? "mobile-position-container" : "mobile-position-container black-text"} style={art.position ? 
                             {backgroundColor: generateBackGroundColor(art.cell)} :
-                            {backgroundColor: '#F7F9FA'}
+                            {backgroundColor: '#5A5A5A'}
                         }>
-                            <p >{art.position}</p>
+                            <p>{art.position ? art.position : ''}</p>
                         </div>
                         <ListItem
                             className='mobile-list-item'
@@ -92,11 +88,10 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
                                     <React.Fragment key={prop.key}>
                                         {prop.isImage ? (
                                             <div className="mobile-image-checkbox-container">
+                                              
                                                 <img 
-                                                    onMouseDown={handleMouseDown}
-                                                    onMouseUp={handleMouseUp}
-                                                    onMouseLeave={handleMouseUp}
                                                     onClick={() => openImagePreviewDialog(art)}
+                                                    
                                                     style={{
                                                         width: '70px', 
                                                         height: '70px', 
@@ -146,7 +141,7 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
                                     </React.Fragment>
                                 ))}
                                 <MoreHorizIcon 
-                                    sx={{marginRight: "0.3rem"}}
+                                    sx={{marginRight: "0.5rem", cursor: 'pointer'}}
                                     onClick={() => openFullInfoDialog(art)}
                                 />
                         
@@ -172,6 +167,7 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults}) 
                         handleDialogOpen={handleDialogOpen}
                         searchResults={searchResults}
                         handleSearchResults={handleSearchResults}
+                        setIsLocationChangeDialogOpen={setIsLocationChangeDialogOpen}
                     />
                     <EditableContainer art={selectedRow} />
                 </DialogContent>

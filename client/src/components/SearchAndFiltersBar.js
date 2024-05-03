@@ -33,7 +33,7 @@ function SearchAndFiltersBar({
 
     const getArtists = async () => {
         try {
-            const res = await fetch(`http://localhost:5000/artists/relatedToEntriesInStorage/${name.split(':')[1]}`)
+            const res = await fetch(`https://app.plus359gallery.com/artists/relatedToEntriesInStorage/${name.split(':')[1]}`)
             const data = await res.json()
     
             const normalizedArtists = data.map(artist => artist.toLowerCase().trim());
@@ -50,7 +50,7 @@ function SearchAndFiltersBar({
 
     const getCells = async () => {
         try {
-            const res = await fetch(`http://localhost:5000/storage/all/allCellsFromCurrentStorage/${name.split(':')[1]}`)
+            const res = await fetch(`https://app.plus359gallery.com/storage/all/allCellsFromCurrentStorage/${name.split(':')[1]}`)
             const data = await res.json()
             const uniqueCells = [...new Set(data)]
             setCells(uniqueCells);
@@ -95,6 +95,14 @@ function SearchAndFiltersBar({
             handleLoading(false);
         } 
     }
+
+    const triggerSearchWithEnter = (e) => {
+        console.log(e)
+        if (e.key === 'Enter') {
+            e.preventDefault(); // Prevent default action
+            // Additional logic if needed
+        }
+    };
 
     useEffect(() => {
         getArtists()
@@ -175,7 +183,7 @@ function SearchAndFiltersBar({
                     placeholder="Search..."
                     inputProps={{ "aria-label": "search" }}
                     onChange={onChange}
-                    //onKeyPress={triggerSearchWithEnter}
+                    onKeyPress={triggerSearchWithEnter}
                 />
                 <IconButton
                     type="button"

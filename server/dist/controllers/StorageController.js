@@ -38,13 +38,30 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.StorageController = void 0;
 const express = __importStar(require("express"));
 const StorageService_1 = __importDefault(require("../services/StorageService"));
-const ArtworksService_1 = __importDefault(require("../services/ArtworksService"));
 class StorageController {
     constructor() {
-        this.getFreeCells = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const { cell } = req.params;
+        this.getAllStorages = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
-                const results = yield StorageService_1.default.getInstance().getFreeCells(cell);
+                const results = yield StorageService_1.default.getInstance().getAllStorages();
+                res.status(200).json(results);
+            }
+            catch (error) {
+                res.status(400).json(error);
+            }
+        });
+        this.getAllStoragesWithNoEntries = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const results = yield StorageService_1.default.getInstance().getAllStoragesWithNoEntries();
+                res.status(200).json(results);
+            }
+            catch (error) {
+                res.status(400).json(error);
+            }
+        });
+        this.getSparePositions = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { cell, storage } = req.params;
+            try {
+                const results = yield StorageService_1.default.getInstance().getSparePositions(cell, storage);
                 res.status(200).json(results);
             }
             catch (error) {
@@ -53,27 +70,13 @@ class StorageController {
         });
         this.getAllCellsFromCurrentStorage = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const { currentStorage } = req.params;
-            let cells;
             try {
-                if (currentStorage !== 'All') {
-                    const arts = yield ArtworksService_1.default.getInstance().getAllByCellFromCurrentStorage(currentStorage);
-                    cells = arts
-                        .map(art => art.cell)
-                        .filter(cell => cell !== "")
-                        .sort((a, b) => a.localeCompare(b));
-                }
-                else {
-                    const arts = yield ArtworksService_1.default.getInstance().getAll();
-                    cells = arts
-                        .map(art => art.cell)
-                        .filter(cell => cell !== "")
-                        .sort((a, b) => a.localeCompare(b));
-                }
-                res.status(200).json(cells);
+                const cellsNames = yield StorageService_1.default.getInstance().getAllCellsFromCurrentStorage(currentStorage);
+                res.status(200).json(cellsNames);
             }
             catch (error) {
                 console.error(error);
-                res.status(500).json({ error: 'Internal Server Error' });
+                res.status(500).json({ error: "Internal Server Error" });
             }
         });
         this.updateLocation = (req, res) => __awaiter(this, void 0, void 0, function* () {
@@ -86,13 +89,37 @@ class StorageController {
                 throw new Error("Could not update locations!");
             }
         });
+        this.saveStorage = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { name } = req.body;
+            try {
+                const results = yield StorageService_1.default.getInstance().saveStorage(name);
+                res.status(200).send(results);
+            }
+            catch (error) {
+                res.status(400).send("Storage with this name already exists!");
+            }
+        });
+        this.deleteStorage = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { name } = req.query;
+            try {
+                const results = yield StorageService_1.default.getInstance().deleteStorage(name);
+                res.status(200).send(results);
+            }
+            catch (_a) {
+                res.status(400).send({ message: 'Delete storage failed!' });
+            }
+        });
         this.router = express.Router();
         this.initializeRoutes();
     }
     initializeRoutes() {
-        this.router.get('/:cell', this.getFreeCells);
-        this.router.get('/all/allCellsFromCurrentStorage/:currentStorage', this.getAllCellsFromCurrentStorage);
-        this.router.put('/update-location', this.updateLocation);
+        this.router.get("/allStorages", this.getAllStorages);
+        this.router.get("/storagesWithNoEntries", this.getAllStoragesWithNoEntries);
+        this.router.get("/:cell/:storage", this.getSparePositions);
+        this.router.get("/all/allCellsFromCurrentStorage/:currentStorage", this.getAllCellsFromCurrentStorage);
+        this.router.post("/saveOne", this.saveStorage);
+        this.router.put("/update-location", this.updateLocation);
+        this.router.delete("/deleteOne", this.deleteStorage);
     }
 }
 exports.StorageController = StorageController;
