@@ -1,6 +1,6 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext } from 'react'
 import { ImageContext } from './contexts/ImageContext';
-import CascadingDropdowns from './CascadingDropdowns'
+//import CascadingDropdowns from './CascadingDropdowns'
 import './EditableContainer.css'
 
 const keysToMap = ['Artist', 'Title', 'Technique', 'Dimensions', 'Price', 'Notes'];
@@ -13,13 +13,6 @@ const EditableContainer = ({art}) => {
         setUpdatedEntry,
         isEditMode,
     } = useContext(ImageContext);
-
-    // eslint-disable-next-line no-unused-vars
-    const [formControlData, setFormControlData] = useState({
-        storageLocation: "",
-        cell: "",
-        position: "",
-    });
 
     const onChangeEditableInput = (event) => {
         const { name, value } = event.target;
@@ -55,7 +48,7 @@ const EditableContainer = ({art}) => {
                     ))}
                 </div>     
             )}
-            {isEditMode && currentImages.length && currentImages[0].id === art.id ? (
+            {/* {isEditMode && currentImages.length && currentImages[0].id === art.id ? (
                 <CascadingDropdowns
                     setFormControlData={setFormControlData} />
             ) : (
@@ -64,7 +57,14 @@ const EditableContainer = ({art}) => {
                     <p><span className='input-label'>Cell: </span>{art.cell}</p> 
                     <p><span className='input-label'>Position: </span>{art.position}</p>
                 </>
-            )}
+            )} */}
+            {!isEditMode &&
+            <>
+                <p><span className='input-label'>Storage: </span>{`${art.storageLocation || art.location}`}</p>
+                <p><span className='input-label'>Cell: </span>{art.cell}</p> 
+                <p><span className='input-label'>Position: </span>{art.position}</p>
+            </>
+            }
         </div>
     </>
    

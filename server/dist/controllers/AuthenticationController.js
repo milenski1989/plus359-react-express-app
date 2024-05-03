@@ -40,6 +40,15 @@ const express = __importStar(require("express"));
 const AuthenticationService_1 = __importDefault(require("../services/AuthenticationService"));
 class AuthenticationController {
     constructor() {
+        this.getAllUsers = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const users = yield AuthenticationService_1.default.getInstance().getAllUsers();
+                res.status(200).send({ data: users });
+            }
+            catch (error) {
+                res.status(400).send({ message: 'No users found!' });
+            }
+        });
         this.login = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const { email, password } = req.body;
             try {
@@ -61,15 +70,27 @@ class AuthenticationController {
                 res.status(200).send({ message: 'You\'ve signed up successfuly!' });
             }
             catch (_b) {
-                throw new Error("User with this email already exists");
+                res.status(400).send({ message: 'User with this email already exists!' });
+            }
+        });
+        this.deleteUsers = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { emails } = req.query;
+            try {
+                const results = yield AuthenticationService_1.default.getInstance().deleteUsers(emails);
+                res.status(200).send(results);
+            }
+            catch (_c) {
+                res.status(400).send({ message: 'Delete user failed!' });
             }
         });
         this.router = express.Router();
         this.initializeRoutes();
     }
     initializeRoutes() {
+        this.router.get('/all', this.getAllUsers);
         this.router.post('/login', this.login);
         this.router.post('/signup', this.signup);
+        this.router.delete('/deleteUsers', this.deleteUsers);
     }
 }
 exports.AuthenticationController = AuthenticationController;

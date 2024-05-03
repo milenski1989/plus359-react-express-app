@@ -1,76 +1,105 @@
-import * as express from 'express'
-import StorageService from '../services/StorageService'
-import ArtworksService from '../services/ArtworksService'
+import * as express from "express";
+import StorageService from "../services/StorageService";
+import ArtworksService from "../services/ArtworksService";
 
+export class StorageController {
+  router: express.Router;
 
-export class StorageController{
+  constructor() {
+    this.router = express.Router();
+    this.initializeRoutes();
+  }
 
-    router: express.Router
+  private initializeRoutes() {
+    this.router.get("/allStorages", this.getAllStorages);
+    this.router.get("/storagesWithNoEntries", this.getAllStoragesWithNoEntries);
+    this.router.get("/:cell/:storage", this.getSparePositions);
+    this.router.get(
+      "/all/allCellsFromCurrentStorage/:currentStorage",
+      this.getAllCellsFromCurrentStorage
+    );
+    this.router.post("/saveOne", this.saveStorage)
+    this.router.put("/update-location", this.updateLocation);
+    this.router.delete("/deleteOne", this.deleteStorage)
+  }
 
-    constructor() {
-this.router = express.Router()
-this.initializeRoutes()
+  getAllStorages = async (req, res) => {
+    try {
+      const results = await StorageService.getInstance().getAllStorages();
+
+      res.status(200).json(results);
+    } catch (error) {
+      res.status(400).json(error);
     }
+  };
 
-    private initializeRoutes() {
-        this.router.get('/:cell', this.getFreeCells)
-        this.router.get('/all/allCellsFromCurrentStorage/:currentStorage', this.getAllCellsFromCurrentStorage)
-        this.router.put('/update-location', this.updateLocation)
+  getAllStoragesWithNoEntries = async (req, res) => {
+    try {
+      const results = await StorageService.getInstance().getAllStoragesWithNoEntries();
+
+      res.status(200).json(results);
+    } catch (error) {
+      res.status(400).json(error);
     }
+  };
 
-    getFreeCells = async (req, res) => {
-        const {cell} = req.params
-      
-        try {
-          
-          const results = await StorageService.getInstance().getFreeCells(cell)
-      
-              res.status(200).json(results);
-          
-        } catch (error) {
-          res.status(400).json(error)
-        }
-      
-      }
+  getSparePositions = async (req, res) => {
+    const { cell, storage } = req.params;
 
-      getAllCellsFromCurrentStorage = async (req, res) => {
-        const {currentStorage} = req.params
-        let cells;
-        try {
-          if (currentStorage !== 'All') {
-            const arts = await ArtworksService.getInstance().getAllByCellFromCurrentStorage(currentStorage);
-            cells = arts
-            .map(art => art.cell)
-            .filter(cell => cell !== "")
-            .sort((a, b) => a.localeCompare(b));
-          } else {
-            const arts = await ArtworksService.getInstance().getAll();
-            cells = arts
-            .map(art => art.cell)
-            .filter(cell => cell !== "")
-            .sort((a, b) => a.localeCompare(b));
-          }
-      
-            res.status(200).json(cells);
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({ error: 'Internal Server Error' });
-        }
+    try {
+      const results = await StorageService.getInstance().getSparePositions(cell, storage);
+
+      res.status(200).json(results);
+    } catch (error) {
+      res.status(400).json(error);
     }
-    
+  };
 
-      updateLocation = async(req, res) => {
-        const {ids, formControlData}  = req.body
-      
-        try {
-          const results = await StorageService.getInstance().updateLocation(ids, formControlData)
-          res.status(200).send(results)
-      
-        } catch (error){
-         throw new Error("Could not update locations!");
-         
-        }
-        
-      }
+  getAllCellsFromCurrentStorage = async (req, res) => {
+    const { currentStorage } = req.params;
+    try {
+      const cellsNames = await StorageService.getInstance().getAllCellsFromCurrentStorage(currentStorage)
 
+      res.status(200).json(cellsNames);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  };
+
+  updateLocation = async (req, res) => {
+    const { ids, formControlData } = req.body;
+
+    try {
+      const results = await StorageService.getInstance().updateLocation(
+        ids,
+        formControlData
+      );
+      res.status(200).send(results);
+    } catch (error) {
+      throw new Error("Could not update locations!");
+    }
+  };
+
+  saveStorage = async (req, res) => {
+    const { name } = req.body;
+
+    try {
+      const results = await StorageService.getInstance().saveStorage(name);
+      res.status(200).send(results);
+    } catch (error) {
+      res.status(400).send("Storage with this name already exists!");
+    }
+  };
+
+  deleteStorage = async (req, res) => {
+    const { name } = req.query;
+
+    try {
+      const results = await StorageService.getInstance().deleteStorage(name);
+      res.status(200).send(results);
+    } catch {
+      res.status(400).send({ message: 'Delete storage failed!' });
+    }
+  };
 }

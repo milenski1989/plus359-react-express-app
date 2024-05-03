@@ -12,8 +12,19 @@ this.initializeRoutes()
     }
 
     private initializeRoutes() {
+        this.router.get('/all', this.getAllUsers)
         this.router.post('/login', this.login)
         this.router.post('/signup', this.signup)
+        this.router.delete('/deleteUsers', this.deleteUsers)
+    }
+
+    getAllUsers = async (req, res) => {
+      try {
+        const users = await AuthenticationService.getInstance().getAllUsers()
+        res.status(200).send({data: users})
+      } catch (error) {
+        res.status(400).send({message: 'No users found!'})
+      }
     }
 
     login = async (req, res) => {
@@ -39,8 +50,17 @@ this.initializeRoutes()
       
         res.status(200).send({message: 'You\'ve signed up successfuly!'});
       } catch {
-        throw new Error("User with this email already exists");
-        
+        res.status(400).send({message: 'User with this email already exists!'});
       }
       }
+
+      deleteUsers = async (req, res) => {
+        const { emails } = req.query;
+        try {
+          const results = await AuthenticationService.getInstance().deleteUsers(emails);
+          res.status(200).send(results);
+        } catch {
+          res.status(400).send({ message: 'Delete user failed!' });
+        }
+      };
 }

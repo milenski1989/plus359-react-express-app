@@ -5,6 +5,8 @@ const Login = lazy(() => import('./Login'))
 const Home = lazy(() => import('./Home'))
 const Upload = lazy(() => import('./Upload'))
 const PdfMaker = lazy(() => import('./PdfMaker'))
+const AdminPanel = lazy(() => import('./AdminPanel'))
+const StoragesManagement = lazy(() => import('./StoragesManagement'))
 const Account = lazy(() => import('./Account'))
 const Signup = lazy(() => import('./Signup'))
 import ProtectedRoute from './ProtectedRoute'
@@ -43,6 +45,8 @@ const router = createBrowserRouter(
                 <Route path="/upload" element={<Suspense fallback=''><Upload/></Suspense>}></Route>
                 <Route path="/gallery/:name" element={<Suspense fallback=''><NewGalleryContent/></Suspense>}/>
                 <Route path='/pdf' element={<Suspense fallback=''><PdfMaker/></Suspense>}></Route>
+                <Route path='/admin-panel' element={<Suspense fallback=''><AdminPanel/></Suspense>}></Route>
+                <Route path='/storages-management' element={<Suspense fallback=''><StoragesManagement/></Suspense>}></Route>
                 <Route path='/account' element={<Suspense fallback=''><Account/></Suspense>}></Route>
             </Route>
             <Route path="/" element={<Navigate to="/" replace />} />

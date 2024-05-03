@@ -81,15 +81,12 @@ this.initializeRoutes()
             image_key = req.file.transforms[0].key;
            
             // let originalString = req.file.transforms[1].location;
-            // console.log(originalString)
             // let removedString = originalString.replace(/plus359gallery\//, "");
-            // console.log(removedString)
             // download_url = "https://plus359gallery." + removedString;
             download_url = req.file.transforms[1].location;
-            console.log(download_url)
             download_key = req.file.transforms[1].key;
         
-            await ArtworksService.getInstance().saveFileIntoDatabase(
+            await ArtworksService.getInstance().saveEntryInDb(
                 title,
                 artist,
                 technique,
@@ -119,7 +116,7 @@ this.initializeRoutes()
         try {
             s3Service.uploadSingleFile('file')(req, res, async (uploadErr) => {
                 if (uploadErr) {
-                    return res.status(400).json({ error: 'File upload failed' });
+                    return res.status(400).json({ error: 'File upload failed!' });
                 }
     
                 await processRequestBody();
