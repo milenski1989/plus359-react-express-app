@@ -2,39 +2,11 @@
     "version": 2,
     "builds": [
         {
-            "src": "*.js",
+            "src": "./index.js",
             "use": "@vercel/node"
         }
     ],
     "routes": [
-        {
-            "src": "/auth/(.*)",
-            "dest": "/auth/$1"
-        },
-        {
-            "src": "/artworks/(.*)",
-            "dest": "/artworks/$1"
-        },
-        {
-            "src": "/s3/(.*)",
-            "dest": "/s3/$1"
-        },
-        {
-            "src": "/storage/(.*)",
-            "dest": "/storage/$1"
-        },
-        {
-            "src": "/pdf/(.*)",
-            "dest": "/pdf/$1"
-        },
-        {
-            "src": "/bios/(.*)",
-            "dest": "/bios/$1"
-        },
-        {
-            "src": "/artists/(.*)",
-            "dest": "/artists/$1"
-        },
         {
             "src": "/(.*)",
             "dest": "/"
