@@ -19,7 +19,7 @@ const LocationsContainer = () => {
 
     const getStorages = async () => {
         try {
-            const res = await fetch(`https://plus359-react-express-app.vercel.app/storage/allStorages`)
+            const res = await fetch(`https://plus359-react-express-lk1cf594n-milenski1989s-projects.vercel.app/storage/allStorages`)
             const data = await res.json()
             setStorages(data);
         } catch (error) {

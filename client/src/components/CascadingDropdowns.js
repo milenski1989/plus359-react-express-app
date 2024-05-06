@@ -25,7 +25,7 @@ function CascadingDropdowns({
 
     const getStorages = async () => {
         try {
-            const res = await fetch(`https://plus359-react-express-app.vercel.app/storage/allStorages`)
+            const res = await fetch(`https://plus359-react-express-lk1cf594n-milenski1989s-projects.vercel.app/storage/allStorages`)
             const data = await res.json()
             setStorages(data);
         } catch (error) {
@@ -35,7 +35,7 @@ function CascadingDropdowns({
 
     const findAvailablePositions = async (selectedCell, location = null) => {
         const getArtsNumbers = async () => {
-            const res = await fetch(`https://plus359-react-express-app.vercel.app/storage/${selectedCell}/${location}`)
+            const res = await fetch(`https://plus359-react-express-lk1cf594n-milenski1989s-projects.vercel.app/storage/${selectedCell}/${location}`)
             const data = await res.json()
             return data
         };

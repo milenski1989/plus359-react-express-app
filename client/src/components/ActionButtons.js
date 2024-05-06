@@ -98,7 +98,7 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResult
 
     const updateEntry = async (id) => {
         const response = await axios.put(
-            `https://plus359-react-express-app.vercel.app/artworks/updateOne/${id}`,
+            `https://plus359-react-express-lk1cf594n-milenski1989s-projects.vercel.app/artworks/updateOne/${id}`,
             updatedEntry
         );
 
@@ -125,7 +125,7 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResult
             data.append("old_image_key", art.id === updatedEntry.id && art.image_key)
             data.append("old_download_key", art.id === updatedEntry.id && art.download_key)
     
-            const res = await axios.post("https://plus359-react-express-app.vercel.app/s3/replace", data, {
+            const res = await axios.post("https://plus359-react-express-lk1cf594n-milenski1989s-projects.vercel.app/s3/replace", data, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
