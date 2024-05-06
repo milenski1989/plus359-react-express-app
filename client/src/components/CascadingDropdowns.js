@@ -25,7 +25,7 @@ function CascadingDropdowns({
 
     const getStorages = async () => {
         try {
-            const res = await fetch(`artworks-management-app.vercel.app/storage/allStorages`)
+            const res = await fetch(`https://storage-management-app.vercel.app/storage/allStorages`)
             const data = await res.json()
             setStorages(data);
         } catch (error) {
@@ -35,7 +35,7 @@ function CascadingDropdowns({
 
     const findAvailablePositions = async (selectedCell, location = null) => {
         const getArtsNumbers = async () => {
-            const res = await fetch(`artworks-management-app.vercel.app/storage/${selectedCell}/${location}`)
+            const res = await fetch(`https://storage-management-app.vercel.app/storage/${selectedCell}/${location}`)
             const data = await res.json()
             return data
         };
