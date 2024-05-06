@@ -26,7 +26,7 @@ const LocationChangeDialog = ({isLocationChangeDialogOpen, handleIsLocationChang
         }
         try {
             await axios.put(
-                `https://storage-management-app/storage/update-location`,
+                `https://storage-management-app.vercel.app/storage/update-location`,
                 {ids, formControlData}
             );
             setIsEditMode(false)

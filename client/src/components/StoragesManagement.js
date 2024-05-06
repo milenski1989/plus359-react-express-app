@@ -29,7 +29,7 @@ const StoragesManagement = () => {
 
     const getStoragesWithNoEntries = async () => {
         try {
-            const res = await fetch(`https://storage-management-app/storage/storagesWithNoEntries`)
+            const res = await fetch(`https://storage-management-app.vercel.app/storage/storagesWithNoEntries`)
             const data = await res.json()
             setStorages(data);
         } catch (error) {
@@ -39,7 +39,7 @@ const StoragesManagement = () => {
 
     const saveNewStorage = async (name) => {
         try {
-            await axios.post("https://storage-management-app/storage/saveOne", {name}, {
+            await axios.post("https://storage-management-app.vercel.app/storage/saveOne", {name}, {
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -52,7 +52,7 @@ const StoragesManagement = () => {
     const deleteStorage = async (name) => {
         setIsLoading(true)
         try {
-            await axios.delete(`https://storage-management-app/storage/deleteOne`, {params: {name}});
+            await axios.delete(`https://storage-management-app.vercel.app/storage/deleteOne`, {params: {name}});
         } catch (error) {
             throw new Error(error)
         } finally {

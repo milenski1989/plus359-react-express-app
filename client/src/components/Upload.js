@@ -42,7 +42,7 @@ const Upload = () => {
     const [isArtistFromDropdown, setIsArtistFromDropDown] = useState(false)
 
     const getArtists = async () => {
-        const res = await fetch(`https://storage-management-app/artists/relatedToEntries`)
+        const res = await fetch(`https://storage-management-app.vercel.app/artists/relatedToEntries`)
         const data = await res.json()
         setArtists(data)
     }
@@ -76,7 +76,7 @@ const Upload = () => {
             data.append("position", formControlData.position)
             data.append("by_user", user.userName)
     
-            await axios.post("https://storage-management-app/s3/upload", data, {
+            await axios.post("https://storage-management-app.vercel.app/s3/upload", data, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
