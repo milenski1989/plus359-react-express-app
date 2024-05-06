@@ -22,7 +22,7 @@ function AddNewUser() {
         }
 
         try {
-            await axios.post("https://features.ddq4m4fgykx7y.amplifyapp.com/auth/signup", data, {
+            await axios.post("https://plus359-react-express-app.vercel.app/auth/signup", data, {
                 headers: {
                     "Content-Type": "application/json",
                 }

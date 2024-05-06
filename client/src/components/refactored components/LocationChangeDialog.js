@@ -26,7 +26,7 @@ const LocationChangeDialog = ({isLocationChangeDialogOpen, handleIsLocationChang
         }
         try {
             await axios.put(
-                `https://features.ddq4m4fgykx7y.amplifyapp.com/storage/update-location`,
+                `https://plus359-react-express-app.vercel.app/storage/update-location`,
                 {ids, formControlData}
             );
             setIsEditMode(false)
