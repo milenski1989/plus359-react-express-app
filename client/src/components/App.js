@@ -49,7 +49,7 @@ const router = createBrowserRouter(
                 <Route path='/storages-management' element={<Suspense fallback=''><StoragesManagement/></Suspense>}></Route>
                 <Route path='/account' element={<Suspense fallback=''><Account/></Suspense>}></Route>
             </Route>
-            <Route path="/" element={<Navigate to="/" replace />} />
+            <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="/logout" element={<Navigate to="/login" replace />} />
             <Route path="*" element={<p className='flex justify-center mt-'>Page not found: 404!</p>} />
         </Route>
