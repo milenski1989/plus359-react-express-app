@@ -45,6 +45,7 @@ dotenv.config()
     const pdfController = new PdfController()
     const biosController = new BiosController()
     const artistsController = new ArtistsController()
+    app.get("/", (req, res) => res.send("Express on Vercel"));
 
     app.use('/auth', authController.router);
     app.use('/artworks', artworksController.router)
