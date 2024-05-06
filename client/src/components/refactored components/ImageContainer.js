@@ -1,6 +1,16 @@
 import { useEffect } from "react";
+import { useLongPress } from "use-long-press";
 
-const ImageContainer = ({ imageSrc }) => { 
+const ImageContainer = ({ imageSrc, setShowCheckbox = null }) => { 
+
+    const bind = useLongPress(() => {
+        if (!setShowCheckbox) return;
+        setShowCheckbox(prev => !prev);
+    }, {
+        onStart: (event) => {
+            event.preventDefault();
+        }
+    });
 
     useEffect(() => {
         const img = new Image();
@@ -20,6 +30,7 @@ const ImageContainer = ({ imageSrc }) => {
     return <>
         <img 
             src={imageSrc} 
+            {...bind()}
             alt="image" 
             style={{ 
                 objectFit: 'cover', 

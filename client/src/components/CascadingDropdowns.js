@@ -4,7 +4,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 
 import { ImageContext } from './contexts/ImageContext';
-import { locations, findAvailablePositions } from "./constants/constants";
+import { findAvailablePositions } from "./constants/constants";
 import { Box } from '@mui/material';
 
 function CascadingDropdowns({
@@ -12,16 +12,44 @@ function CascadingDropdowns({
     openInModal, 
 }) {
 
-    const {setUpdatedEntry, updatedEntry, isEditMode} = useContext(ImageContext)
+    const {setUpdatedEntry, updatedEntry, isEditMode, currentImages} = useContext(ImageContext)
 
     const [location, setLocation] = useState('--Location--')
     const [cells, setCells] = useState([])
     const [availablePositions, setAvailablePositions] = useState([])
+    const [storages, setStorages] = useState([])
+    
+    useEffect(() => {
+        getStorages()
+    },[])
+
+    const getStorages = async () => {
+        try {
+            const res = await fetch(`https://plus359-react-express-app.vercel.app/storage/allStorages`)
+            const data = await res.json()
+            setStorages(data);
+        } catch (error) {
+            throw new Error(error)
+        }
+    }
+
+    const findAvailablePositions = async (selectedCell, location = null) => {
+        const getArtsNumbers = async () => {
+            const res = await fetch(`https://plus359-react-express-app.vercel.app/storage/${selectedCell}/${location}`)
+            const data = await res.json()
+            return data
+        };
+        
+        const freePositions = await getArtsNumbers()
+        setAvailablePositions(freePositions)
+    }
 
     const changeLocation = (newValue) => {
         if (!newValue) return
         setLocation(newValue)
-        setCells(locations.find(location => location.name === newValue).cells)
+        const selectedStorage = storages.find(location => location.name === newValue);
+        const selectedCells = selectedStorage ? selectedStorage.cells.map(cell => cell.name) : [];
+        setCells(selectedCells);
 
         setFormControlData((prevState) => ({
             ...prevState,
@@ -36,8 +64,8 @@ function CascadingDropdowns({
 
     const changeCell = async (newValue) => {
         if (!newValue) return
-        const _availablePositions =  await findAvailablePositions(newValue, location).then(data => data)
-        setAvailablePositions(_availablePositions)
+
+        findAvailablePositions(newValue, location)
         setFormControlData((prevState) => ({
             ...prevState,
             cell: newValue,
@@ -78,7 +106,7 @@ function CascadingDropdowns({
         <Box>
             <Autocomplete
                 disablePortal
-                options={locations.map(location => location.name)}
+                options={storages.map(location => location.name)}
                 renderInput={(params) => <TextField {...params} label={isEditMode ? updatedEntry.storageLocation : 'Location'} />} 
                 onChange={(event, newValue) => changeLocation(newValue)}
                 onInputChange={(event, newInputValue) => {
@@ -93,23 +121,27 @@ function CascadingDropdowns({
             <Autocomplete
                 disablePortal
                 disabled={location === 'Sold'}
-                options={location !== 'Sold' ? cells.map(cell => cell.name) : []}
+                options={location !== 'Sold' ? cells : []}
                 renderInput={(params) =>
                     <TextField {...params} label={isEditMode ? `cell: ${updatedEntry.cell ? updatedEntry.cell : 'none'}` : 'Cell'} />} 
                 onChange={(event, newValue) => changeCell(newValue)}
                 fullWidth
                 sx={{marginBottom: '1rem'}}
             />
-            <Autocomplete
-                disablePortal
-                disabled={location === 'Sold'}
-                options={availablePositions}
-                renderInput={(params) =>
-                    <TextField {...params} label={isEditMode ? `position: ${updatedEntry.position}` : 'Position'} />} 
-                onChange={(event, newValue) => changePosition(newValue)}
-                fullWidth
-                sx={{marginBottom: '1rem'}}
-            />
+            {(openInModal && currentImages.length === 1) || !openInModal ? 
+                <Autocomplete
+                    disablePortal
+                    disabled={location === 'Sold'}
+                    options={availablePositions}
+                    renderInput={(params) =>
+                        <TextField {...params} label={isEditMode ? `position: ${updatedEntry.position}` : 'Position'} />} 
+                    onChange={(event, newValue) => changePosition(newValue)}
+                    fullWidth
+                    sx={{marginBottom: '1rem'}}
+                /> :
+                <></>
+            }
+         
         </Box>
     )
 }

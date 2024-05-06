@@ -14,8 +14,9 @@ import './ActionButtons.css'
 import Message from './Message';
 import CustomDialog from './CustomDialog';
 import { TextField } from '@mui/material';
+import LocationIcon from '../components/assets/move-solid.svg'
 
-const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResults, className = ''}) => {
+const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResults, className = '', setIsLocationChangeDialogOpen}) => {
 
     const {
         currentImages,
@@ -25,6 +26,9 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResult
         setIsEditMode,
         isEditMode,
     } = useContext(ImageContext);
+
+    const user = JSON.parse(localStorage.getItem('user'))
+
 
     const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
 
@@ -56,11 +60,11 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResult
             dimensions,
             price,
             notes,
-            storageLocation,
+            storage: { name: storageLocation },
             cell,
             position,
             image_url,
-            download_url
+            download_url,
         } = copyOfEntry;
         setUpdatedEntry({
             id: copyId,
@@ -94,7 +98,7 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResult
 
     const updateEntry = async (id) => {
         const response = await axios.put(
-            `http://localhost:5000/artworks/updateOne/${id}`,
+            `https://plus359-react-express-app.vercel.app/artworks/updateOne/${id}`,
             updatedEntry
         );
 
@@ -107,7 +111,6 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResult
         }
     };
 
-    
     const imageSelectHandler = (e) => {
         const file = e.target.files[0];
         setFile(file);
@@ -122,7 +125,7 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResult
             data.append("old_image_key", art.id === updatedEntry.id && art.image_key)
             data.append("old_download_key", art.id === updatedEntry.id && art.download_key)
     
-            const res = await axios.post("http://localhost:5000/s3/replace", data, {
+            const res = await axios.post("https://plus359-react-express-app.vercel.app/s3/replace", data, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -140,6 +143,9 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResult
         setUploadSuccessful(true);
     };
 
+    const prepareImagesForLocationChange = async() => {
+        setIsLocationChangeDialogOpen(true)
+    }
 
     return <>
         <Message
@@ -180,7 +186,7 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResult
         <div className={isSmallDevice && !className ? 'mobile-icons-container' : 'icons-container'}>
             
             <>
-                {!isEditMode || currentImages.length && currentImages[0].id !== art.id ?
+                {!isEditMode && currentImages.length === 1 && currentImages[0].id === art.id ?
                     <img 
                         src={DownloadIcon} 
                         className='icon'
@@ -191,11 +197,19 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResult
                 {isEditMode && currentImages.length && currentImages[0].id === art.id ?
                     <>
                         <CloseIcon className='icon' sx={{fontSize: "30px"}} onClick={cancelEditing}/>
-                        <SwapHorizIcon className='icon' sx={{fontSize: "32px"}} onClick={() => setImageReplaceDialogisOpen(true)}/>
+                        {user.superUser ? <SwapHorizIcon className='icon' sx={{fontSize: "32px"}} onClick={() => setImageReplaceDialogisOpen(true)}/> : <></>}
                         <img src={SaveIcon} className='icon' onClick={() => saveUpdatedEntry(art.id)}/>
                     </>
                     :
                     <></>}
+                {user.superUser && !isSmallDevice && isEditMode && currentImages.length && currentImages[0].id === art.id ?
+                    <>
+                        <img
+                            src={LocationIcon}
+                            style={{width: '32px'}}
+                            className='icon'
+                            onClick={prepareImagesForLocationChange} /></> : <></>  
+                }
                 {!isEditMode || currentImages.length && currentImages[0].id !== art.id ?
                     <img src={PdfIcon} className='icon'/>
                     :
@@ -213,7 +227,7 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResult
                     :
                     <></>
                 }
-                {!isEditMode || currentImages.length && currentImages[0].id !== art.id ? 
+                {user.superUser && !isEditMode || currentImages.length && currentImages[0].id !== art.id ? 
                     <img 
                         src={DeleteIcon}
                         className='icon'

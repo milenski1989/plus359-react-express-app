@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import  './Login.css'
 import Typography from '@mui/material/Typography';
 import Logo from '../components/assets/logo359 gallery-black.png'
+import axios from 'axios';
 
 function Copyright(props) {
     return (
@@ -38,33 +39,39 @@ const Login = () => {
 
 
     const handleLogin = async () => {
-        const response = await fetch("http://localhost:5000/auth/login", {
-            method: "POST",
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
+        try {
+            const response = await axios.post("https://plus359-react-express-app.vercel.app/auth/login", {
                 email: email,
                 password: password,
-            })
-        })
-        const data = await response.json()
-
-        if (response.status === 200) {
-            const {id, userName, email, superUser, createdAt} = data
-            myStorage.setItem('user', JSON.stringify({
-                id, 
-                userName, 
-                email, 
-                superUser, 
-                createdAt
-            }))
-            setLoading(false)
-            setLoginError({error: false, message: ''})
-            navigate('/')
-        } else {
-            setLoginError({error: true, message: data.error})
-            setLoading(false)
+            }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+    
+            const data = response.data;
+    
+            if (response.status === 200) {
+                const { id, userName, email, superUser, createdAt } = data;
+                myStorage.setItem('user', JSON.stringify({
+                    id,
+                    userName,
+                    email,
+                    superUser,
+                    createdAt
+                }));
+                setLoading(false);
+                setLoginError({ error: false, message: '' });
+                navigate('/');
+            } else {
+                setLoginError({ error: true, message: data.error });
+                setLoading(false);
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            // Handle error accordingly
         }
-    }
+    };
 
     const handleSubmit = (event) => {
         event.preventDefault()

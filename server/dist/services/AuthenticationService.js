@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const database_1 = require("../database");
 const User_1 = require("../entities/User");
+const typeorm_1 = require("typeorm");
 const userRepository = database_1.dbConnection.getRepository(User_1.User);
 class AuthenticationService {
     constructor() { }
@@ -23,6 +24,17 @@ class AuthenticationService {
             AuthenticationService.authenticationService = new AuthenticationService();
         }
         return AuthenticationService.authenticationService;
+    }
+    getAllUsers() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const users = yield userRepository.find();
+                return users;
+            }
+            catch (error) {
+                throw new Error('No users found!');
+            }
+        });
     }
     login(email, password) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -61,13 +73,13 @@ class AuthenticationService {
                             email: email,
                             password: hash,
                             userName: userName,
-                            superUser: 1
+                            superUser: 0
                         });
                         yield database_1.dbConnection.getRepository(User_1.User).save(user);
                     }));
                 }
                 else {
-                    throw new Error("exists");
+                    throw new Error("User with this email already exists!");
                 }
             }
             catch (_a) {
@@ -76,5 +88,28 @@ class AuthenticationService {
         });
     }
     ;
+    deleteUsers(emails) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const promises = [];
+            try {
+                const foundUsers = yield userRepository.find({ where: {
+                        email: (0, typeorm_1.In)(emails)
+                    } });
+                if (foundUsers.length) {
+                    for (let user of foundUsers) {
+                        promises.push(userRepository.delete({ email: user.email }));
+                    }
+                    const result = yield Promise.all(promises);
+                    return result;
+                }
+                else {
+                    throw new Error('User with this email was not found!');
+                }
+            }
+            catch (error) {
+                throw new Error(error);
+            }
+        });
+    }
 }
 exports.default = AuthenticationService;

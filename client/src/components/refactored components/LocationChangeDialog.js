@@ -9,6 +9,7 @@ const LocationChangeDialog = ({isLocationChangeDialogOpen, handleIsLocationChang
     const {
         currentImages,
         setCurrentImages,
+        setIsEditMode
     } = useContext(ImageContext);
 
 
@@ -25,9 +26,10 @@ const LocationChangeDialog = ({isLocationChangeDialogOpen, handleIsLocationChang
         }
         try {
             await axios.put(
-                `http://localhost:5000/storage/update-location`,
+                `https://plus359-react-express-app.vercel.app/storage/update-location`,
                 {ids, formControlData}
             );
+            setIsEditMode(false)
         } catch (error) {
             console.log(error)
         } finally {
