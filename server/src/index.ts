@@ -17,7 +17,7 @@ dotenv.config()
 
     const app = express()
     
-    app.use(express.static(path.join(__dirname, '/build')));
+    //app.use(express.static(path.join(__dirname, '/build')));
     
     app.use(cors({ origin: "https://storages-management-app-client.vercel.app" }))
     app.use(bodyParser.json())
@@ -48,9 +48,9 @@ dotenv.config()
     app.use('/bios', biosController.router)
     app.use('/artists', artistsController.router)
     
-    app.get('*', (req,res) =>{
-      res.sendFile(path.join(__dirname+'/build/index.html'));
-      });
+    // app.get('*', (req,res) =>{
+    //   res.sendFile(path.join(__dirname+'/build/index.html'));
+    //   });
     
     const PORT = process.env.PORT
     
