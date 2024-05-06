@@ -19,7 +19,7 @@ dotenv.config()
     
     //app.use(express.static(path.join(__dirname, '/build')));
     
-    app.use(cors({ origin: "https://artworks-management-app-client.vercel.app" }))
+    app.use(cors({ origin: "https://artworks-management-app.vercel.app/" }))
     app.use(bodyParser.json())
     app.use(bodyParser.urlencoded({ extended: false }))
     app.use(cookieParser())
@@ -54,7 +54,7 @@ dotenv.config()
     
     const PORT = process.env.PORT
     
-    app.listen(PORT, () => console.log(`Server is connected on ${PORT}`))
+    app.listen(PORT, () => console.log(`Server is connected on ${5000}`))
 
 
 
