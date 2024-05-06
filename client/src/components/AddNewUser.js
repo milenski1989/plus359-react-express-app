@@ -22,7 +22,7 @@ function AddNewUser() {
         }
 
         try {
-            await axios.post("https://app.plus359gallery.com/auth/signup", data, {
+            await axios.post("http://localhost:5000/auth/signup", data, {
                 headers: {
                     "Content-Type": "application/json",
                 }

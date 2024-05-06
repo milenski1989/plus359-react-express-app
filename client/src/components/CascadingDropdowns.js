@@ -25,7 +25,7 @@ function CascadingDropdowns({
 
     const getStorages = async () => {
         try {
-            const res = await fetch(`https://app.plus359gallery.com/storage/allStorages`)
+            const res = await fetch(`http://localhost:5000/storage/allStorages`)
             const data = await res.json()
             setStorages(data);
         } catch (error) {
@@ -35,7 +35,7 @@ function CascadingDropdowns({
 
     const findAvailablePositions = async (selectedCell, location = null) => {
         const getArtsNumbers = async () => {
-            const res = await fetch(`https://app.plus359gallery.com/storage/${selectedCell}/${location}`)
+            const res = await fetch(`http://localhost:5000/storage/${selectedCell}/${location}`)
             const data = await res.json()
             return data
         };

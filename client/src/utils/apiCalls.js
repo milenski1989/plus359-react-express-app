@@ -4,11 +4,11 @@ export const getPaginatedEntries = async (name, page, sortField, sortOrder) => {
     let res;
     if (!page && !sortField && !sortOrder) {
         res = await fetch(
-            `https://app.plus359gallery.com/artworks/filterByStorage/${name}`,
+            `http://localhost:5000/artworks/filterByStorage/${name}`,
         );
     } else {
         res = await fetch(
-            `https://app.plus359gallery.com/artworks/filterByStorage/${name.split(':')[1]}?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`,
+            `http://localhost:5000/artworks/filterByStorage/${name.split(':')[1]}?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`,
         );
     }
   
@@ -20,7 +20,7 @@ export const getPaginatedEntries = async (name, page, sortField, sortOrder) => {
 
 export const filterAllEntries = async(keywords, sortField, sortOrder, selectedArtist, selectedCell) => {
 
-    const res = await axios.get(`https://app.plus359gallery.com/artworks/filter?sortField=${sortField}&sortOrder=${sortOrder}`, {
+    const res = await axios.get(`http://localhost:5000/artworks/filter?sortField=${sortField}&sortOrder=${sortOrder}`, {
         params: {
             keywords: keywords,
             selectedArtist: selectedArtist,
