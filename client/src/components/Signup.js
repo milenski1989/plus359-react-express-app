@@ -21,7 +21,7 @@ const Signup = () => {
     const [signupSuccess, setSignupSuccess] = useState({success: false, message: ''})
 
     const handleSignup = async () => {
-        const res = await fetch("https://plus359-react-express-app.vercel.app/auth/signup", {
+        const res = await fetch("https://storage-management-app/auth/signup", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
