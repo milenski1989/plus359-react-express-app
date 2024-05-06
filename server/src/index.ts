@@ -25,7 +25,7 @@ dotenv.config()
     // "dev": "nodemon --exec ts-node-dev --respawn --transpile-only ./src/index.ts",
     // "postinstall": "npm run build",
     
-    app.use(cors())
+    app.use(cors({origin: "https://storage-management-app-client.vercel.app"}))
     app.use(bodyParser.json())
     app.use(bodyParser.urlencoded({ extended: false }))
     app.use(cookieParser())
