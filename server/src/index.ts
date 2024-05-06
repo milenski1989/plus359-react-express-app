@@ -19,7 +19,7 @@ dotenv.config()
     
     //app.use(express.static(path.join(__dirname, '/build')));
     
-    app.use(cors({ origin: "https://storages-management-app-client.vercel.app" }))
+    app.use(cors())
     app.use(bodyParser.json())
     app.use(bodyParser.urlencoded({ extended: false }))
     app.use(cookieParser())
