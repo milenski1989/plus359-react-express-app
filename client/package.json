@@ -1,6 +1,5 @@
 {
   "name": "plus359gallery-frontend-react",
-  "proxy": "https://plus359-react-express-lk1cf594n-milenski1989s-projects.vercel.app",
   "version": "0.1.0",
   "private": true,
   "homepage": "http://localhost:3000/",
