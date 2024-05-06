@@ -20,7 +20,7 @@ const DeleteDialog = ({isDialogOpen, handleDialogOpen, isDeleting, handleIsDelet
         try {
             const params = {originalFilename, filename, id}
             await axios.delete(
-                `https://plus359-react-express-lk1cf594n-milenski1989s-projects.vercel.app/artworks/deleteOne/${params}`,
+                `https://plus359-react-express-app.vercel.app/artworks/deleteOne/${params}`,
                 { params }
             );
         } catch(error) {

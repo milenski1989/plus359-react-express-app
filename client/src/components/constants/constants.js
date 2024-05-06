@@ -139,7 +139,7 @@ export const findAvailablePositions = async (selectedCell, location = null) => {
     let newArray;
     let dropdownOptions
     const getArtsNumbers = async () => {
-        const res = await fetch(`https://plus359-react-express-lk1cf594n-milenski1989s-projects.vercel.app/storage/${selectedCell}`)
+        const res = await fetch(`https://plus359-react-express-app.vercel.app/storage/${selectedCell}`)
         const data = await res.json()
         return data
     };

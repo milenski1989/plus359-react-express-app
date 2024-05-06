@@ -40,7 +40,7 @@ const Login = () => {
 
     const handleLogin = async () => {
         try {
-            const response = await axios.post("https://plus359-react-express-lk1cf594n-milenski1989s-projects.vercel.app/auth/login", {
+            const response = await axios.post("https://plus359-react-express-app.vercel.app/auth/login", {
                 email: email,
                 password: password,
             }, {
