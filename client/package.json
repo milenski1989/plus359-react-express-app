@@ -2,7 +2,7 @@
   "name": "plus359gallery-frontend-react",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://localhost:3000/",
+  "homepage": "artworks-management-app.vercel.app/",
   "dependencies": {
     "@babel/runtime": "^7.18.9",
     "@emotion/react": "^11.11.1",

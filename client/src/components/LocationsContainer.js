@@ -19,7 +19,7 @@ const LocationsContainer = () => {
 
     const getStorages = async () => {
         try {
-            const res = await fetch(`https://artworks-management-app.vercel.app/storage/allStorages`)
+            const res = await fetch(`artworks-management-app.vercel.app/storage/allStorages`)
             const data = await res.json()
             setStorages(data);
         } catch (error) {

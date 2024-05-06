@@ -22,7 +22,7 @@ function AddNewUser() {
         }
 
         try {
-            await axios.post("https://artworks-management-app.vercel.app/auth/signup", data, {
+            await axios.post("artworks-management-app.vercel.app/auth/signup", data, {
                 headers: {
                     "Content-Type": "application/json",
                 }

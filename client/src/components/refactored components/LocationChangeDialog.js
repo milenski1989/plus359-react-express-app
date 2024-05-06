@@ -26,7 +26,7 @@ const LocationChangeDialog = ({isLocationChangeDialogOpen, handleIsLocationChang
         }
         try {
             await axios.put(
-                `https://artworks-management-app.vercel.app/storage/update-location`,
+                `artworks-management-app.vercel.app/storage/update-location`,
                 {ids, formControlData}
             );
             setIsEditMode(false)

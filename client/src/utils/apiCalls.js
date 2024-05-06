@@ -4,11 +4,11 @@ export const getPaginatedEntries = async (name, page, sortField, sortOrder) => {
     let res;
     if (!page && !sortField && !sortOrder) {
         res = await fetch(
-            `https://artworks-management-app.vercel.app/artworks/filterByStorage/${name}`,
+            `artworks-management-app.vercel.app/artworks/filterByStorage/${name}`,
         );
     } else {
         res = await fetch(
-            `https://artworks-management-app.vercel.app/artworks/filterByStorage/${name.split(':')[1]}?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`,
+            `artworks-management-app.vercel.app/artworks/filterByStorage/${name.split(':')[1]}?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`,
         );
     }
   
@@ -20,7 +20,7 @@ export const getPaginatedEntries = async (name, page, sortField, sortOrder) => {
 
 export const filterAllEntries = async(keywords, sortField, sortOrder, selectedArtist, selectedCell) => {
 
-    const res = await axios.get(`https://artworks-management-app.vercel.app/artworks/filter?sortField=${sortField}&sortOrder=${sortOrder}`, {
+    const res = await axios.get(`artworks-management-app.vercel.app/artworks/filter?sortField=${sortField}&sortOrder=${sortOrder}`, {
         params: {
             keywords: keywords,
             selectedArtist: selectedArtist,
