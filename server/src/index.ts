@@ -19,7 +19,7 @@ dotenv.config()
     
     app.use(express.static(path.join(__dirname, '/build')));
     
-    app.use(cors({ origin: "https://plus359-react-express-lk1cf594n-milenski1989s-projects.vercel.app" }))
+    app.use(cors({ origin: "http://localhost:3000" }))
     app.use(bodyParser.json())
     app.use(bodyParser.urlencoded({ extended: false }))
     app.use(cookieParser())
