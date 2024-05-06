@@ -26,7 +26,7 @@ const LocationChangeDialog = ({isLocationChangeDialogOpen, handleIsLocationChang
         }
         try {
             await axios.put(
-                `http://localhost:5000/storage/update-location`,
+                `https://features.ddq4m4fgykx7y.amplifyapp.com/storage/update-location`,
                 {ids, formControlData}
             );
             setIsEditMode(false)

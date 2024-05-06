@@ -22,7 +22,7 @@ function AddNewUser() {
         }
 
         try {
-            await axios.post("http://localhost:5000/auth/signup", data, {
+            await axios.post("https://features.ddq4m4fgykx7y.amplifyapp.com/auth/signup", data, {
                 headers: {
                     "Content-Type": "application/json",
                 }

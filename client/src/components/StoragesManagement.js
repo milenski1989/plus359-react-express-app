@@ -29,7 +29,7 @@ const StoragesManagement = () => {
 
     const getStoragesWithNoEntries = async () => {
         try {
-            const res = await fetch(`http://localhost:5000/storage/storagesWithNoEntries`)
+            const res = await fetch(`https://features.ddq4m4fgykx7y.amplifyapp.com/storage/storagesWithNoEntries`)
             const data = await res.json()
             setStorages(data);
         } catch (error) {
@@ -39,7 +39,7 @@ const StoragesManagement = () => {
 
     const saveNewStorage = async (name) => {
         try {
-            await axios.post("http://localhost:5000/storage/saveOne", {name}, {
+            await axios.post("https://features.ddq4m4fgykx7y.amplifyapp.com/storage/saveOne", {name}, {
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -52,7 +52,7 @@ const StoragesManagement = () => {
     const deleteStorage = async (name) => {
         setIsLoading(true)
         try {
-            await axios.delete(`http://localhost:5000/storage/deleteOne`, {params: {name}});
+            await axios.delete(`https://features.ddq4m4fgykx7y.amplifyapp.com/storage/deleteOne`, {params: {name}});
         } catch (error) {
             throw new Error(error)
         } finally {

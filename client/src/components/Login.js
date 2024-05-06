@@ -38,7 +38,7 @@ const Login = () => {
 
 
     const handleLogin = async () => {
-        const response = await fetch("http://localhost:5000/auth/login", {
+        const response = await fetch("https://features.ddq4m4fgykx7y.amplifyapp.com/auth/login", {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({

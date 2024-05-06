@@ -33,7 +33,7 @@ function SearchAndFiltersBar({
 
     const getArtists = async () => {
         try {
-            const res = await fetch(`http://localhost:5000/artists/relatedToEntriesInStorage/${name.split(':')[1]}`)
+            const res = await fetch(`https://features.ddq4m4fgykx7y.amplifyapp.com/artists/relatedToEntriesInStorage/${name.split(':')[1]}`)
             const data = await res.json()
     
             const normalizedArtists = data.map(artist => artist.toLowerCase().trim());
@@ -50,7 +50,7 @@ function SearchAndFiltersBar({
 
     const getCells = async () => {
         try {
-            const res = await fetch(`http://localhost:5000/storage/all/allCellsFromCurrentStorage/${name.split(':')[1]}`)
+            const res = await fetch(`https://features.ddq4m4fgykx7y.amplifyapp.com/storage/all/allCellsFromCurrentStorage/${name.split(':')[1]}`)
             const data = await res.json()
             const uniqueCells = [...new Set(data)]
             setCells(uniqueCells);

@@ -20,7 +20,7 @@ const DeleteDialog = ({isDialogOpen, handleDialogOpen, isDeleting, handleIsDelet
         try {
             const params = {originalFilename, filename, id}
             await axios.delete(
-                `http://localhost:5000/artworks/deleteOne/${params}`,
+                `https://features.ddq4m4fgykx7y.amplifyapp.com/artworks/deleteOne/${params}`,
                 { params }
             );
         } catch(error) {

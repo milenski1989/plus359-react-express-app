@@ -19,7 +19,7 @@ const LocationsContainer = () => {
 
     const getStorages = async () => {
         try {
-            const res = await fetch(`http://localhost:5000/storage/allStorages`)
+            const res = await fetch(`https://features.ddq4m4fgykx7y.amplifyapp.com/storage/allStorages`)
             const data = await res.json()
             setStorages(data);
         } catch (error) {
