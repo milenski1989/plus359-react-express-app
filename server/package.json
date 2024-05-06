@@ -8,7 +8,10 @@
   },
   "main": "index.ts",
   "scripts": {
-    "start": "nodemon dist/index.js",
+    "start": "nodemon --exec ts-node-dev --respawn --transpile-only ./src/index.ts",
+    "build": "tsc",
+    "dev": "nodemon --exec ts-node-dev --respawn --transpile-only ./src/index.ts",
+    "postinstall": "npm run build",
     "typeorm": "typeorm-ts-node-esm",
     "migrate": "typeorm-ts-node-esm migration:run -d ./config/MigrationDataSource.ts",
     "seed": "typeorm-ts-node-esm migration:run -d ./config/SeedDataSource.ts",
