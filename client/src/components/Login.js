@@ -40,7 +40,7 @@ const Login = () => {
 
     const handleLogin = async () => {
         try {
-            const response = await axios.post("https://app.plus359gallery.com/auth/login", {
+            const response = await axios.post("http://localhost:5000/auth/login", {
                 email: email,
                 password: password,
             }, {

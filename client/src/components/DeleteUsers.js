@@ -65,7 +65,7 @@ function DeleteUsers() {
         const emails = users.map(user => user.email)
         setIsLoading(true);
         try {
-            await axios.delete(`https://app.plus359gallery.com/auth/deleteUsers`, {
+            await axios.delete(`http://localhost:5000/auth/deleteUsers`, {
                 params: { emails },
             });
             setIsDialogOpen(false);
@@ -79,7 +79,7 @@ function DeleteUsers() {
     const getUsers = async () => {
         setIsLoading(true);
         try {
-            const res = await fetch(`https://app.plus359gallery.com/auth/all`);
+            const res = await fetch(`http://localhost:5000/auth/all`);
             const data = await res.json();
 
             setUsers(data.data.filter((item) => item.id !== user.id));
