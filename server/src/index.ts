@@ -6,26 +6,20 @@ import cors from "cors"
 import bodyParser from "body-parser"
 import session from "express-session"
 import path from "path"
-import { AuthenticationController } from "../src/controllers/AuthenticationController"
-import { ArtworksController } from "../src/controllers/ArtworksController"
-import { S3Controller } from "../src/controllers/S3Controller"
-import { StorageController } from "../src/controllers/StorageController"
-import { PdfController } from "../src/controllers/PdfController"
-import { BiosController } from "../src/controllers/BiosController"
-import { ArtistsController } from "../src/controllers/ArtistsController"
+import { AuthenticationController } from "./controllers/AuthenticationController"
+import { ArtworksController } from "./controllers/ArtworksController"
+import { S3Controller } from "./controllers/S3Controller"
+import { StorageController } from "./controllers/StorageController"
+import { PdfController } from "./controllers/PdfController"
+import { BiosController } from "./controllers/BiosController"
+import { ArtistsController } from "./controllers/ArtistsController"
 dotenv.config()
 
     const app = express()
     
-    //app.use(express.static(path.join(__dirname, '/build')));
-
-    //package.json old:
-    // "start": "nodemon --exec ts-node-dev --respawn --transpile-only ./src/index.ts",
-    // "build": "tsc",
-    // "dev": "nodemon --exec ts-node-dev --respawn --transpile-only ./src/index.ts",
-    // "postinstall": "npm run build",
+    app.use(express.static(path.join(__dirname, '/build')));
     
-    app.use(cors({origin: "https://storage-management-app-client.vercel.app"}))
+    app.use(cors({origin: "http://localhost:3000"}))
     app.use(bodyParser.json())
     app.use(bodyParser.urlencoded({ extended: false }))
     app.use(cookieParser())
@@ -55,9 +49,9 @@ dotenv.config()
     app.use('/bios', biosController.router)
     app.use('/artists', artistsController.router)
     
-    // app.get('*', (req,res) =>{
-    //   res.sendFile(path.join(__dirname+'/build/index.html'));
-    //   });
+    app.get('*', (req,res) =>{
+      res.sendFile(path.join(__dirname+'/build/index.html'));
+      });
     
     const PORT = process.env.PORT
     
