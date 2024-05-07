@@ -22,7 +22,7 @@ function AddNewUser() {
         }
 
         try {
-            await axios.post("https://storage-management-app.vercel.app/auth/signup", data, {
+            await axios.post("https://app.plus359gallery.com/auth/signup", data, {
                 headers: {
                     "Content-Type": "application/json",
                 }

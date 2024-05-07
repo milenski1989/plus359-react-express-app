@@ -40,7 +40,7 @@ const Login = () => {
 
     const handleLogin = async () => {
         try {
-            const response = await axios.post("https://storage-management-app.vercel.app/auth/login", {
+            const response = await axios.post("https://app.plus359gallery.com/auth/login", {
                 email: email,
                 password: password,
             }, {

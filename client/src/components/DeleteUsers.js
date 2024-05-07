@@ -65,7 +65,7 @@ function DeleteUsers() {
         const emails = users.map(user => user.email)
         setIsLoading(true);
         try {
-            await axios.delete(`https://storage-management-app.vercel.app/auth/deleteUsers`, {
+            await axios.delete(`https://app.plus359gallery.com/auth/deleteUsers`, {
                 params: { emails },
             });
             setIsDialogOpen(false);
@@ -79,7 +79,7 @@ function DeleteUsers() {
     const getUsers = async () => {
         setIsLoading(true);
         try {
-            const res = await fetch(`https://storage-management-app.vercel.app/auth/all`);
+            const res = await fetch(`https://app.plus359gallery.com/auth/all`);
             const data = await res.json();
 
             setUsers(data.data.filter((item) => item.id !== user.id));
