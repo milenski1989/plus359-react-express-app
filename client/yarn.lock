@@ -11512,11 +11512,6 @@ uri-js@^4.2.2:
   dependencies:
     punycode "^2.1.0"
 
-use-long-press@^3.2.0:
-  version "3.2.0"
-  resolved "https://registry.npmjs.org/use-long-press/-/use-long-press-3.2.0.tgz"
-  integrity sha512-uq5o2qFR1VRjHn8Of7Fl344/AGvgk7C5Mcb4aSb1ZRVp6PkgdXJJLdRrlSTJQVkkQcDuqFbFc3mDX4COg7mRTA==
-
 use-sync-external-store@1.2.0:
   version "1.2.0"
   resolved "https://registry.npmjs.org/use-sync-external-store/-/use-sync-external-store-1.2.0.tgz"

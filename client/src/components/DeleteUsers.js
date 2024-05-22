@@ -5,7 +5,6 @@ import CustomDialog from "./CustomDialog";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import { useLongPress } from "use-long-press";
 import SelectAllIcon from '../components/assets/select-all.svg'
 import UnselectAllIcon from '../components/assets/unselect-all.svg'
 import './DeleteUsers.css'
@@ -17,16 +16,6 @@ function DeleteUsers() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [selectedUsers, setSelectedUsers] = useState([]);
-    const [showCheckbox, setShowCheckbox] = useState(false);
-
-    const bind = useLongPress(() => {
-        if (!setShowCheckbox) return;
-        setShowCheckbox(prev => !prev);
-    }, {
-        onStart: (event) => {
-            event.preventDefault();
-        }
-    });
 
     const user = JSON.parse(localStorage.getItem("user"));
 
@@ -88,7 +77,7 @@ function DeleteUsers() {
         <>
             {isLoading && <CircularProgress className="loader" color="primary" />}
             <div className="delete-users-buttons">
-                {users.length && showCheckbox ?
+                {users.length ?
                     <img onClick={handleSelectAll} src={selectedUsers.length ? UnselectAllIcon : SelectAllIcon} className='icon' /> :
                     <></>
                 }
@@ -134,7 +123,6 @@ function DeleteUsers() {
             >
                 {users.map((user) => (
                     <div
-                        {...bind()}
                         className={isSmallDevice ? "mobile-location-item" : "location-item"}
                         key={user.id}
                         style={{
@@ -146,26 +134,24 @@ function DeleteUsers() {
                         }}
                     >
                         <div style={{marginLeft: "1rem"}}>{user.email}</div>
-                        {showCheckbox && (
-                            <Checkbox
-                                onChange={() => checkBoxHandler(user.id)}
-                                checked={selectedUsers.some(
-                                    (selectedUser) => selectedUser.id === user.id
-                                )}
-                                sx={{
-                                    position: "absolute",
-                                    top: "50%",
-                                    left: "10%",
-                                    transform: "translate(-50%, -50%)",
+                        <Checkbox
+                            onChange={() => checkBoxHandler(user.id)}
+                            checked={selectedUsers.some(
+                                (selectedUser) => selectedUser.id === user.id
+                            )}
+                            sx={{
+                                position: "absolute",
+                                top: "50%",
+                                left: "10%",
+                                transform: "translate(-50%, -50%)",
+                                color: "white",
+                                "&.Mui-checked": {
                                     color: "white",
-                                    "&.Mui-checked": {
-                                        color: "white",
-                                    },
-                                }}
-                                icon={<RadioButtonUncheckedIcon />}
-                                checkedIcon={<CheckCircleOutlineIcon />}
-                            />
-                        )}
+                                },
+                            }}
+                            icon={<RadioButtonUncheckedIcon />}
+                            checkedIcon={<CheckCircleOutlineIcon />}
+                        />
                     </div>
                 ))}
             </Box>
