@@ -11,7 +11,6 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { Dialog, DialogContent } from "@mui/material";
 import './ListView.css'
 import { generateBackGroundColor } from "./utils/helpers";
-import { useLongPress } from "use-long-press";
 
 const properties = [
     { key: 'image_url', label: 'Image', align: 'center', isImage: true },
@@ -24,21 +23,12 @@ const properties = [
     { key: 'storageLocation', label: 'Storage Location', align: 'center' }
 ];
 
-const ListView = ({searchResults, handleDialogOpen, handleSearchResults, setIsLocationChangeDialogOpen, showCheckbox, setShowCheckbox}) => {
+const ListView = ({searchResults, handleDialogOpen, handleSearchResults, setIsLocationChangeDialogOpen}) => {
     const {isEditMode, updatedEntry, setUpdatedEntry, currentImages, setCurrentImages} = useContext(ImageContext)
     const [imagePreview, setImagePreview] = useState(false)
     const [isMoreInfoOpen, setIsMoreInfoOpen] = useState(false)
     const [selectedArt, setSelectedArt] = useState(null);
     const [selectedProp, setSelectedProp] = useState(null)
-
-    const bind = useLongPress(() => {
-        if (!setShowCheckbox) return;
-        setShowCheckbox(prev => !prev);
-    }, {
-        onStart: (event) => {
-            event.preventDefault();
-        }
-    });
 
     const checkBoxHandler = (id) => {
         if (currentImages.some(image => image.id === id)) {
@@ -81,7 +71,7 @@ const ListView = ({searchResults, handleDialogOpen, handleSearchResults, setIsLo
                 const labelId = `checkbox-list-secondary-label-${ind}`;
                 return (
                     <div key={art.id} className="list-item-container">
-                        {<div {...bind()} className={art.position ? "mobile-position-container" : "mobile-position-container black-text"} style={art.position ? 
+                        {<div className={art.position ? "mobile-position-container" : "mobile-position-container black-text"} style={art.position ? 
                             {backgroundColor: generateBackGroundColor(art.cell)} :
                             {backgroundColor: '#5A5A5A'}
                         }>
@@ -113,25 +103,22 @@ const ListView = ({searchResults, handleDialogOpen, handleSearchResults, setIsLo
                                                     }} 
                                                     src={art[prop.key]} 
                                                     alt={art[prop.key]} />
-                                                {showCheckbox &&
-                                                     <Checkbox
-                                                         onChange={() => checkBoxHandler(art.id)}
-                                                         checked={currentImages.some(image => image.id === art.id)}
-                                                         sx={{
-                                                             position: "absolute",
-                                                             top: "50%",
-                                                             left: "50%",
-                                                             transform: "translate(-50%, -50%)",
-                                                             color: 'white',
-                                                             "&.Mui-checked": {
-                                                                 color: "white",
-                                                             },
-                                                         }}
-                                                         icon={<RadioButtonUncheckedIcon />}
-                                                         checkedIcon={<CheckCircleOutlineIcon />}
-                                                     />
-                                                }
-                                     
+                                                <Checkbox
+                                                    onChange={() => checkBoxHandler(art.id)}
+                                                    checked={currentImages.some(image => image.id === art.id)}
+                                                    sx={{
+                                                        position: "absolute",
+                                                        top: "50%",
+                                                        left: "50%",
+                                                        transform: "translate(-50%, -50%)",
+                                                        color: 'white',
+                                                        "&.Mui-checked": {
+                                                            color: "white",
+                                                        },
+                                                    }}
+                                                    icon={<RadioButtonUncheckedIcon />}
+                                                    checkedIcon={<CheckCircleOutlineIcon />}
+                                                />
                                             </div>
                                         ) : (
                                             <ListItemText

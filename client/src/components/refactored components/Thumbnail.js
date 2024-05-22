@@ -7,7 +7,7 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ImageContainer from '../refactored components/ImageContainer';
 
 
-const Thumbnail = ({searchResults, showCheckbox, setShowCheckbox}) => {
+const Thumbnail = ({searchResults}) => {
 
     const {
         currentImages,
@@ -26,24 +26,22 @@ const Thumbnail = ({searchResults, showCheckbox, setShowCheckbox}) => {
         {searchResults && searchResults.map((art, id) => (
             <div
                 key={id}>
-                {showCheckbox &&
-                       <Checkbox
-                           onChange={() => checkBoxHandler(art.id)}
-                           checked={currentImages.some(image => image.id === art.id)}
-                           sx={{
-                               position: "absolute",
-                               zIndex: '888',
-                               color: "white",
-                               "&.Mui-checked": {
-                                   color: "white",
-                               },
-                           }}
-                           icon={<RadioButtonUncheckedIcon />}
-                           checkedIcon={<CheckCircleOutlineIcon />}
-                       />
-                }
+                <Checkbox
+                    onChange={() => checkBoxHandler(art.id)}
+                    checked={currentImages.some(image => image.id === art.id)}
+                    sx={{
+                        position: "absolute",
+                        zIndex: '888',
+                        color: "white",
+                        "&.Mui-checked": {
+                            color: "white",
+                        },
+                    }}
+                    icon={<RadioButtonUncheckedIcon />}
+                    checkedIcon={<CheckCircleOutlineIcon />}
+                />
                 <div style={{cursor: 'pointer'}}>
-                    <ImageContainer setShowCheckbox={setShowCheckbox} imageSrc={art.image_url}/>
+                    <ImageContainer imageSrc={art.image_url}/>
                 </div>
             </div>
         ))}

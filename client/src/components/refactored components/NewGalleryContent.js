@@ -50,7 +50,6 @@ const NewGalleryContent = () => {
     const [totalCount, setTotalCount] = useState(0);
     const [pagesCount, setPagesCount] = useState(0);
     const [page, setPage] = useState(1);
-    const [showCheckbox, setShowCheckbox] = useState(false)
 
     const [error, setError] = useState({
         error: false,
@@ -93,8 +92,6 @@ const NewGalleryContent = () => {
         if (viewMode === 'thumbnail') {
             return  <ThumbnailView
                 searchResults={searchResults}
-                showCheckbox={showCheckbox}
-                setShowCheckbox={setShowCheckbox}
             />  
         } else if (viewMode === 'details') {
             return <DetailsView
@@ -103,7 +100,6 @@ const NewGalleryContent = () => {
                 handleSearchResults={setSearchResults}
                 imageLoaded={imageLoaded}
                 setIsLocationChangeDialogOpen={setIsLocationChangeDialogOpen}
-                showCheckbox={showCheckbox}
             />
           
         } else if (viewMode === 'list' && isSmallDevice) {
@@ -113,8 +109,6 @@ const NewGalleryContent = () => {
                 handleDialogOpen={setIsDeleteDialogOpen}
                 handleSearchResults={setSearchResults}
                 setIsLocationChangeDialogOpen={setIsLocationChangeDialogOpen}
-                showCheckbox={showCheckbox}
-                setShowCheckbox={setShowCheckbox}
             /> 
         } else {
             return <ListView
@@ -123,8 +117,6 @@ const NewGalleryContent = () => {
                 handleDialogOpen={setIsDeleteDialogOpen}
                 handleSearchResults={setSearchResults}
                 setIsLocationChangeDialogOpen={setIsLocationChangeDialogOpen}
-                showCheckbox={showCheckbox}
-                setShowCheckbox={setShowCheckbox}
             /> 
         }
     }
@@ -192,7 +184,7 @@ const NewGalleryContent = () => {
                     'search-filters-buttons-container'}>
                     {!isSmallDevice && 
                              <div className="select-pdf-location-buttons-container">
-                                 {searchResults.length && showCheckbox || searchResults.length && viewMode === 'details' ?
+                                 {searchResults.length || searchResults.length && viewMode === 'details' ?
                                      <img onClick={handleSelectAll} src={currentImages.length ? UnselectAllIcon : SelectAllIcon} className='icon' /> :
                                      <></>
                                  }
