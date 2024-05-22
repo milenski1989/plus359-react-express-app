@@ -10,7 +10,7 @@ import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { Dialog, DialogContent } from "@mui/material";
 import './ListView.css'
-import { generateBackGroundColor } from "./constants/constants";
+import { generateBackGroundColor } from "./utils/helpers";
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import EditableContainer from "./EditableContainer";
 import { useLongPress } from 'use-long-press';

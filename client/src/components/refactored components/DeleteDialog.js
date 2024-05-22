@@ -2,8 +2,8 @@ import React, { useContext, useState } from 'react'
 import CustomDialog from '../CustomDialog';
 import { ImageContext } from '../contexts/ImageContext';
 import { CircularProgress } from '@mui/material';
-import axios from 'axios';
 import Message from '../Message';
+import { deleteOneArtwork } from '../../api/artworksService';
 
 const DeleteDialog = ({isDialogOpen, handleDialogOpen, isDeleting, handleIsDeleting}) => {
 
@@ -15,23 +15,20 @@ const DeleteDialog = ({isDialogOpen, handleDialogOpen, isDeleting, handleIsDelet
 
     const [isDeleteSuccessful, setIsDeleteSuccessful] = useState(false);
 
-    const deleteOne = async (originalFilename, filename, id) => {
+    const handleDeleteOneArtwork = async (originalFilename, filename, id) => {
         handleIsDeleting(true);
         try {
             const params = {originalFilename, filename, id}
-            await axios.delete(
-                `http://localhost:5000/artworks/deleteOne/${params}`,
-                { params }
-            );
+            await deleteOneArtwork(params)
+            handleIsDeleting(false)
         } catch(error) {
             console.log(error)
-        } finally {
             handleIsDeleting(false)
         }
     };
 
     const handleDeleteOne = async (originalName, filename, id) => {
-        deleteOne(originalName, filename, id)
+        handleDeleteOneArtwork(originalName, filename, id)
         handleDialogOpen(false)
         setIsDeleteSuccessful(true);
         setCurrentImages(prev => prev.filter(image => !currentImages.some(img => img.id === image.id)));
@@ -41,7 +38,7 @@ const DeleteDialog = ({isDialogOpen, handleDialogOpen, isDeleting, handleIsDelet
 
         try {
             const deletePromises = currentImages.map(image =>
-                deleteOne(image.download_key, image.image_key, image.id)
+                handleDeleteOneArtwork(image.download_key, image.image_key, image.id)
             );
 
             await Promise.allSettled(deletePromises);

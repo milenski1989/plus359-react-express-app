@@ -16,19 +16,46 @@ import { ArtistsController } from "./controllers/ArtistsController"
 dotenv.config()
 
     const app = express()
-    
+   
     app.use(express.static(path.join(__dirname, '/build')));
-    
-    app.use(cors({origin: "http://localhost:3000"}))
+    const origin = process.env.NODE_ENV === 'production' ? "https://app.plus359gallery.com" : "http://localhost:3000"
+    const domain = process.env.NODE_ENV === 'production' ? 'app.plus359gallery.com' : 'localhost'
+
+    app.use((req, res, next) => {
+      res.setHeader("Access-Control-Allow-Origin", origin);
+      res.setHeader("Access-Control-Allow-Credentials", "true");
+      res.setHeader("X-Content-Type-Options", "nosniff");
+      res.setHeader("X-Frame-Options", "DENY");
+      res.setHeader("Content-Security-Policy", `object-src 'none'; script-src 'self'; base-uri 'self'`);
+      res.setHeader("Referrer-Policy", "no-referrer")
+      if (req.secure) {
+        res.setHeader("Strict-Transport-Security", "max-age=15778463; includeSubDomains");
+      }
+      next();
+    });
+
+    const sessionSecret = process.env.EXPRESS_SESSION_SECRET
+    if (!sessionSecret) {
+    throw new Error("EXPRESS_SESSION_SECRET is not defined")
+    }
+
+    app.use(cors({origin: origin, credentials: true}))
     app.use(bodyParser.json())
     app.use(bodyParser.urlencoded({ extended: false }))
     app.use(cookieParser())
     
     app.use(
       session({
-        secret: "secret",
-        resave: true,
-        saveUninitialized: true,
+        secret: sessionSecret,
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+          secure: true,
+          httpOnly: true,
+          domain: domain,
+          path: '/',
+          maxAge: 24 * 60 * 60 * 1000
+        }
       })
     )
 
@@ -39,7 +66,6 @@ dotenv.config()
     const pdfController = new PdfController()
     const biosController = new BiosController()
     const artistsController = new ArtistsController()
-    app.get("/", (req, res) => res.send("Express on Vercel"));
 
     app.use('/auth', authController.router);
     app.use('/artworks', artworksController.router)

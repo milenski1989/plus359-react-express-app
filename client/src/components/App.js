@@ -8,7 +8,6 @@ const PdfMaker = lazy(() => import('./PdfMaker'))
 const AdminPanel = lazy(() => import('./AdminPanel'))
 const StoragesManagement = lazy(() => import('./StoragesManagement'))
 const Account = lazy(() => import('./Account'))
-const Signup = lazy(() => import('./Signup'))
 import ProtectedRoute from './ProtectedRoute'
 import { ImageProvider } from './contexts/ImageContext'
 import { ThemeProvider, createTheme } from '@mui/material'
@@ -39,7 +38,6 @@ const router = createBrowserRouter(
     createRoutesFromElements(
         <Route>
             <Route exact path="/login" element={<Suspense fallback=''><Login/></Suspense>} />
-            <Route exact path="/signup" element={<Suspense fallback=''><Signup/></Suspense>} />
             <Route element={<ProtectedRoute/>}>
                 <Route path="/" element={<Suspense fallback=''><Home/></Suspense>}></Route>
                 <Route path="/upload" element={<Suspense fallback=''><Upload/></Suspense>}></Route>

@@ -4,8 +4,8 @@ import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 
 import { ImageContext } from './contexts/ImageContext';
-import { findAvailablePositions } from "./constants/constants";
 import { Box } from '@mui/material';
+import { getAllStorages, getAvailablePositions } from '../api/storageService';
 
 function CascadingDropdowns({
     setFormControlData, 
@@ -25,22 +25,18 @@ function CascadingDropdowns({
 
     const getStorages = async () => {
         try {
-            const res = await fetch(`http://localhost:5000/storage/allStorages`)
-            const data = await res.json()
-            setStorages(data);
+            const response = await getAllStorages()
+            setStorages(response.data);
         } catch (error) {
             throw new Error(error)
         }
     }
 
     const findAvailablePositions = async (selectedCell, location = null) => {
-        const getArtsNumbers = async () => {
-            const res = await fetch(`http://localhost:5000/storage/${selectedCell}/${location}`)
-            const data = await res.json()
-            return data
-        };
-        
-        const freePositions = await getArtsNumbers()
+       
+        const response = await getAvailablePositions(selectedCell, location)
+
+        const freePositions = response.data
         setAvailablePositions(freePositions)
     }
 

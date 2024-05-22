@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import Message from './Message'
 import { Box, Button, CircularProgress, TextField } from '@mui/material';
-import axios from 'axios';
+import { signupUser } from '../api/authService';
 
 function AddNewUser() {
 
@@ -12,36 +12,34 @@ function AddNewUser() {
     const [loading, setLoading] = useState(false)
     const [signupError, setSignupError] = useState({error: false, message: ''})
 
-    const handleSignup = async () => {
-        setLoading(true)
-
+    const handleSignupUser = async () => {
+        setLoading(true);
+    
         const data = {
             email,
             password,
             userName
-        }
+        };
 
         try {
-            await axios.post("http://localhost:5000/auth/signup", data, {
-                headers: {
-                    "Content-Type": "application/json",
-                }
-            })
-          
+            await signupUser(data);
+            setLoading(false);
+            setEmail("");
+            setUserName("");
+            setPassword("");
+            setConfirmedPassword(false);
         } catch (error) {
-            setSignupError({error: true, message: error.response.data.message})
+            setLoading(false);
+            console.log(error)
+            setSignupError({ error: true, message: error.response.data.message });
         }
-        setLoading(false)
-        setEmail("")
-        setUserName("")
-        setPassword("")
-        setConfirmedPassword(false)
-    }
+    };
+    
 
     const handleSubmit = (event) => {
         event.preventDefault()
         setLoading(true)
-        handleSignup()
+        handleSignupUser()
     }
 
     const checkPasswordMatch = (e) => {

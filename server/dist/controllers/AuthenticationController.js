@@ -43,7 +43,7 @@ class AuthenticationController {
         this.getAllUsers = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const users = yield AuthenticationService_1.default.getInstance().getAllUsers();
-                res.status(200).send({ data: users });
+                res.status(200).send({ users: users });
             }
             catch (error) {
                 res.status(400).send({ message: 'No users found!' });
@@ -56,8 +56,9 @@ class AuthenticationController {
                 req.session.loggedin = true;
                 if (!userFound)
                     res.status(400).send({ error: "Invalid Username or Password" });
-                else
-                    res.status(200).send(userFound);
+                else {
+                    res.status(200).send({ user: userFound });
+                }
             }
             catch (_a) {
                 throw new Error("Error");

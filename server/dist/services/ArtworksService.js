@@ -133,18 +133,29 @@ class ArtworksService {
             }
         });
     }
-    saveEntryInDb(title, artist, technique, dimensions, price, notes, storageLocation, cell, position, image_url, image_key, download_url, download_key, by_user) {
+    saveEntryInDb(title, artist, technique, dimensions, price, notes, storageLocation, cellParam, positionParam, image_url, image_key, download_url, download_key, by_user) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                let foundCellId;
+                let foundPositionId;
                 const foundStorage = yield storagesRepository.findOne({
                     where: { name: storageLocation }
                 });
-                const foundCell = yield cellsRepository.findOne({
-                    where: { name: cell }
-                });
-                const foundPosition = yield positionsRepository.findOne({
-                    where: { cell_id: foundCell.id, cell: { storage_id: foundStorage.id } }
-                });
+                if (cellParam) {
+                    const foundCell = yield cellsRepository.findOne({
+                        where: { name: cellParam }
+                    });
+                    foundCellId = foundCell ? foundCell.id : null;
+                }
+                if (positionParam) {
+                    const foundCell = yield cellsRepository.findOne({
+                        where: { name: cellParam }
+                    });
+                    const foundPosition = yield positionsRepository.findOne({
+                        where: { cell_id: foundCell.id, cell: { storage_id: foundStorage.id } }
+                    });
+                    foundPositionId = foundPosition ? foundPosition.id : null;
+                }
                 const newArtwork = artsRepository.create({
                     title,
                     artist,
@@ -153,16 +164,16 @@ class ArtworksService {
                     price,
                     notes,
                     storageLocation,
-                    cell,
-                    position,
+                    cell: cellParam || null,
+                    position: positionParam || null,
                     image_url,
                     image_key,
                     download_url,
                     download_key,
                     by_user,
                     storage_id: foundStorage.id,
-                    cell_id: foundCell.id,
-                    position_id: foundPosition.id
+                    cell_id: foundCellId,
+                    position_id: foundPositionId
                 });
                 const savedArtwork = yield artsRepository.save(newArtwork);
                 return savedArtwork;

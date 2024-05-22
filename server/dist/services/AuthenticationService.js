@@ -59,31 +59,26 @@ class AuthenticationService {
     ;
     signup(email, password, userName) {
         return __awaiter(this, void 0, void 0, function* () {
-            let user;
-            let userFound = yield userRepository.findOneBy({
-                email: email
-            });
             try {
+                const userFound = yield userRepository.findOneBy({ email: email });
                 if (!userFound) {
                     const saltRounds = 10;
-                    bcrypt_1.default.hash(password, saltRounds, (err, hash) => __awaiter(this, void 0, void 0, function* () {
-                        if (err)
-                            throw new Error("Signup failed!");
-                        user = userRepository.create({
-                            email: email,
-                            password: hash,
-                            userName: userName,
-                            superUser: 0
-                        });
-                        yield database_1.dbConnection.getRepository(User_1.User).save(user);
-                    }));
+                    const hash = yield bcrypt_1.default.hash(password, saltRounds);
+                    const user = userRepository.create({
+                        email: email,
+                        password: hash,
+                        userName: userName,
+                        superUser: 0
+                    });
+                    yield database_1.dbConnection.getRepository(User_1.User).save(user);
+                    return { success: true, message: "You've signed up successfully!" };
                 }
                 else {
                     throw new Error("User with this email already exists!");
                 }
             }
-            catch (_a) {
-                throw new Error("Error occured while registering!");
+            catch (error) {
+                throw error;
             }
         });
     }

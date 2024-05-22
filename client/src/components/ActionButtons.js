@@ -1,7 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { ImageContext } from './contexts/ImageContext';
 import { saveAs } from "file-saver";
-import axios from "axios";
 import PdfIcon from '../components/assets/pdf-solid-small.svg'
 import DownloadIcon from '../components/assets/download-solid.svg'
 import EditIcon from '../components/assets/edit-solid.svg'
@@ -15,6 +14,8 @@ import Message from './Message';
 import CustomDialog from './CustomDialog';
 import { TextField } from '@mui/material';
 import LocationIcon from '../components/assets/move-solid.svg'
+import { updateOneArtwork } from '../api/artworksService';
+import { replaceImage } from '../api/s3Service';
 
 const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResults, className = '', setIsLocationChangeDialogOpen}) => {
 
@@ -88,7 +89,7 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResult
     };
 
     const saveUpdatedEntry = (id) => {
-        updateEntry(id);
+        handleUpdateEntry(id);
         const updatedResults = searchResults.map((entry) =>
             entry.id === id ? updatedEntry : entry
         );
@@ -96,16 +97,13 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResult
         setCurrentImages([])
     };
 
-    const updateEntry = async (id) => {
-        const response = await axios.put(
-            `http://localhost:5000/artworks/updateOne/${id}`,
-            updatedEntry
-        );
-
-        if (response.status === 200) {
+    const handleUpdateEntry = async (id) => {
+        try {
+            await updateOneArtwork(updatedEntry, id)
             setIsEditMode(false);
             setUpdatedEntry({});
-        } else {
+        } catch (error) {
+            console.log(error)
             setIsEditMode(false);
             setUpdatedEntry({});
         }
@@ -116,31 +114,24 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResult
         setFile(file);
     }
 
-    const handleSubmit = async () => {
+    const handleReplaceImage = async () => {
+        setUploading(true);
+        const data = new FormData();
+        data.append("file", file);
+        data.append("id", updatedEntry.id)
+        data.append("old_image_key", art.id === updatedEntry.id && art.image_key)
+        data.append("old_download_key", art.id === updatedEntry.id && art.download_key)
+
         try {
-            setUploading(true);
-            const data = new FormData();
-            data.append("file", file);
-            data.append("id", updatedEntry.id)
-            data.append("old_image_key", art.id === updatedEntry.id && art.image_key)
-            data.append("old_download_key", art.id === updatedEntry.id && art.download_key)
-    
-            const res = await axios.post("http://localhost:5000/s3/replace", data, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            });
-
-            if (res.status === 200) {
-                setImageReplaceDialogisOpen(false)
-            }
-
-        } catch (error) {
+            await replaceImage(data)
+            setImageReplaceDialogisOpen(false)
+            setUploading(false);
+            setUploadSuccessful(true);
+        } catch(error) {
             console.log(error)
+            setUploading(false);
+            setUploadSuccessful(false);
         }
-
-        setUploading(false);
-        setUploadSuccessful(true);
     };
 
     const prepareImagesForLocationChange = async() => {
@@ -162,7 +153,7 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResult
                     openModal={imageReplaceDialogisOpen}
                     setOpenModal={() => setImageReplaceDialogisOpen(false)}
                     title="Once you replace the image, the old one is deleted!"
-                    handleClickYes={handleSubmit}
+                    handleClickYes={handleReplaceImage}
                     handleClickNo={() => setImageReplaceDialogisOpen(false)}
                     confirmButtonText="Replace"
                     cancelButtonText="Cancel"

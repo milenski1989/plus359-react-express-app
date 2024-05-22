@@ -3,12 +3,12 @@ import './LocationsContainer.css'
 import { Box, CircularProgress, TextField } from '@mui/material';
 import { useMediaQuery } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
-import axios from 'axios';
 import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '../components/assets/save-solid.svg'
 import Message from './Message';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import CustomDialog from './CustomDialog';
+import { deleteOneStorage, getStoragesWithNoEntries, saveOneStorage } from '../api/storageService';
 
 
 const StoragesManagement = () => {
@@ -24,14 +24,13 @@ const StoragesManagement = () => {
     const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
 
     useEffect(() => {
-        getStoragesWithNoEntries()
+        getEmptyStorages()
     },[])
 
-    const getStoragesWithNoEntries = async () => {
+    const getEmptyStorages = async () => {
         try {
-            const res = await fetch(`http://localhost:5000/storage/storagesWithNoEntries`)
-            const data = await res.json()
-            setStorages(data);
+            const response = await getStoragesWithNoEntries()
+            setStorages(response.data);
         } catch (error) {
             throw new Error(error)
         }
@@ -39,26 +38,22 @@ const StoragesManagement = () => {
 
     const saveNewStorage = async (name) => {
         try {
-            await axios.post("http://localhost:5000/storage/saveOne", {name}, {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
+            await saveOneStorage(name)
+
         } catch (error) {
-            setError({ error: true, message: error.response.data })
+            setError({ error: true, message: error.response.data.message })
         }
     }
 
     const deleteStorage = async (name) => {
         setIsLoading(true)
         try {
-            await axios.delete(`http://localhost:5000/storage/deleteOne`, {params: {name}});
+            await deleteOneStorage(name)
         } catch (error) {
             throw new Error(error)
         } finally {
             setIsLoading(false)
         }
-        
     }
 
     const handleClickAddNewStorage = () => {
@@ -73,7 +68,7 @@ const StoragesManagement = () => {
         if (!newStorageName) return
         await saveNewStorage(newStorageName)
         setShowInput(false)
-        getStoragesWithNoEntries()
+        getEmptyStorages()
     }
 
     const handleCancel = () => {
@@ -100,9 +95,8 @@ const StoragesManagement = () => {
                     title="Are you sure you want to delete this empty storage and all related cells and positions ?"
                     handleClickYes={async () => {
                         await deleteStorage(selectedStorage)
-                        getStoragesWithNoEntries()
+                        getEmptyStorages()
                         setIsDialogOpen(false)
-                        
                     }}
                     handleClickNo={() => {setSelectedStorage(); setIsDialogOpen(false)}} 
                     confirmButtonText="Yes"

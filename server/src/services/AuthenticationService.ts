@@ -50,36 +50,32 @@ export default class AuthenticationService {
         
       };
 
-      async signup(email: string, password: string, userName: string){
-        let user: object
-        let userFound = await userRepository.findOneBy({
-          email: email
-        })
-      
+      async signup(email: string, password: string, userName: string) {
         try {
-           if (!userFound) {
-            const saltRounds = 10
-            bcrypt.hash(password, saltRounds, async (err, hash) => {
-              if (err) throw new Error("Signup failed!");
-              
-              user = userRepository.create({
-                email: email,
-                password: hash,
-                userName: userName,
-                superUser: 0
-              })
-              await dbConnection.getRepository(User).save(user)
-             
-            })
-           } else {
-            throw new Error("User with this email already exists!");
-            
-           }
-        } catch {
-          throw new Error("Error occured while registering!");
+            const userFound = await userRepository.findOneBy({ email: email });
+    
+            if (!userFound) {
+                const saltRounds = 10;
+                const hash = await bcrypt.hash(password, saltRounds);
+    
+                const user = userRepository.create({
+                    email: email,
+                    password: hash,
+                    userName: userName,
+                    superUser: 0
+                });
+    
+                await dbConnection.getRepository(User).save(user);
+    
+                return { success: true, message: "You've signed up successfully!" };
+            } else {
+                throw new Error("User with this email already exists!");
+            }
+        } catch (error) {
+            throw error;
         }
-      
-      };
+    };
+    
 
       async deleteUsers(emails: string[]) {
         const promises = []

@@ -21,7 +21,7 @@ this.initializeRoutes()
     getAllUsers = async (req, res) => {
       try {
         const users = await AuthenticationService.getInstance().getAllUsers()
-        res.status(200).send({data: users})
+        res.status(200).send({users: users})
       } catch (error) {
         res.status(400).send({message: 'No users found!'})
       }
@@ -36,7 +36,9 @@ this.initializeRoutes()
       
         if (!userFound) res.status(400).send({error: "Invalid Username or Password"})
        
-        else res.status(200).send(userFound);
+        else {
+          res.status(200).send({user: userFound});
+        } 
       } catch  {
       throw new Error("Error");
       }

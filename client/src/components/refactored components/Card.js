@@ -4,7 +4,7 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import EditableContainer from "../EditableContainer";
 import ActionButtons from "../ActionButtons";
 import '../DetailsView.css'
-import { generateBackGroundColor } from "../constants/constants";
+import { generateBackGroundColor } from "../utils/helpers";
 import ImageContainer from "./ImageContainer";
 import { useContext } from "react";
 import { ImageContext } from "../contexts/ImageContext";

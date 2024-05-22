@@ -79,12 +79,15 @@ this.initializeRoutes()
     
             image_url = req.file.transforms[0].location;
             image_key = req.file.transforms[0].key;
-           
+
             // let originalString = req.file.transforms[1].location;
             // let removedString = originalString.replace(/plus359gallery\//, "");
             // download_url = "https://plus359gallery." + removedString;
             download_url = req.file.transforms[1].location;
             download_key = req.file.transforms[1].key;
+
+            const cellParam = cell ? cell : null;
+            const positionParam = position ? position : null;
         
             await ArtworksService.getInstance().saveEntryInDb(
                 title,
@@ -94,8 +97,8 @@ this.initializeRoutes()
                 price,
                 notes,
                 storageLocation,
-                cell,
-                position,
+                cellParam,
+                positionParam,
                 image_url,
                 image_key,
                 download_url,

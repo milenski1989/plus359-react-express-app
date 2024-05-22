@@ -2,9 +2,11 @@ import { Autocomplete, IconButton, InputBase, Paper, TextField } from '@mui/mate
 import React, { useEffect, useState } from 'react'
 import SearchIcon from "@mui/icons-material/Search";
 import './SearchAndFiltersBar.css'
-import { getPaginatedEntries, filterAllEntries } from '../utils/apiCalls';
 import { useParams } from 'react-router-dom';
 import { useMediaQuery } from "@mui/material";
+import { filterAllArtworks, getPaginatedArtworks } from '../api/artworksService';
+import { getAllCellsFromSelectedStorage } from '../api/storageService';
+import { getAllArtistsRelatedToEntriesInSelectedStorage } from '../api/artistsService';
 
 const boxShadow = '0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12)'
 
@@ -33,29 +35,26 @@ function SearchAndFiltersBar({
 
     const getArtists = async () => {
         try {
-            const res = await fetch(`http://localhost:5000/artists/relatedToEntriesInStorage/${name.split(':')[1]}`)
-            const data = await res.json()
-    
-            const normalizedArtists = data.map(artist => artist.toLowerCase().trim());
+            const response = await getAllArtistsRelatedToEntriesInSelectedStorage(name)
+            const normalizedArtists = response.data.map(artist => artist.toLowerCase().trim());
             const uniqueNormalizedArtists = [...new Set(normalizedArtists)];
             const uniqueArtists = uniqueNormalizedArtists.map(normalizedArtist => {
-                return data.find(artist => artist.toLowerCase().trim() === normalizedArtist);
+                return response.data.find(artist => artist.toLowerCase().trim() === normalizedArtist);
             });
     
             setArtists(uniqueArtists);
         } catch (error) {
-            handleError({ error: true, message: error.message });
+            handleError({ error: true, message: error.response.data.message });
         }
     }
 
     const getCells = async () => {
         try {
-            const res = await fetch(`http://localhost:5000/storage/all/allCellsFromCurrentStorage/${name.split(':')[1]}`)
-            const data = await res.json()
-            const uniqueCells = [...new Set(data)]
+            const response = await getAllCellsFromSelectedStorage(name)
+            const uniqueCells = [...new Set(response.data)]
             setCells(uniqueCells);
         } catch (error) {
-            handleError({ error: true, message: error.message });
+            handleError({ error: true, message: error.response.data.message });
         }
     }
 
@@ -70,14 +69,15 @@ function SearchAndFiltersBar({
     const getPaginatedData = async () => {
         handleLoading(true)
         try {
-            const data = await getPaginatedEntries(name, page, sortField, sortOrder);
-            const { arts, artsCount } = data;
+            const response = await getPaginatedArtworks(page, sortField, sortOrder, name);
+
+            const { arts, artsCount } = await response.data;
             handleSearchResults(arts);
             setPaginationDisabled(false)
             setPagesCount(Math.ceil(artsCount / 25));
             setTotalCount(artsCount);
         } catch(error) {
-            handleError({ error: true, message: error.message });
+            handleError({ error: true, message: error.response.data.message });
         } finally {
             handleLoading(false);
         }
@@ -86,21 +86,20 @@ function SearchAndFiltersBar({
     const filterData = async () => {
         handleLoading(true)
         try {
-            const data = await filterAllEntries(keywords, sortField, sortOrder, selectedArtist, selectedCell);
-            handleSearchResults(data);
+
+            const response = await filterAllArtworks(keywords, selectedArtist, selectedCell, sortField, sortOrder)
+            handleSearchResults(response.data.arts);
             setPaginationDisabled(true)
         } catch(error) {
-            handleError({ error: true, message: error.message });
+            handleError({ error: true, message: error.response.data.message });
         } finally {
             handleLoading(false);
         } 
     }
 
     const triggerSearchWithEnter = (e) => {
-        console.log(e)
         if (e.key === 'Enter') {
-            e.preventDefault(); // Prevent default action
-            // Additional logic if needed
+            e.preventDefault();
         }
     };
 

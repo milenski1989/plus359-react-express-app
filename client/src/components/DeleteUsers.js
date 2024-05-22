@@ -2,7 +2,6 @@ import { Box, Checkbox, CircularProgress, useMediaQuery } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import Message from "./Message";
 import CustomDialog from "./CustomDialog";
-import axios from "axios";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
@@ -10,6 +9,7 @@ import { useLongPress } from "use-long-press";
 import SelectAllIcon from '../components/assets/select-all.svg'
 import UnselectAllIcon from '../components/assets/unselect-all.svg'
 import './DeleteUsers.css'
+import { deleteUser, getAllUsers } from "../api/authService";
 
 function DeleteUsers() {
     const [users, setUsers] = useState([]);
@@ -44,9 +44,6 @@ function DeleteUsers() {
         }
     };
 
-    console.log(selectedUsers)
-    
-
     const handleSelectAll = () => {
         if (users.length === selectedUsers.length) {
             setSelectedUsers([]);
@@ -65,9 +62,7 @@ function DeleteUsers() {
         const emails = users.map(user => user.email)
         setIsLoading(true);
         try {
-            await axios.delete(`http://localhost:5000/auth/deleteUsers`, {
-                params: { emails },
-            });
+            await deleteUser(emails)
             setIsDialogOpen(false);
             getUsers();
         } catch (error) {
@@ -79,18 +74,15 @@ function DeleteUsers() {
     const getUsers = async () => {
         setIsLoading(true);
         try {
-            const res = await fetch(`http://localhost:5000/auth/all`);
-            const data = await res.json();
-
-            setUsers(data.data.filter((item) => item.id !== user.id));
+            const response = await getAllUsers()
+            
+            setUsers(response.data.users.filter((item) => item.id !== user.id));
             setIsLoading(false);
         } catch (error) {
             setIsLoading(false);
-            setError({ error: true, message: error.response.data });
+            setError({ error: true, message: error.response.data.message });
         }
     };
-
-    console.log(selectedUsers)
 
     return (
         <>

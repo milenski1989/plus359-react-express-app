@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import  './Login.css'
 import Typography from '@mui/material/Typography';
 import Logo from '../components/assets/logo359 gallery-black.png'
-import axios from 'axios';
+import { loginUser } from "../api/authService";
 
 function Copyright(props) {
     return (
@@ -39,37 +39,24 @@ const Login = () => {
 
 
     const handleLogin = async () => {
+        const _email = email
+        const _password = password
+        setLoading(true);
         try {
-            const response = await axios.post("http://localhost:5000/auth/login", {
-                email: email,
-                password: password,
-            }, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-    
-            const data = response.data;
-    
-            if (response.status === 200) {
-                const { id, userName, email, superUser, createdAt } = data;
-                myStorage.setItem('user', JSON.stringify({
-                    id,
-                    userName,
-                    email,
-                    superUser,
-                    createdAt
-                }));
-                setLoading(false);
-                setLoginError({ error: false, message: '' });
-                navigate('/');
-            } else {
-                setLoginError({ error: true, message: data.error });
-                setLoading(false);
-            }
+            const response = await loginUser(_email, _password)
+            const { id, userName, email, superUser, createdAt } = response.data.user;
+            myStorage.setItem('user', JSON.stringify({
+                id,
+                userName,
+                email,
+                superUser,
+                createdAt
+            }));
+            setLoading(false);
+            navigate('/');
         } catch (error) {
-            console.error("Error:", error);
-            // Handle error accordingly
+            setLoginError({ error: true, message: error.response.data.message });
+            setLoading(false);
         }
     };
 
@@ -79,8 +66,6 @@ const Login = () => {
             setEmailError(true);
             return;
         }
-
-        setLoading(true)
         handleLogin()
     }
 

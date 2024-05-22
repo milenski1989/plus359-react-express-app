@@ -4,8 +4,9 @@ import {Autocomplete, Box, Button, CircularProgress, TextField} from "@mui/mater
 import "./App.css";
 import Message from "./Message";
 import Navbar from "./Navbar";
-import axios from "axios";
 import CascadingDropdowns from "./CascadingDropdowns";
+import { uploadImageWithData } from "../api/s3Service";
+import { getAllArtistsRelatedToAllEntries } from "../api/artistsService";
 
 const Upload = () => {
 
@@ -42,9 +43,8 @@ const Upload = () => {
     const [isArtistFromDropdown, setIsArtistFromDropDown] = useState(false)
 
     const getArtists = async () => {
-        const res = await fetch(`http://localhost:5000/artists/relatedToEntries`)
-        const data = await res.json()
-        setArtists(data)
+        const response = await getAllArtistsRelatedToAllEntries()
+        setArtists(response.data)
     }
 
     useEffect(() => {
@@ -75,13 +75,9 @@ const Upload = () => {
             data.append("cell", formControlData.cell);
             data.append("position", formControlData.position)
             data.append("by_user", user.userName)
-    
-            await axios.post("http://localhost:5000/s3/upload", data, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-                onUploadProgress
-            });
+
+            await uploadImageWithData(data, onUploadProgress)
+
             getArtists()
             setNewArtistFromInput("")
 

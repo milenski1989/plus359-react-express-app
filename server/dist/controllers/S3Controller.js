@@ -95,7 +95,9 @@ class S3Controller {
                 // download_url = "https://plus359gallery." + removedString;
                 download_url = req.file.transforms[1].location;
                 download_key = req.file.transforms[1].key;
-                yield ArtworksService_1.default.getInstance().saveEntryInDb(title, artist, technique, dimensions, price, notes, storageLocation, cell, position, image_url, image_key, download_url, download_key, by_user);
+                const cellParam = cell ? cell : null;
+                const positionParam = position ? position : null;
+                yield ArtworksService_1.default.getInstance().saveEntryInDb(title, artist, technique, dimensions, price, notes, storageLocation, cellParam, positionParam, image_url, image_key, download_url, download_key, by_user);
                 res.status(200).json({
                     results: {
                         image_url,

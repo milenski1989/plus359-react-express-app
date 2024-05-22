@@ -1,8 +1,8 @@
 import React, { useContext, useState } from 'react'
 import CustomDialog from '../CustomDialog'
 import CascadingDropdowns from '../CascadingDropdowns'
-import axios from 'axios'
 import { ImageContext } from '../contexts/ImageContext'
+import { updateLocations } from '../../api/storageService'
 
 const LocationChangeDialog = ({isLocationChangeDialogOpen, handleIsLocationChangeDialogOpen, handleLocationChanged}) => {
 
@@ -25,10 +25,7 @@ const LocationChangeDialog = ({isLocationChangeDialogOpen, handleIsLocationChang
             ids.push(image.id)
         }
         try {
-            await axios.put(
-                `http://localhost:5000/storage/update-location`,
-                {ids, formControlData}
-            );
+            await updateLocations(ids, formControlData)
             setIsEditMode(false)
         } catch (error) {
             console.log(error)

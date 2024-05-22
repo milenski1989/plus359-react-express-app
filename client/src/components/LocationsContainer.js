@@ -4,6 +4,7 @@ import './LocationsContainer.css'
 import { Box } from '@mui/material';
 import { useMediaQuery } from "@mui/material";
 import Message from './Message';
+import { getAllStorages } from '../api/storageService';
 
 const LocationsContainer = () => {
 
@@ -19,9 +20,8 @@ const LocationsContainer = () => {
 
     const getStorages = async () => {
         try {
-            const res = await fetch(`http://localhost:5000/storage/allStorages`)
-            const data = await res.json()
-            setStorages(data);
+            const response = await getAllStorages()
+            setStorages(response.data);
         } catch (error) {
             throw new Error(error)
         }
