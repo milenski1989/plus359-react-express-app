@@ -19,6 +19,8 @@ const LocationChangeDialog = ({isLocationChangeDialogOpen, handleIsLocationChang
         position: "",
     });
 
+    console.log('change')
+
     const updateLocation = async (formControlData) => {
         const ids = []
         for (let image of currentImages) {
