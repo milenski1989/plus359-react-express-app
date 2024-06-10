@@ -19,7 +19,7 @@ const LocationChangeDialog = ({isLocationChangeDialogOpen, handleIsLocationChang
         position: "",
     });
 
-    console.log('change3')
+    console.log('change4')
 
     const updateLocation = async (formControlData) => {
         const ids = []
