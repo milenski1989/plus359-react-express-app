@@ -1,13 +1,16 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Pagination } from '@mui/material';
 import { useMediaQuery } from "@mui/material";
 import './PaginationComponent.css'
+import { ImageContext } from '../contexts/ImageContext';
 
-const PaginationComponent = ({page, handlePage, pagesCount, totalCount}) => {
+const PaginationComponent = ({handlePage, pagesCount, totalCount}) => {
 
     const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
 
-    
+    const {
+        page,
+    } = useContext(ImageContext);
     const noNextPage = () => {
         const currentPage = page + 1;
         const lastPage = Math.ceil(totalCount / 25);

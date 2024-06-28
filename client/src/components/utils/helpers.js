@@ -1,4 +1,5 @@
 export const generateBackGroundColor = (cell) => {
+    if (!cell) return
     if (cell === "1-1" || cell === "charta1" || cell === "lozenets1" || cell === "other1" || cell === "collect1" || cell === "South Park1" || cell ==="Office Room") {
         return "#EAC435"
     } else if (cell === "1-2" || cell === "charta2" || cell === "lozenets2" || cell === "other2" || cell === "collect2" || cell === "South Park2" || cell === "Old Artists Room") {

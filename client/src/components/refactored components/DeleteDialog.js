@@ -15,7 +15,7 @@ const DeleteDialog = ({isDialogOpen, handleDialogOpen, isDeleting, handleIsDelet
 
     const [isDeleteSuccessful, setIsDeleteSuccessful] = useState(false);
 
-    const handleDeleteOneArtwork = async (originalFilename, filename, id) => {
+    const deleteOne = async (originalFilename, filename, id) => {
         handleIsDeleting(true);
         try {
             const params = {originalFilename, filename, id}
@@ -27,8 +27,8 @@ const DeleteDialog = ({isDialogOpen, handleDialogOpen, isDeleting, handleIsDelet
         }
     };
 
-    const handleDeleteOne = async (originalName, filename, id) => {
-        handleDeleteOneArtwork(originalName, filename, id)
+    const handleDelete = (originalName, filename, id) => {
+        deleteOne(originalName, filename, id)
         handleDialogOpen(false)
         setIsDeleteSuccessful(true);
         setCurrentImages(prev => prev.filter(image => !currentImages.some(img => img.id === image.id)));
@@ -38,7 +38,7 @@ const DeleteDialog = ({isDialogOpen, handleDialogOpen, isDeleting, handleIsDelet
 
         try {
             const deletePromises = currentImages.map(image =>
-                handleDeleteOneArtwork(image.download_key, image.image_key, image.id)
+                deleteOne(image.download_key, image.image_key, image.id)
             );
 
             await Promise.allSettled(deletePromises);
@@ -74,7 +74,7 @@ const DeleteDialog = ({isDialogOpen, handleDialogOpen, isDeleting, handleIsDelet
                         if (currentImages.length > 1) {
                             handleDeleteMultiple();
                         } else {
-                            handleDeleteOne(currentImages[0].download_key, currentImages[0].image_key, currentImages[0].id);
+                            handleDelete(currentImages[0].download_key, currentImages[0].image_key, currentImages[0].id);
                         }
                     } }
                     handleClickNo={() => {

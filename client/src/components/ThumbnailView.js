@@ -1,14 +1,22 @@
 import './ThumbnailView.css'
-import Masonry from '@mui/lab/Masonry';
+import Masonry, {ResponsiveMasonry} from "react-responsive-masonry"
 import Thumbnail from './refactored components/Thumbnail';
 
 const ThumbnailView = ({searchResults}) => {
 
     return <>
-        <Masonry columns={{ xs: 1, sm: 2, md: 4, lg: 5, xl: 6}} spacing={2} sequential>
-            <Thumbnail  
-                searchResults={searchResults}/>
-        </Masonry>
+        <ResponsiveMasonry
+            columnsCountBreakPoints={{400: 1, 600: 2, 750: 3, 900: 4, 1000: 5, 1200: 7}}
+        >
+            <Masonry gutter='1rem'>
+                {searchResults.map(art => (
+                    <Thumbnail 
+                        key={art.id} 
+                        artwork={art}
+                        searchResults={searchResults}/>
+                ))}
+            </Masonry>
+        </ResponsiveMasonry>
     </>
 }
 
