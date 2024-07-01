@@ -1,19 +1,19 @@
-import { Checkbox } from "@mui/material";
+import React, { useContext, useEffect, useState } from 'react'
+import { useNavigate, useOutletContext } from 'react-router-dom';
+import { ImageContext } from './contexts/ImageContext';
+import { generateBackGroundColor } from './utils/helpers';
+import { Checkbox } from '@mui/material';
+import EditableContainer from './EditableContainer';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import EditableContainer from "../EditableContainer";
-import '../DetailsView.css';
-import { generateBackGroundColor } from "../utils/helpers";
-import { useContext, useState, useEffect } from "react";
-import { ImageContext } from "../contexts/ImageContext";
-import './Card.css'
-import EditIcon from '../assets/edit-solid.svg'
-import DownloadIcon from '../assets/download-solid.svg'
+import './CardWithActions.css'
+import EditIcon from './assets/edit-solid.svg'
+import DownloadIcon from './assets/download-solid.svg'
 import { saveAs } from "file-saver";
-import { useNavigate } from "react-router-dom";
 
+function CardWithActions({art}) {
 
-const Card = ({ searchResults, artwork}) => {
+    const {searchResults} = useOutletContext()
 
     const {
         currentImages,
@@ -47,7 +47,7 @@ const Card = ({ searchResults, artwork}) => {
         } else {
             setCurrentImages([...currentImages, searchResults.find(image => image.id === id)]);
         }
-    };
+    }
 
     const handleImageLoad = (e) => {
         const { naturalWidth, naturalHeight } = e.target;
@@ -61,23 +61,23 @@ const Card = ({ searchResults, artwork}) => {
     };
 
     return (
-        <div className="card" key={artwork.id}>
+        <div className="card" key={art.id}>
             <div className="card-header-container">
-                <p className="card-header">{artwork.artist || 'No Artist'}</p>
-                {artwork.position !== 0 ? (
+                <p className="card-header">{art.artist || 'No Artist'}</p>
+                {art.position !== 0 ? (
                     <div
                         style={{
-                            backgroundColor: generateBackGroundColor(artwork.cell),
+                            backgroundColor: generateBackGroundColor(art.cell),
                             color: "white",
                             height: "auto",
                             marginRight: "0.5rem"
                         }}>
-                        <p style={{ padding: "0.7rem" }}>{artwork.position}</p>
+                        <p style={{ padding: "0.7rem" }}>{art.position}</p>
                     </div>
                 ) : null}
                 <Checkbox
-                    onChange={() => checkBoxHandler(artwork.id)}
-                    checked={currentImages.some(image => image.id === artwork.id)}
+                    onChange={() => checkBoxHandler(art.id)}
+                    checked={currentImages.some(image => image.id === art.id)}
                     sx={{
                         "&.Mui-checked": {
                             color: "black",
@@ -94,33 +94,33 @@ const Card = ({ searchResults, artwork}) => {
                 overflow: 'hidden'
             }}>
                 {allImagesLoaded &&
-                    <img
-                        src={artwork.image_url}
-                        alt="image"
-                        onLoad={handleImageLoad}
-                        style={{
-                            display: imageLoaded ? 'block' : 'none',
-                            width: '100%',
-                            height: 'auto',
-                            objectFit: 'cover',
-                            marginBottom: '1rem'
-                        }}
-                    /> }
+                <img
+                    src={art.image_url}
+                    alt="image"
+                    onLoad={handleImageLoad}
+                    style={{
+                        display: imageLoaded ? 'block' : 'none',
+                        width: '100%',
+                        height: 'auto',
+                        objectFit: 'cover',
+                        marginBottom: '1rem'
+                    }}
+                /> }
             </div>
             {!imageLoaded && 
-            
-                <div style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    background: 'linear-gradient(to right, #eff1f3 4%, #e2e2e2 25%, #eff1f3 36%)',
-                    backgroundSize: '80vw 100%',
-                    animation: 'placeholderShimmer 1.5s linear infinite forwards'
-                }}></div>
+        
+            <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                background: 'linear-gradient(to right, #eff1f3 4%, #e2e2e2 25%, #eff1f3 36%)',
+                backgroundSize: '80vw 100%',
+                animation: 'placeholderShimmer 1.5s linear infinite forwards'
+            }}></div>
             }
-           
+       
             <>
                 <div style={{display: 'flex', justifyContent: 'center'}}>
                     <img 
@@ -128,27 +128,27 @@ const Card = ({ searchResults, artwork}) => {
                         src={EditIcon} 
                         className='icon'
                         onClick={() => {
-                            setCurrentImages([artwork]);
-                            localStorage.setItem('currentImage', JSON.stringify(artwork));
+                            setCurrentImages([art]);
+                            localStorage.setItem('currentImage', JSON.stringify(art));
                             navigate('/edit-page')
                         } }/>
-                    {currentImages.length === 1 && currentImages[0].id === artwork.id ?
+                    {currentImages.length === 1 && currentImages[0].id === art.id ?
                         <img 
                             src={DownloadIcon} 
                             className='icon'
-                            onClick={() => downloadOriginalImage(artwork.download_url, artwork.download_key)}/>
+                            onClick={() => downloadOriginalImage(art.download_url, art.download_key)}/>
                         :
                         <></>
                     }
                 </div>
-              
+          
                 <EditableContainer
-                    art={artwork}
+                    art={art}
                 />
             </>
-        
+    
         </div>
-    );
-};
+    )
+}
 
-export default Card;
+export default CardWithActions

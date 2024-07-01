@@ -2,29 +2,34 @@ import { Autocomplete, IconButton, InputBase, Paper, TextField } from '@mui/mate
 import React, { useContext, useEffect, useState } from 'react'
 import SearchIcon from "@mui/icons-material/Search";
 import './SearchAndFiltersBar.css'
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useMediaQuery } from "@mui/material";
 import { filterAllArtworks, getPaginatedArtworks } from '../api/artworksService';
 import { getAllCellsFromSelectedStorage } from '../api/storageService';
 import { getAllArtistsRelatedToEntriesInSelectedStorage } from '../api/artistsService';
 import { ImageContext } from './contexts/ImageContext';
+import DetailsViewIcon from '../components/assets/details-view-solid.svg'
+import ThumbnailViewIcon from '../components/assets/thumbnail-view-solid.svg'
+import ListViewIcon from '../components/assets/list-view-solid.svg'
 
 const boxShadow = '0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12)'
 
 function SearchAndFiltersBar({
+    handleError, 
+    isDeleting,
+    handleSearchResults,
+    handlePagesCount,
+    handleTotalCount,
+    locationChanged,
+    page,
+    handlePaginationDisabled,
     sortField, 
     sortOrder,
-    setPaginationDisabled,
-    handleLoading, 
-    handleError, 
-    handleSearchResults,
-    keywords, 
-    handleKeywords,
-    isDeleting,
-    locationChanged,
-    setTotalCount,
-    setPagesCount
 }) {
+
+    const {
+        setCurrentImages,
+    } = useContext(ImageContext);
 
     const [artists, setArtists] = useState([])
     const [cells, setCells] = useState([])
@@ -32,10 +37,13 @@ function SearchAndFiltersBar({
     const [selectedCell, setSelectedCell] = useState()
     const {name} = useParams()
     const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
+    const [keywords, setKeywords] = useState([]);
 
-    const {
-        page
-    } = useContext(ImageContext);
+    const navigate = useNavigate();
+
+    const handleKeywords = (enteredKeywords) => {
+        setKeywords(enteredKeywords)
+    }
 
     const getArtists = async () => {
         try {
@@ -71,41 +79,35 @@ function SearchAndFiltersBar({
     };
 
     const getPaginatedData = async () => {
-        handleLoading(true)
+        //handleLoading(true)
         try {
             const response = await getPaginatedArtworks(page, sortField, sortOrder, name);
 
             const { arts, artsCount } = await response.data;
             handleSearchResults(arts);
-            setPaginationDisabled(false)
-            setPagesCount(Math.ceil(artsCount / 25));
-            setTotalCount(artsCount);
+            handlePaginationDisabled(false)
+            handlePagesCount(Math.ceil(artsCount / 25));
+            handleTotalCount(artsCount);
         } catch(error) {
             handleError({ error: true, message: error.response.data.message });
         } finally {
-            handleLoading(false);
+            //handleLoading(false);
         }
     }
 
     const filterData = async () => {
-        handleLoading(true)
+        //handleLoading(true)
         try {
 
             const response = await filterAllArtworks(keywords, selectedArtist, selectedCell, sortField, sortOrder)
             handleSearchResults(response.data.arts);
-            setPaginationDisabled(true)
+            handlePaginationDisabled(true)
         } catch(error) {
             handleError({ error: true, message: error.response.data.message });
         } finally {
-            handleLoading(false);
+            //handleLoading(false);
         } 
     }
-
-    const triggerSearchWithEnter = (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-        }
-    };
 
     useEffect(() => {
         getArtists()
@@ -126,6 +128,12 @@ function SearchAndFiltersBar({
 
         return () =>  clearTimeout(filterTimeOut)
     }, [page, sortField, sortOrder, isDeleting, locationChanged, selectedArtist, selectedCell, keywords]);
+
+    const handleViewMode = (mode) => {
+        if (mode === 'details') navigate(`/gallery/${name}`)
+        else navigate(`/gallery/${name}/${mode}`)
+        setCurrentImages([])
+    }
   
     return <>
         <div className={!isSmallDevice ?
@@ -187,7 +195,7 @@ function SearchAndFiltersBar({
                     placeholder="Search..."
                     inputProps={{ "aria-label": "search" }}
                     onChange={onChange}
-                    onKeyPress={triggerSearchWithEnter}
+                    //onKeyPress={triggerSearchWithEnter}
                 />
                 <IconButton
                     type="button"
@@ -197,6 +205,19 @@ function SearchAndFiltersBar({
                     <SearchIcon />
                 </IconButton>
             </Paper>
+            {isSmallDevice ? 
+                <div className="mobile-view-mode-icons-container">
+                    <img className="icon" src={DetailsViewIcon} onClick={() => handleViewMode('details')}/>
+                    <img className="icon" src={ThumbnailViewIcon} onClick={() => handleViewMode('thumbnails')}/>
+                    <img className="icon" src={ListViewIcon} onClick={() => handleViewMode('list')}/>
+                </div> :
+                <>
+                    <img className="icon" src={DetailsViewIcon} onClick={() => handleViewMode('details')} />
+                    <img className="icon" src={ThumbnailViewIcon} onClick={() => handleViewMode('thumbnails')} />
+                    <img className="icon" src={ListViewIcon} onClick={() => handleViewMode('list')} />
+                </>
+            }
+           
         </div>
       
     </>

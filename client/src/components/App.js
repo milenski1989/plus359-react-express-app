@@ -1,72 +1,14 @@
-import { Route, Navigate, createBrowserRouter, createRoutesFromElements, RouterProvider, } from 'react-router-dom'
-import {React, lazy, Suspense} from 'react'
+import { Outlet } from 'react-router-dom'
+import {React} from 'react'
 import './App.css'
-const Login = lazy(() => import('./Login'))
-const Home = lazy(() => import('./Home'))
-const Upload = lazy(() => import('./Upload'))
-const PdfMaker = lazy(() => import('./PdfMaker'))
-const AdminPanel = lazy(() => import('./AdminPanel'))
-const StoragesManagement = lazy(() => import('./StoragesManagement'))
-const Account = lazy(() => import('./Account'))
-import ProtectedRoute from './ProtectedRoute'
-import { ImageProvider } from './contexts/ImageContext'
-import { ThemeProvider, createTheme } from '@mui/material'
-import NewGalleryContent from './refactored components/NewGalleryContent'
-const EditPage = lazy(() => import('./EditPage'))
 
-const theme = createTheme({
-    components: {
-        MuiButton: {
-            styleOverrides: {
-                root: {
-                    padding: '0.5rem 1.2rem',
-                    textTransform: 'capitalize',
-                    fontSize: '1rem',
-                    width: '20vw',
-                    marginLeft: 'auto',
-                    marginRight: 'auto',
-                },
-            },
-        },
-        MuiMasonry: {
-            styleOverrides: {
-                root: {
-                    margin: 0
-                }
-            }
-        }
-    },
-});
-
-const router = createBrowserRouter(
-    createRoutesFromElements(
-        <Route>
-            <Route exact path="/login" element={<Suspense fallback=''><Login/></Suspense>} />
-            <Route element={<ProtectedRoute/>}>
-                <Route path="/" element={<Suspense fallback=''><Home/></Suspense>}></Route>
-                <Route path="/upload" element={<Suspense fallback=''><Upload/></Suspense>}></Route>
-                <Route path="/gallery/:name" element={<Suspense fallback=''><NewGalleryContent/></Suspense>}/>
-                <Route path='/pdf' element={<Suspense fallback=''><PdfMaker/></Suspense>}></Route>
-                <Route path='/admin-panel' element={<Suspense fallback=''><AdminPanel/></Suspense>}></Route>
-                <Route path='/storages-management' element={<Suspense fallback=''><StoragesManagement/></Suspense>}></Route>
-                <Route path='/account' element={<Suspense fallback=''><Account/></Suspense>}></Route>
-                <Route path='/edit-page' element={<Suspense fallback=''><EditPage/></Suspense>}></Route>
-            </Route>
-            <Route path="/" element={<Navigate to="/login" replace />} />
-            <Route path="/logout" element={<Navigate to="/login" replace />} />
-            <Route path="*" element={<p className='flex justify-center mt-'>Page not found: 404!</p>} />
-        </Route>
-    )
-)
 
 const App = () => {
 
     return <>
-        <ThemeProvider theme={theme}>
-            <ImageProvider>
-                <RouterProvider router={router} />
-            </ImageProvider>
-        </ThemeProvider>
+        <div className="App">
+            <Outlet/> 
+        </div>
     </>
 }
 

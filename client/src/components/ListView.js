@@ -11,6 +11,7 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { Dialog, DialogContent } from "@mui/material";
 import './ListView.css'
 import { generateBackGroundColor } from "./utils/helpers";
+import { useOutletContext } from "react-router-dom";
 
 const properties = [
     { key: 'image_url', label: 'Image', align: 'center', isImage: true },
@@ -23,12 +24,14 @@ const properties = [
     { key: 'storageLocation', label: 'Storage Location', align: 'center' }
 ];
 
-const ListView = ({searchResults, handleDialogOpen, handleSearchResults, setIsLocationChangeDialogOpen}) => {
+const ListView = () => {
     const {isEditMode, updatedEntry, setUpdatedEntry, currentImages, setCurrentImages} = useContext(ImageContext)
     const [imagePreview, setImagePreview] = useState(false)
     const [isMoreInfoOpen, setIsMoreInfoOpen] = useState(false)
     const [selectedArt, setSelectedArt] = useState(null);
     const [selectedProp, setSelectedProp] = useState(null)
+
+    const {searchResults} = useOutletContext()
 
     const checkBoxHandler = (id) => {
         if (currentImages.some(image => image.id === id)) {
@@ -154,10 +157,6 @@ const ListView = ({searchResults, handleDialogOpen, handleSearchResults, setIsLo
 
                                 <ActionButtons
                                     art={art}
-                                    handleDialogOpen={handleDialogOpen}
-                                    searchResults={searchResults}
-                                    handleSearchResults={handleSearchResults}
-                                    setIsLocationChangeDialogOpen={setIsLocationChangeDialogOpen}
                                 />
                             </div>
                         </ListItem>

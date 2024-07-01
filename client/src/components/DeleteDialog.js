@@ -1,11 +1,14 @@
 import React, { useContext, useState } from 'react'
-import CustomDialog from '../CustomDialog';
-import { ImageContext } from '../contexts/ImageContext';
+import CustomDialog from './CustomDialog';
+import { ImageContext } from './contexts/ImageContext';
 import { CircularProgress } from '@mui/material';
-import Message from '../Message';
-import { deleteOneArtwork } from '../../api/artworksService';
+import Message from './Message';
+import { deleteOneArtwork } from '../api/artworksService';
+import { useOutletContext } from 'react-router-dom';
 
-const DeleteDialog = ({isDialogOpen, handleDialogOpen, isDeleting, handleIsDeleting}) => {
+const DeleteDialog = ({isDeleting, handleIsDeleting}) => {
+
+    const {isDeleteDialogOpen, setIsDeleteDialogOpen} = useOutletContext()
 
     const {
         currentImages,
@@ -29,7 +32,7 @@ const DeleteDialog = ({isDialogOpen, handleDialogOpen, isDeleting, handleIsDelet
 
     const handleDelete = (originalName, filename, id) => {
         deleteOne(originalName, filename, id)
-        handleDialogOpen(false)
+        setIsDeleteDialogOpen(false)
         setIsDeleteSuccessful(true);
         setCurrentImages(prev => prev.filter(image => !currentImages.some(img => img.id === image.id)));
     };
@@ -49,7 +52,7 @@ const DeleteDialog = ({isDialogOpen, handleDialogOpen, isDeleting, handleIsDelet
             handleIsDeleting(false);
             setIsDeleteSuccessful(false);
         } finally {
-            handleDialogOpen(false)
+            setIsDeleteDialogOpen(false)
         }
         
     }
@@ -62,10 +65,10 @@ const DeleteDialog = ({isDialogOpen, handleDialogOpen, isDeleting, handleIsDelet
             message="Entry deleted successfully!"
             severity="success" />
             
-        {isDialogOpen &&
+        {isDeleteDialogOpen &&
                 <CustomDialog
-                    openModal={isDialogOpen}
-                    setOpenModal={() => handleDialogOpen(true)}
+                    openModal={isDeleteDialogOpen}
+                    setOpenModal={() => setIsDeleteDialogOpen(true)}
                     title={currentImages.length === 1 ? 
                         "Are you sure you want to delete the entry ?" :
                         "Are you sure you want to delete all selected entries ?"
@@ -79,7 +82,7 @@ const DeleteDialog = ({isDialogOpen, handleDialogOpen, isDeleting, handleIsDelet
                     } }
                     handleClickNo={() => {
                         if (currentImages.length === 1 && !isEditMode) setCurrentImages([])
-                        handleDialogOpen(false)
+                        setIsDeleteDialogOpen(false)
                     } } 
                     confirmButtonText="Yes"
                     cancelButtonText="Cancel"

@@ -9,6 +9,7 @@ import Message from './Message';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import CustomDialog from './CustomDialog';
 import { deleteOneStorage, getStoragesWithNoEntries, saveOneStorage } from '../api/storageService';
+import { useOutletContext } from 'react-router-dom';
 
 
 const StoragesManagement = () => {
@@ -18,10 +19,11 @@ const StoragesManagement = () => {
     const [newStorageName, setNewStorageName] = useState()
     const [showInput, setShowInput] = useState(false)
     const [error, setError] = useState({ error: false, message: "" })
-    const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
 
     const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
+
+    const {isDeleteDialogOpen, setIsDeleteDialogOpen} = useOutletContext()
 
     useEffect(() => {
         getEmptyStorages()
@@ -77,7 +79,7 @@ const StoragesManagement = () => {
     }
 
     const handleDeleteStorage = () => {
-        setIsDialogOpen(true)
+        setIsDeleteDialogOpen(true)
     }
   
     return <>
@@ -88,17 +90,17 @@ const StoragesManagement = () => {
             message={error.message}
             severity="error" />
 
-        {isDialogOpen &&
+        {isDeleteDialogOpen &&
                 <CustomDialog
-                    openModal={isDialogOpen}
-                    setOpenModal={() => setIsDialogOpen(true)}
+                    openModal={isDeleteDialogOpen}
+                    setOpenModal={() => setIsDeleteDialogOpen(true)}
                     title="Are you sure you want to delete this empty storage and all related cells and positions ?"
                     handleClickYes={async () => {
                         await deleteStorage(selectedStorage)
                         getEmptyStorages()
-                        setIsDialogOpen(false)
+                        setIsDeleteDialogOpen(false)
                     }}
-                    handleClickNo={() => {setSelectedStorage(); setIsDialogOpen(false)}} 
+                    handleClickNo={() => {setSelectedStorage(); setIsDeleteDialogOpen(false)}} 
                     confirmButtonText="Yes"
                     cancelButtonText="Cancel"
                     style={{padding: '0'}}

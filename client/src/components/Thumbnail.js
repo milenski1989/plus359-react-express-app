@@ -1,15 +1,18 @@
-import React from 'react'
-import { useContext } from 'react';
-import { ImageContext } from '../contexts/ImageContext';
+import React, { useContext, useEffect, useState } from 'react'
+import { ImageContext } from './contexts/ImageContext';
+import { useOutletContext } from 'react-router-dom';
 import { Checkbox } from '@mui/material';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import { useEffect } from 'react';
-import { useState } from 'react';
-import './Thumbnail.css'
 
+function Thumbnail({art}) {
 
-const Thumbnail = ({artwork, searchResults}) => {
+    const {
+        currentImages,
+        setCurrentImages,
+    } = useContext(ImageContext);
+
+    const {searchResults} = useOutletContext()
 
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
     const [imageLoaded, setImageLoaded] = useState(false);
@@ -36,12 +39,6 @@ const Thumbnail = ({artwork, searchResults}) => {
         setImageLoaded(true);
     };
 
-
-    const {
-        currentImages,
-        setCurrentImages,
-    } = useContext(ImageContext);
-
     const checkBoxHandler = (id) => {
         if (currentImages.some(image => image.id === id)) {
             setCurrentImages(currentImages.filter(image => image.id !== id));
@@ -49,15 +46,14 @@ const Thumbnail = ({artwork, searchResults}) => {
             setCurrentImages([...currentImages, searchResults.find(image => image.id === id)]);
         }
     }
-    
-    return <>
-       
+
+    return (
         <div
             className="thumb"
-            key={artwork.id}>
+            key={art.id}>
             <Checkbox
-                onChange={() => checkBoxHandler(artwork.id)}
-                checked={currentImages.some(image => image.id === artwork.id)}
+                onChange={() => checkBoxHandler(art.id)}
+                checked={currentImages.some(image => image.id === art.id)}
                 sx={{
                     position: "absolute",
                     zIndex: '888',
@@ -77,7 +73,7 @@ const Thumbnail = ({artwork, searchResults}) => {
             }}>
                 {allImagesLoaded &&
                     <img 
-                        src={artwork.image_url} 
+                        src={art.image_url} 
                         alt="image" 
                         onLoad={handleImageLoad}
                         style={{
@@ -104,8 +100,7 @@ const Thumbnail = ({artwork, searchResults}) => {
                 }}></div>
             }
         </div>
-        
-    </>   
+    )
 }
 
 export default Thumbnail

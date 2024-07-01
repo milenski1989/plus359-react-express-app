@@ -1,6 +1,5 @@
 import "./App.css";
 import ConstructionIcon from '@mui/icons-material/Construction';
-import Navbar from "./Navbar";
 
 
 const Account = () => {
@@ -10,7 +9,7 @@ const Account = () => {
 
     return (
         <>
-            <Navbar />
+         
             <section className="mainSection" style={{textAlign: "center", marginTop: "40vh"}}>
                 <ConstructionIcon fontSize="large" color="primary"/>
 

@@ -95,6 +95,7 @@ class StorageService {
     updateLocation(ids, formControlData) {
         return __awaiter(this, void 0, void 0, function* () {
             const { storageLocation, cell, position } = formControlData;
+            console.log(formControlData);
             const promises = [];
             try {
                 const images = yield artsRepository.findBy({
@@ -104,6 +105,7 @@ class StorageService {
                 const foundCell = yield cellsRepository.findOne({
                     where: { name: cell, storage_id: foundStorage.id }
                 });
+                console.log('foundCell', foundCell);
                 const foundPosition = yield positionsRepository.findOne({
                     where: { cell_id: foundCell.id, cell: { storage_id: foundStorage.id }, name: position.toString() }
                 });

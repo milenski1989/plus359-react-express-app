@@ -9,15 +9,17 @@ import SelectAllIcon from '../components/assets/select-all.svg'
 import UnselectAllIcon from '../components/assets/unselect-all.svg'
 import './DeleteUsers.css'
 import { deleteUser, getAllUsers } from "../api/authService";
+import { useOutletContext } from "react-router-dom";
 
 function DeleteUsers() {
     const [users, setUsers] = useState([]);
     const [error, setError] = useState({ error: false, message: "" });
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [selectedUsers, setSelectedUsers] = useState([]);
 
     const user = JSON.parse(localStorage.getItem("user"));
+
+    const {isDeleteDialogOpen, setIsDeleteDialogOpen} = useOutletContext()
 
     const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
 
@@ -52,7 +54,7 @@ function DeleteUsers() {
         setIsLoading(true);
         try {
             await deleteUser(emails)
-            setIsDialogOpen(false);
+            isDeleteDialogOpen(false);
             getUsers();
         } catch (error) {
             setError({ error: true, message: error.response.data.message });
@@ -86,7 +88,7 @@ function DeleteUsers() {
                         className="icon"
                         style={{ cursor: "pointer", height: '34px', width: '34px'}}
                         onClick={() => {
-                            setIsDialogOpen(true);
+                            setIsDeleteDialogOpen(true);
                         }}
                     /> :
                     <></>
@@ -99,15 +101,15 @@ function DeleteUsers() {
                 severity="error"
             />
 
-            {isDialogOpen && (
+            {isDeleteDialogOpen && (
                 <CustomDialog
-                    openModal={isDialogOpen}
-                    setOpenModal={() => setIsDialogOpen(true)}
+                    openModal={isDeleteDialogOpen}
+                    setOpenModal={() => setIsDeleteDialogOpen(true)}
                     title="Are you sure you want to delete this user?"
                     handleClickYes={async () => await deleteUsers(selectedUsers)}
                     handleClickNo={() => {
                         setSelectedUsers([]);
-                        setIsDialogOpen(false);
+                        setIsDeleteDialogOpen(false);
                     }}
                     confirmButtonText="Yes"
                     cancelButtonText="Cancel"

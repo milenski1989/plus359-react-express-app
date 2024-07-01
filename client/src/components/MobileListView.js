@@ -13,6 +13,7 @@ import './ListView.css'
 import { generateBackGroundColor } from "./utils/helpers";
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import EditableContainer from "./EditableContainer";
+import { useOutletContext } from "react-router-dom";
 
 const properties = [
     { key: 'image_url', label: 'Image', align: 'center', isImage: true },
@@ -20,12 +21,14 @@ const properties = [
     { key: 'dimensions', label: 'Dimensions', align: 'center' },
 ];
 
-const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults, setIsLocationChangeDialogOpen}) => {
+const MobileListView = () => {
     const {currentImages, setCurrentImages} = useContext(ImageContext)
     const [imagePreview, setImagePreview] = useState(false)
     const [fullInfoOpened, setFullInfoOpened] = useState(false)
     const [selectedImage, setSelectedImage] = useState(null);
     const [selectedRow, setSelectedRow] = useState(null)
+
+    const {searchResults} = useOutletContext()
 
     const checkBoxHandler = (id) => {
         if (currentImages.some(image => image.id === id)) {
@@ -150,10 +153,6 @@ const MobileListView = ({searchResults, handleDialogOpen, handleSearchResults, s
                 <DialogContent>
                     <ActionButtons
                         art={selectedRow}
-                        handleDialogOpen={handleDialogOpen}
-                        searchResults={searchResults}
-                        handleSearchResults={handleSearchResults}
-                        setIsLocationChangeDialogOpen={setIsLocationChangeDialogOpen}
                     />
                     <EditableContainer art={selectedRow} />
                 </DialogContent>

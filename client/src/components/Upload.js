@@ -3,7 +3,6 @@ import "./Upload.css";
 import {Autocomplete, Box, Button, CircularProgress, TextField} from "@mui/material";
 import "./App.css";
 import Message from "./Message";
-import Navbar from "./Navbar";
 import CascadingDropdowns from "./CascadingDropdowns";
 import { uploadImageWithData } from "../api/s3Service";
 import { getAllArtistsRelatedToAllEntries } from "../api/artistsService";
@@ -152,7 +151,6 @@ const Upload = () => {
             message="Entry uploaded successfully!"
             severity="success" />
             
-        <Navbar />
 
         {uploading ? 
             <CircularProgress variant="determinate" value={progress} className="loader" color="primary" />

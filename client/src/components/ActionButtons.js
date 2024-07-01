@@ -16,9 +16,12 @@ import { TextField } from '@mui/material';
 import LocationIcon from '../components/assets/move-solid.svg'
 import { updateOneArtwork } from '../api/artworksService';
 import { replaceImage } from '../api/s3Service';
+import { useOutletContext } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 
-const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResults, className = '', setIsLocationChangeDialogOpen}) => {
+const ActionButtons = ({art, className = ''}) => {
+
+    const {searchResults, setSearchResults, setIsDeleteDialogOpen, setIsLocationChangeDialogOpen} = useOutletContext()
 
     const {
         currentImages,
@@ -94,7 +97,7 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResult
         const updatedResults = searchResults.map((entry) =>
             entry.id === id ? updatedEntry : entry
         );
-        handleSearchResults(updatedResults);
+        setSearchResults(updatedResults);
         setCurrentImages([])
     };
 
@@ -229,7 +232,7 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResult
                             if (!currentImages.length) {
                                 setCurrentImages([art])   
                             }
-                            handleDialogOpen(true)
+                            setIsDeleteDialogOpen(true)
                         } }/>
                     :
                     <></>

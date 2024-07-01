@@ -1,10 +1,11 @@
 import React, { useContext, useState } from 'react'
-import CustomDialog from '../CustomDialog'
-import CascadingDropdowns from '../CascadingDropdowns'
-import { ImageContext } from '../contexts/ImageContext'
-import { updateLocations } from '../../api/storageService'
+import CustomDialog from './CustomDialog'
+import CascadingDropdowns from './CascadingDropdowns'
+import { ImageContext } from './contexts/ImageContext'
+import { updateLocations } from '../api/storageService'
+import { useOutletContext } from 'react-router-dom'
 
-const LocationChangeDialog = ({isLocationChangeDialogOpen, handleIsLocationChangeDialogOpen, handleLocationChanged}) => {
+const LocationChangeDialog = () => {
 
     const {
         currentImages,
@@ -12,6 +13,11 @@ const LocationChangeDialog = ({isLocationChangeDialogOpen, handleIsLocationChang
         setIsEditMode
     } = useContext(ImageContext);
 
+    const {setLocationChanged, isLocationChangeDialogOpen, setIsLocationChangeDialogOpen} = useOutletContext()
+
+    const handleLocationChanged = () => {
+        setLocationChanged(prev => !prev)
+    }
 
     const [formControlData, setFormControlData] = useState({
         storageLocation: "",
@@ -19,9 +25,7 @@ const LocationChangeDialog = ({isLocationChangeDialogOpen, handleIsLocationChang
         position: "",
     });
 
-    console.log('change4')
-
-    const updateLocation = async () => {
+    const updateLocation = async (formControlData) => {
         const ids = []
         for (let image of currentImages) {
             ids.push(image.id)
@@ -32,7 +36,7 @@ const LocationChangeDialog = ({isLocationChangeDialogOpen, handleIsLocationChang
         } catch (error) {
             console.log(error)
         } finally {
-            handleIsLocationChangeDialogOpen(false);
+            setIsLocationChangeDialogOpen(false);
             setCurrentImages([])
             handleLocationChanged()
         }
@@ -42,16 +46,16 @@ const LocationChangeDialog = ({isLocationChangeDialogOpen, handleIsLocationChang
         {isLocationChangeDialogOpen &&
                 <CustomDialog
                     openModal={isLocationChangeDialogOpen}
-                    setOpenModal={() => handleIsLocationChangeDialogOpen(false)}
+                    setOpenModal={() => setIsLocationChangeDialogOpen(false)}
                     title="This will change the location of all selected entries, are you sure?"
-                    handleClickYes={updateLocation}
-                    handleClickNo={() => handleIsLocationChangeDialogOpen(false)}
+                    handleClickYes={() => updateLocation(formControlData)}
+                    handleClickNo={() => setIsLocationChangeDialogOpen(false)}
                     confirmButtonText="Yes"
                     cancelButtonText="No"
                 >
                     <CascadingDropdowns
                         setFormControlData={setFormControlData}
-                        isOpenInModal={isLocationChangeDialogOpen} />
+                        openInModal={isLocationChangeDialogOpen} />
 
                 </CustomDialog>}
     </>

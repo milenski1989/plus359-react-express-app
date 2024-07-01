@@ -1,9 +1,9 @@
 import React from 'react';
 import {Autocomplete, TextField} from '@mui/material';
 import { useMediaQuery } from "@mui/material";
-import './NewSort.css'
-import AscIcon from '../assets/ascending-solid.svg'
-import DescIcon from '../assets/descending-solid.svg'
+import './Sort.css'
+import AscIcon from './assets/ascending-solid.svg'
+import DescIcon from './assets/descending-solid.svg'
 
 const sortOptions = [
     { label: 'Date', field: 'id' },
@@ -14,7 +14,7 @@ const sortOptions = [
 
 const boxShadow = '0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12)'
 
-const NewSort = ({ sortField, sortOrder, handleSortField, handleSortOrder }) => {
+const Sort = ({ sortField, sortOrder, handleSortField, handleSortOrder }) => {
 
     const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
 
@@ -94,4 +94,4 @@ const NewSort = ({ sortField, sortOrder, handleSortField, handleSortOrder }) => 
     );
 };
 
-export default NewSort;
+export default Sort;
