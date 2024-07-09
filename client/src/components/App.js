@@ -12,6 +12,7 @@ import ProtectedRoute from './ProtectedRoute'
 import { ImageProvider } from './contexts/ImageContext'
 import { ThemeProvider, createTheme } from '@mui/material'
 import NewGalleryContent from './refactored components/NewGalleryContent'
+const EditPage = lazy(() => import('./EditPage'))
 
 const theme = createTheme({
     components: {
@@ -21,6 +22,9 @@ const theme = createTheme({
                     padding: '0.5rem 1.2rem',
                     textTransform: 'capitalize',
                     fontSize: '1rem',
+                    width: '20vw',
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
                 },
             },
         },
@@ -46,6 +50,7 @@ const router = createBrowserRouter(
                 <Route path='/admin-panel' element={<Suspense fallback=''><AdminPanel/></Suspense>}></Route>
                 <Route path='/storages-management' element={<Suspense fallback=''><StoragesManagement/></Suspense>}></Route>
                 <Route path='/account' element={<Suspense fallback=''><Account/></Suspense>}></Route>
+                <Route path='/edit-page' element={<Suspense fallback=''><EditPage/></Suspense>}></Route>
             </Route>
             <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="/logout" element={<Navigate to="/login" replace />} />

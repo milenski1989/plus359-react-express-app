@@ -1,18 +1,22 @@
 import './DetailsView.css'
-import Masonry from '@mui/lab/Masonry';
+import Masonry, {ResponsiveMasonry} from "react-responsive-masonry"
 import Card from './refactored components/Card';
 
-const DetailsView = ({searchResults, handleDialogOpen, handleSearchResults, setIsLocationChangeDialogOpen}) => {
-
+const DetailsView = ({searchResults}) => {
     return <>
-        <Masonry columns={{ xs: 1, sm: 2, md: 4, lg: 5, xl: 6}} spacing={2} sequential>
-            <Card 
-                searchResults={searchResults} 
-                handleDialogOpen={handleDialogOpen} 
-                handleSearchResults={handleSearchResults}
-                setIsLocationChangeDialogOpen={setIsLocationChangeDialogOpen}
-            />
-        </Masonry>
+        <ResponsiveMasonry
+            columnsCountBreakPoints={{400: 1, 600: 2, 750: 3, 900: 4, 1000: 5, 1200: 7}}
+        >
+            <Masonry gutter='1rem'>
+                {searchResults.map(art => (
+                    <Card 
+                        key={art.id}
+                        artwork={art}
+                        searchResults={searchResults} 
+                    />
+                ))} 
+            </Masonry>
+        </ResponsiveMasonry>
     </>
 }
 

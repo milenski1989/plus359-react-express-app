@@ -7,6 +7,8 @@ import Navbar from "./Navbar";
 import CascadingDropdowns from "./CascadingDropdowns";
 import { uploadImageWithData } from "../api/s3Service";
 import { getAllArtistsRelatedToAllEntries } from "../api/artistsService";
+import CustomDropZone from "./CustomDropZone";
+import DeleteIcon from '../components/assets/delete-solid.svg'
 
 const Upload = () => {
 
@@ -51,9 +53,8 @@ const Upload = () => {
         getArtists()
     },[])
 
-    const imageSelectHandler = (e) => {
-        const _file = e.target.files[0];
-        setFile(_file);
+    const handleOnDrop = (files) => {
+        setFile(files[0]);
     }
 
     const handleSubmit = async () => {
@@ -158,37 +159,45 @@ const Upload = () => {
             : 
             <Box
                 component="section"
-                sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    margin: '3rem auto',
-                    marginTop: '4rem',
-                    width: "60vw",
-                }}
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                justifyContent="center"
+                margin="2rem"
             >
-                <TextField
-                    onChange={imageSelectHandler} 
-                    id="textField" type="file" 
-                    autoComplete="current-password" 
-                    required 
-                    className="peer cursor-pointer block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
-                <p className="invisible peer-invalid:visible text-red-400 mt-0">
-                                    Please upload an image
-                </p>
+
+                <CustomDropZone 
+                    handleOndrop={handleOnDrop} 
+                    acceptedFormats={{'image/jpeg': ['.jpeg', '.png']}} 
+                    isRequired={true}
+                    files={[file]}
+                />
+               
+                <div style={{display: 'flex', marginBottom: '1rem', alignItems: 'center'}}>
+                    <span className={file ? 'attached' : 'dot'}>
+                    </span>
+                    <span>{file ? `${file.name.slice(0, 24)}...` : 'Please attach an image!'}</span>
+                    {file ? <img
+                        src={DeleteIcon}
+                        style={{marginLeft: '1rem'}}
+                        className='icon'
+                        onClick={() => setFile()} /> : <></>}
+                </div>
+               
                 <Autocomplete
                     disablePortal
+                    sx={{width: '50vw', marginBottom: '1rem'}}
                     options={artists}
                     renderInput={(params) => <TextField {...params} label="Artists" />}
                     onChange={(event, newValue) => handleChangeArtistFromDropDown(newValue)}
                     required
-                    sx={{marginBottom: '1rem'}}
                 />
                 <TextField
                     label="Add a new artist"
+                    sx={{width: '50vw', marginBottom: '1rem'}}
                     value={newArtistFromInput}
                     disabled={isArtistFromDropdown}
                     onChange={(e) => handleChangeNewArtist(e)}
-                    sx={{ marginBottom: "1rem", width: '60vw' }}
                 />
                 {Object.entries(inputsData).map(([key, value]) => {
                     return (
@@ -197,10 +206,10 @@ const Upload = () => {
                             </div>
                             <TextField 
                                 label={key}
+                                sx={{width: '50vw', marginBottom: '1rem'}}
                                 value={value} 
                                 onChange={(event) => handleInputChange(key, event)} 
                                 id="textField" name={key} required={key === 'technique' || key === 'title'}
-                                sx={{marginBottom: '1rem', width: '60vw'}}
                             />
                         </div>
                     )

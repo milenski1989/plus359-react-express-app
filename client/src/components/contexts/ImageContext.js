@@ -8,7 +8,7 @@ const ImageProvider = ({ children }) => {
     const [isEditMode, setIsEditMode] = useState(false);
     const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
     const [imageHeight, setImageHeight] = useState(0);
-
+    const [page, setPage] = useState(1)
     return (
         <ImageContext.Provider
             value={{
@@ -22,6 +22,8 @@ const ImageProvider = ({ children }) => {
                 setIsInfoModalOpen,
                 imageHeight,
                 setImageHeight,
+                page,
+                setPage
             }}
         >
             {children}
