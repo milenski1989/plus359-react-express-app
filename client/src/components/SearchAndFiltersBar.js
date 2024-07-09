@@ -1,5 +1,5 @@
 import { Autocomplete, IconButton, InputBase, Paper, TextField } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import SearchIcon from "@mui/icons-material/Search";
 import './SearchAndFiltersBar.css'
 import { useParams } from 'react-router-dom';
@@ -7,6 +7,7 @@ import { useMediaQuery } from "@mui/material";
 import { filterAllArtworks, getPaginatedArtworks } from '../api/artworksService';
 import { getAllCellsFromSelectedStorage } from '../api/storageService';
 import { getAllArtistsRelatedToEntriesInSelectedStorage } from '../api/artistsService';
+import { ImageContext } from './contexts/ImageContext';
 
 const boxShadow = '0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12)'
 
@@ -22,8 +23,7 @@ function SearchAndFiltersBar({
     isDeleting,
     locationChanged,
     setTotalCount,
-    setPagesCount,
-    page
+    setPagesCount
 }) {
 
     const [artists, setArtists] = useState([])
@@ -32,6 +32,10 @@ function SearchAndFiltersBar({
     const [selectedCell, setSelectedCell] = useState()
     const {name} = useParams()
     const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
+
+    const {
+        page
+    } = useContext(ImageContext);
 
     const getArtists = async () => {
         try {
@@ -111,6 +115,7 @@ function SearchAndFiltersBar({
     useEffect(() => {
         let filterTimeOut = null;
         if (!selectedArtist && !selectedCell && !keywords.length) {
+            
             getPaginatedData()
         }
         else {

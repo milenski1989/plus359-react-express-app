@@ -13,7 +13,7 @@ export const theme = {
         center: true,
     },
     screens: {
-        'sm': '600px',
+        'sm': '500px',
         // => @media (min-width: 640px) { ... }
         'lg': '900px'
     }

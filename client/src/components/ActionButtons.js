@@ -16,6 +16,7 @@ import { TextField } from '@mui/material';
 import LocationIcon from '../components/assets/move-solid.svg'
 import { updateOneArtwork } from '../api/artworksService';
 import { replaceImage } from '../api/s3Service';
+import { useNavigate } from "react-router-dom";
 
 const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResults, className = '', setIsLocationChangeDialogOpen}) => {
 
@@ -30,7 +31,6 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResult
 
     const user = JSON.parse(localStorage.getItem('user'))
 
-
     const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
 
     const [imageReplaceDialogisOpen, setImageReplaceDialogisOpen] = useState(false)
@@ -43,6 +43,7 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResult
         message: "",
     });
 
+    let navigate = useNavigate();
 
     const downloadOriginalImage = (downloadUrl, name) => {
         saveAs(downloadUrl, name);
@@ -214,6 +215,8 @@ const ActionButtons = ({art, handleDialogOpen, searchResults, handleSearchResult
                             setCurrentImages([art]);
                             setIsEditMode(true);
                             prefillEditableFields(art.id);
+                            localStorage.setItem('currentImage', JSON.stringify(art));
+                            navigate('/edit-page')
                         } }/>
                     :
                     <></>

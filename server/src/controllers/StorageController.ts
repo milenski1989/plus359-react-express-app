@@ -69,6 +69,7 @@ export class StorageController {
 
   updateLocation = async (req, res) => {
     const { ids, formControlData } = req.body;
+    console.log(req.body)
 
     try {
       const results = await StorageService.getInstance().updateLocation(

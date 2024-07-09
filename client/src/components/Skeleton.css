@@ -1,0 +1,9 @@
+.skeleton {
+    border-radius: 2px;
+    line-height: 100%;
+    width: 100%;
+    background-color: #fff;
+    background: linear-gradient(100deg, rgb(223, 24, 24) 20%, rgb(230, 177, 177) 50%, rgb(223, 24, 24) 60%);
+    background-size: 1000px 1000px;
+    animation: placeholderShimmer 1.5s linear infinite forwards;
+}

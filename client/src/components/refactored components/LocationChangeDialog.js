@@ -21,7 +21,7 @@ const LocationChangeDialog = ({isLocationChangeDialogOpen, handleIsLocationChang
 
     console.log('change4')
 
-    const updateLocation = async (formControlData) => {
+    const updateLocation = async () => {
         const ids = []
         for (let image of currentImages) {
             ids.push(image.id)
@@ -44,14 +44,14 @@ const LocationChangeDialog = ({isLocationChangeDialogOpen, handleIsLocationChang
                     openModal={isLocationChangeDialogOpen}
                     setOpenModal={() => handleIsLocationChangeDialogOpen(false)}
                     title="This will change the location of all selected entries, are you sure?"
-                    handleClickYes={() => updateLocation(formControlData)}
+                    handleClickYes={updateLocation}
                     handleClickNo={() => handleIsLocationChangeDialogOpen(false)}
                     confirmButtonText="Yes"
                     cancelButtonText="No"
                 >
                     <CascadingDropdowns
                         setFormControlData={setFormControlData}
-                        openInModal={isLocationChangeDialogOpen} />
+                        isOpenInModal={isLocationChangeDialogOpen} />
 
                 </CustomDialog>}
     </>

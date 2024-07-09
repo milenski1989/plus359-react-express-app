@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import Navbar from "../Navbar";
 import "./NewGalleryContent.css";
 import "../App.css";
@@ -34,7 +34,9 @@ const NewGalleryContent = () => {
         currentImages,
         setCurrentImages,
         setUpdatedEntry,
-        isEditMode
+        isEditMode,
+        page,
+        setPage
     } = useContext(ImageContext);
 
     const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
@@ -49,40 +51,17 @@ const NewGalleryContent = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [totalCount, setTotalCount] = useState(0);
     const [pagesCount, setPagesCount] = useState(0);
-    const [page, setPage] = useState(1);
 
     const [error, setError] = useState({
         error: false,
         message: "",
     });
-    const [imageLoaded, setImageLoaded] = useState({});
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [viewMode, setViewMode] = useState('details')
     const [paginationDisabled, setPaginationDisabled] = useState(false);
     let navigate = useNavigate();
 
     const user = JSON.parse(localStorage.getItem('user'))
-
-    useEffect(() => {
-    
-        const promises = searchResults && searchResults.map((art) => {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.src = art.image_url;
-                img.onload = () => {
-                    resolve();
-                    setImageLoaded(prev => ({ ...prev, [art.id]: true }));
-                };
-            });
-        });
-
-        if (promises) {
-            Promise.allSettled(promises).then(() => {
-                setLoading(false)
-            });
-        }
-
-    }, [searchResults]);
 
     const prepareImagesForLocationChange = async() => {
         setIsLocationChangeDialogOpen(true)
@@ -96,10 +75,6 @@ const NewGalleryContent = () => {
         } else if (viewMode === 'details') {
             return <DetailsView
                 searchResults={searchResults}
-                handleDialogOpen={setIsDeleteDialogOpen}
-                handleSearchResults={setSearchResults}
-                imageLoaded={imageLoaded}
-                setIsLocationChangeDialogOpen={setIsLocationChangeDialogOpen}
             />
           
         } else if (viewMode === 'list' && isSmallDevice) {
@@ -204,7 +179,7 @@ const NewGalleryContent = () => {
                                  }
                                  {currentImages.length > 1 ?
                                      <img 
-                                         style={{width: '39px'}}
+                                         style={{width: '30px'}}
                                          src={DownloadIcon} 
                                          className='icon'
                                          onClick={downloadOriginalImage}/>

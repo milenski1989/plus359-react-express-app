@@ -2,17 +2,19 @@
 import React, { useContext, useState, useEffect } from 'react'
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
-
+import './CascadingDropdowns.css'
 import { ImageContext } from './contexts/ImageContext';
-import { Box } from '@mui/material';
+import { Box, useMediaQuery } from '@mui/material';
 import { getAllStorages, getAvailablePositions } from '../api/storageService';
 
 function CascadingDropdowns({
     setFormControlData, 
-    openInModal, 
+    isOpenInModal
 }) {
 
     const {setUpdatedEntry, updatedEntry, isEditMode, currentImages} = useContext(ImageContext)
+    const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
+
 
     const [location, setLocation] = useState('--Location--')
     const [cells, setCells] = useState([])
@@ -99,9 +101,15 @@ function CascadingDropdowns({
     }
 
     return (
-        <Box>
+        <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+        >
             <Autocomplete
                 disablePortal
+                sx={isOpenInModal ? {width: '70%', marginBottom: '1rem'} : {width: '50vw', marginBottom: '1rem'}}
                 options={storages.map(location => location.name)}
                 renderInput={(params) => <TextField {...params} label={isEditMode ? updatedEntry.storageLocation : 'Location'} />} 
                 onChange={(event, newValue) => changeLocation(newValue)}
@@ -110,30 +118,26 @@ function CascadingDropdowns({
                         clearLocation(event, newInputValue);
                     }
                 }}
-                fullWidth
-                sx={{marginBottom: '1rem'}}
             />
           
             <Autocomplete
                 disablePortal
+                sx={isOpenInModal ? {width: '70%', marginBottom: '1rem'} : {width: '50vw', marginBottom: '1rem'}}
                 disabled={location === 'Sold'}
                 options={location !== 'Sold' ? cells : []}
                 renderInput={(params) =>
                     <TextField {...params} label={isEditMode ? `cell: ${updatedEntry.cell ? updatedEntry.cell : 'none'}` : 'Cell'} />} 
                 onChange={(event, newValue) => changeCell(newValue)}
-                fullWidth
-                sx={{marginBottom: '1rem'}}
             />
-            {(openInModal && currentImages.length === 1) || !openInModal ? 
+            {(isOpenInModal && currentImages.length === 1) || !isOpenInModal ? 
                 <Autocomplete
                     disablePortal
+                    sx={isOpenInModal ? {width: '70%', marginBottom: '1rem'} : {width: '50vw', marginBottom: '1rem'}}
                     disabled={location === 'Sold'}
                     options={availablePositions}
                     renderInput={(params) =>
                         <TextField {...params} label={isEditMode ? `position: ${updatedEntry.position}` : 'Position'} />} 
                     onChange={(event, newValue) => changePosition(newValue)}
-                    fullWidth
-                    sx={{marginBottom: '1rem'}}
                 /> :
                 <></>
             }
