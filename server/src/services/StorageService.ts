@@ -94,7 +94,6 @@ export default class StorageService {
     }
   ) {
     const { storageLocation, cell, position } = formControlData;
-    console.log(formControlData)
     const promises = [];
     try {
       const images = await artsRepository.findBy({
@@ -109,11 +108,12 @@ export default class StorageService {
         where: {name: cell, storage_id: foundStorage.id}
       })
 
-      console.log('foundCell', foundCell)
-
-      const foundPosition = await positionsRepository.findOne({
-        where: {cell_id: foundCell.id, cell: {storage_id: foundStorage.id},  name: position.toString()}
-      })
+      let foundPosition;
+      if (foundCell) {
+        foundPosition = await positionsRepository.findOne({
+          where: {cell_id: foundCell.id, cell: {storage_id: foundStorage.id},  name: position.toString()}
+        })
+      }
 
       if (foundStorage) {
         for (let image of images) {

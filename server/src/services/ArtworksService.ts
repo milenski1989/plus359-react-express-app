@@ -91,43 +91,49 @@ export default class ArtworksService {
     count?: string,
     sortField?: string,
     sortOrder?: string
-  ) {
+) {
     try {
-      if (!page && !count) {
-        const whereCondition = { storage: { name: name } };
+        if (!page && !count) {
+            const whereCondition = { storage: { name: name } };
 
-        const artsCount = await artsRepository.count({
-          where: whereCondition
-        });
-        
-        return [artsCount];
-      }
-      if (name === "All") {
-        const [arts, artsCount] = await artsRepository.findAndCount({
-          relations: ["storage", "cell_t", "position_t"],
-          order: { [sortField]: sortOrder.toUpperCase() },
-          take: parseInt(count),
-          skip: parseInt(count) * parseInt(page) - parseInt(count),
-        });
+            const artsCount = await artsRepository.count({
+                where: whereCondition
+            });
 
-        return [arts, artsCount];
-      } else {
-        const whereCondition = { storage: { name: name } };
+            return [artsCount];
+        }
 
-        const [arts, artsCount] = await artsRepository.findAndCount({
-          where: whereCondition,
-          relations: ["storage", "cell_t", "position_t"],
-          order: { [sortField]: sortOrder.toUpperCase() },
-          take: parseInt(count),
-          skip: parseInt(count) * (parseInt(page) - 1),
-        });
+        const take = parseInt(count);
+        const skip = take * (parseInt(page) - 1);
+        const order = sortField ? { [sortField]: sortOrder.toUpperCase() } : {};
 
-        return [arts, artsCount];
-      }
+        if (name === "All") {
+            const [arts, artsCount] = await artsRepository.findAndCount({
+                relations: ["storage", "cell_t", "position_t"],
+                order,
+                take,
+                skip
+            });
+
+            return [arts, artsCount];
+        } else {
+            const whereCondition = { storage: { name: name } };
+
+            const [arts, artsCount] = await artsRepository.findAndCount({
+                where: whereCondition,
+                relations: ["storage", "cell_t", "position_t"],
+                order,
+                take,
+                skip
+            });
+
+            return [arts, artsCount];
+        }
     } catch {
-      throw new Error("Fetch failed!");
+        throw new Error("Fetch failed!");
     }
-  }
+}
+
 
   async saveEntryInDb(
     title,
@@ -290,16 +296,22 @@ export default class ArtworksService {
    
     if (whereConditions) {
       query = `
-      SELECT *
+      SELECT artworks.*, storages.name AS storage_name, cells.name AS cell_name, positions.name AS position_name
       FROM artworks
+      LEFT JOIN storages ON artworks.storage_id = storages.id
+      LEFT JOIN cells ON artworks.cell_id = cells.id
+      LEFT JOIN positions ON artworks.position_id = positions.id
       WHERE ${whereConditions} ${additionalCondition}
       ORDER BY ${sortField} ${sortOrder.toUpperCase()}
     `;
 
     } else {
       query = `
-      SELECT *
+      SELECT artworks.*, storages.name AS storage_name, cells.name AS cell_name, positions.name AS position_name
       FROM artworks
+      LEFT JOIN storages ON artworks.storage_id = storages.id
+      LEFT JOIN cells ON artworks.cell_id = cells.id
+      LEFT JOIN positions ON artworks.position_id = positions.id
       WHERE ${additionalCondition}
       ORDER BY ${sortField} ${sortOrder.toUpperCase()}
     `;

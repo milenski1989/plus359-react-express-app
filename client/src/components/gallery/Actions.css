@@ -1,0 +1,10 @@
+.action-buttons-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+  }
+  
+  .action-buttons-container .download-icon {
+    width: 25px;
+  }

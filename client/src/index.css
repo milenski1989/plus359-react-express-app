@@ -10,3 +10,14 @@ body {
 .rotate-class {
     transform: rotate(90deg);
 }
+
+.main-section {
+   padding: 2rem;
+}
+
+.loader {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}

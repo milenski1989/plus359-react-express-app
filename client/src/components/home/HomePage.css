@@ -1,0 +1,39 @@
+.locations-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  max-width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 2rem;
+}
+
+.location {
+  min-width: 250px;
+  text-align: center;
+  padding: 1rem 1.25rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  background-color: #40C8F4;
+  color: #F7F9FA;
+  font-size: 1.25rem;
+}
+  .add-new-storage {
+    background-color: #F0BB14;
+  }
+
+  .textfield-icon-container {
+    position: relative;
+    margin-bottom: 1rem;
+  }
+
+  .mobile-textfield-icon-container {
+    position: relative;
+  }
+
+  .mobile-icons-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }

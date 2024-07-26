@@ -81,6 +81,7 @@ class StorageController {
         });
         this.updateLocation = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const { ids, formControlData } = req.body;
+            console.log(req.body);
             try {
                 const results = yield StorageService_1.default.getInstance().updateLocation(ids, formControlData);
                 res.status(200).send(results);

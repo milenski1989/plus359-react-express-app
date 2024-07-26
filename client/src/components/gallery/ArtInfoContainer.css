@@ -1,0 +1,13 @@
+.art-info-container {
+    padding: 0 0.75rem 0.75rem 0.75rem;  
+}
+
+.art-info-item {
+    overflow: hidden;
+    font-size: 0.85rem;
+}
+
+.art-info-item .input-label {
+    font-weight: 600;
+    font-size: 0.85rem;
+}

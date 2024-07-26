@@ -104,9 +104,12 @@ class StorageService {
                 const foundCell = yield cellsRepository.findOne({
                     where: { name: cell, storage_id: foundStorage.id }
                 });
-                const foundPosition = yield positionsRepository.findOne({
-                    where: { cell_id: foundCell.id, cell: { storage_id: foundStorage.id }, name: position.toString() }
-                });
+                let foundPosition;
+                if (foundCell) {
+                    foundPosition = yield positionsRepository.findOne({
+                        where: { cell_id: foundCell.id, cell: { storage_id: foundStorage.id }, name: position.toString() }
+                    });
+                }
                 if (foundStorage) {
                     for (let image of images) {
                         promises.push(yield artsRepository.save({

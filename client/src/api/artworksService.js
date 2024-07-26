@@ -1,22 +1,23 @@
 import axios from "axios";
 import { API_URL } from "./constants";
 
-export const getPaginatedArtworks = async (page, sortField, sortOrder, name) => {
+export const getPaginatedArtworks = async (page, count, sortField, sortOrder, name) => {
     try {
-        if (!page && !sortField && !sortOrder) {
+        if (!page && !count && !sortField && !sortOrder) {
             return await axios.get(
                 `${API_URL}/artworks/filterByStorage/${name}`,
             );
         } else {
             return await axios.get(
-                `${API_URL}/artworks/filterByStorage/${name.split(':')[1]}?count=25&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`,
+                `${API_URL}/artworks/filterByStorage/${name.split(':')[1]}?count=${count}&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`,
             );
         }
     } catch(error) {
-        console.log(error)
-        throw error
+        console.log(error);
+        throw error;
     }
 }
+
 
 export const filterAllArtworks = async (keywords, selectedArtist, selectedCell, sortField, sortOrder) => {
     try {
