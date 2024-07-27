@@ -1,5 +1,4 @@
 import React, { useContext, useState } from "react";
-import "./GalleryContent.css";
 import Message from "../reusable/Message";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { ImageContext } from "../contexts/ImageContext";
@@ -85,7 +84,11 @@ const NewGalleryContent = () => {
                     
             />
             <div className="gallery-content-container">
-                <Actions  handleDialogOpen={setIsDeleteDialogOpen} viewMode={viewMode} searchResults={searchResults} handleIsLocationChangeDialogOpen={setIsLocationChangeDialogOpen} />
+                <Actions  
+                    handleDialogOpen={setIsDeleteDialogOpen} 
+                    viewMode={viewMode} searchResults={searchResults} 
+                    handleIsLocationChangeDialogOpen={setIsLocationChangeDialogOpen} />
+                
                 <SearchAndFiltersBar
                     setPaginationDisabled={setPaginationDisabled}
                     handleError={setError}

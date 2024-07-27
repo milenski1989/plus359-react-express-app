@@ -9,6 +9,7 @@ import SelectAllIcon from '../assets/select-all.svg'
 import UnselectAllIcon from '../assets/unselect-all.svg'
 import './DeleteUsers.css'
 import { deleteUser, getAllUsers } from "../../api/authService";
+import { checkBoxHandler } from "../utils/helpers";
 
 function DeleteUsers() {
     const [users, setUsers] = useState([]);
@@ -24,14 +25,6 @@ function DeleteUsers() {
     useEffect(() => {
         getUsers();
     }, []);
-
-    const checkBoxHandler = (id) => {
-        if (selectedUsers.some((user) => user.id === id)) {
-            setSelectedUsers(selectedUsers.filter((user) => user.id !== id));
-        } else {
-            setSelectedUsers([...selectedUsers, users.find((user) => user.id === id)]);
-        }
-    };
 
     const handleSelectAll = () => {
         if (users.length === selectedUsers.length) {
@@ -121,39 +114,42 @@ function DeleteUsers() {
                     isSmallDevice ? "mobile-locations-container" : "locations-container"
                 }
             >
-                {users.map((user) => (
-                    <div
-                        className={isSmallDevice ? "mobile-location-item" : "location-item"}
-                        key={user.id}
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                            paddingLeft: "25px",
-                            position: "relative"
-                        }}
-                    >
-                        <div style={{marginLeft: "1rem"}}>{user.email}</div>
-                        <Checkbox
-                            onChange={() => checkBoxHandler(user.id)}
-                            checked={selectedUsers.some(
-                                (selectedUser) => selectedUser.id === user.id
-                            )}
-                            sx={{
-                                position: "absolute",
-                                top: "50%",
-                                left: "10%",
-                                transform: "translate(-50%, -50%)",
-                                color: "white",
-                                "&.Mui-checked": {
-                                    color: "white",
-                                },
+                {!isLoading && !error ?
+                    users.map((user) => (
+                        <div
+                            className={isSmallDevice ? "mobile-location-item" : "location-item"}
+                            key={user.id}
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                                paddingLeft: "25px",
+                                position: "relative"
                             }}
-                            icon={<RadioButtonUncheckedIcon />}
-                            checkedIcon={<CheckCircleOutlineIcon />}
-                        />
-                    </div>
-                ))}
+                        >
+                            <div style={{marginLeft: "1rem"}}>{user.email}</div>
+                            <Checkbox
+                                onChange={() => checkBoxHandler(selectedUsers, setSelectedUsers, users, user.id)}
+                                checked={selectedUsers.some(
+                                    (selectedUser) => selectedUser.id === user.id
+                                )}
+                                sx={{
+                                    position: "absolute",
+                                    top: "50%",
+                                    left: "10%",
+                                    transform: "translate(-50%, -50%)",
+                                    color: "white",
+                                    "&.Mui-checked": {
+                                        color: "white",
+                                    },
+                                }}
+                                icon={<RadioButtonUncheckedIcon />}
+                                checkedIcon={<CheckCircleOutlineIcon />}
+                            />
+                        </div>
+                    )) :
+                    <p className="no-data-container">No users found!</p>
+                }
             </Box>
         </>
     );

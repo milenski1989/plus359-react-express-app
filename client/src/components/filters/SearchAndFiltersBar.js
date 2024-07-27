@@ -11,7 +11,6 @@ import ViewModeIcons from './ViewModeIcons';
 const countPerPageOptions = [25, 50, 100, 150, 200]
 
 function SearchAndFiltersBar({
-  
     setPaginationDisabled,
     handleError, 
     handleSearchResults,

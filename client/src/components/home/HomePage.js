@@ -8,6 +8,7 @@ const HomePage = () => {
 
     const [storages, setStorages] = useState([])
     const [error, setError] = useState({ error: false, message: "" })
+    const [isLoading, setIsLoading] = useState(false);
 
     let navigate = useNavigate();
 
@@ -20,13 +21,16 @@ const HomePage = () => {
             const response = await getAllStorages()
             setStorages(response.data);
         } catch (error) {
-            throw new Error(error)
+            setIsLoading(false);
+            setError({ error: true, message: error.response.data.message });
         }
     }
 
     const handleStorageSelect = (name) => {
         navigate(`/gallery/:${name}`)
     }
+
+
   
     return <>
         <Message
@@ -34,18 +38,21 @@ const HomePage = () => {
             handleClose={() => setError({ error: false, message: "" })}
             message={error.message}
             severity="error" />
-        <div className="locations-container">
-            <div className='location' onClick={() => handleStorageSelect('All')}>
-                All
-            </div>
-            {storages.map(storage => (
-                <div key={storage.id} className='location'>
-                    <div onClick={() => handleStorageSelect(storage.name)}>
-                        {storage.name}
-                    </div>
+        {!isLoading && !error ?
+            <div className="locations-container">
+                <div className='location' onClick={() => handleStorageSelect('All')}>
+                 All
                 </div>
-            ))} 
-        </div>
+                {storages.map(storage => (
+                    <div key={storage.id} className='location'>
+                        <div onClick={() => handleStorageSelect(storage.name)}>
+                            {storage.name}
+                        </div>
+                    </div>
+                ))} 
+            </div> :
+            <p className="no-data-container">No storages found!</p>
+        }
     </>  
 }
 

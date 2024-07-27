@@ -109,45 +109,49 @@ const StoragesManagement = () => {
                 'mobile-locations-container' :
                 'locations-container'
             }>
-            {showInput ?
-                <div className={isSmallDevice ? 'mobile-textfield-icon-container' : 'textfield-icon-container'}>
-                    <TextField sx={isSmallDevice ?
-                        {
-                            '& .MuiOutlinedInput-root':{
-                                borderRadius: '37px', width: '242px', height: '47px'
-                            }} :
-                        {
-                            '& .MuiOutlinedInput-root':{
-                                borderRadius: '37px', width: '242px', height: '47px'
-                            }, '&.MuiFormControl-root': {
-                                marginBottom: '-1rem'
-                            }}
-                    } placeholder='Enter name...' onChange={(e) => handleChange(e)} />
-                    <div style={isSmallDevice ? {position: 'absolute', right: '15px', top: '50%', transform: 'translateY(-50%)'} :{position: 'absolute', right: '15px', top: '30%'}} className={isSmallDevice ? 'mobile-icons-container': 'icons-container'}>
-                        <img src={SaveIcon} style={{cursor: 'pointer', marginRight: '0.5rem'}} onClick={handleSaveNewStorage}/>
-                        <CloseIcon sx={{fontSize: "30px", cursor: 'pointer'}} onClick={handleCancel}/>
+            {!isLoading && !error ?
+                showInput ?
+                    <div className={isSmallDevice ? 'mobile-textfield-icon-container' : 'textfield-icon-container'}>
+                        <TextField sx={isSmallDevice ?
+                            {
+                                '& .MuiOutlinedInput-root':{
+                                    borderRadius: '37px', width: '242px', height: '47px'
+                                }} :
+                            {
+                                '& .MuiOutlinedInput-root':{
+                                    borderRadius: '37px', width: '242px', height: '47px'
+                                }, '&.MuiFormControl-root': {
+                                    marginBottom: '-1rem'
+                                }}
+                        } placeholder='Enter name...' onChange={(e) => handleChange(e)} />
+                        <div style={isSmallDevice ? {position: 'absolute', right: '15px', top: '50%', transform: 'translateY(-50%)'} :{position: 'absolute', right: '15px', top: '30%'}} className={isSmallDevice ? 'mobile-icons-container': 'icons-container'}>
+                            <img src={SaveIcon} style={{cursor: 'pointer', marginRight: '0.5rem'}} onClick={handleSaveNewStorage}/>
+                            <CloseIcon sx={{fontSize: "30px", cursor: 'pointer'}} onClick={handleCancel}/>
+                        </div>
                     </div>
-                </div>
-                :
-                <div 
-                    onClick={handleClickAddNewStorage}
-                    className={isSmallDevice ? 'mobile-location-item add-new-storage' : 'location-item add-new-storage'}><AddIcon/></div>
+                    :
+                    <div 
+                        onClick={handleClickAddNewStorage}
+                        className={isSmallDevice ? 'mobile-location-item add-new-storage' : 'location-item add-new-storage'}><AddIcon/></div> :
+                !isLoading && !error ?
+                    storages.map(storage => (
+                        <div 
+                            className={isSmallDevice ? 'mobile-location-item' : 'location-item'} 
+                            key={storage.id} 
+                            style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingLeft: '25px'}}>
+                            <div>
+                                {storage.name}
+                            </div>
+                            <DeleteOutlineIcon 
+                                className='icon'
+                                style={{ cursor: 'pointer' }}
+                                onClick={() => {setSelectedStorage(storage.name);handleDeleteStorage()}}
+                            />
+                        </div>
+                    )) :
+                    <p className="no-data-container">No storages found!</p>
+
             }
-            {storages.map(storage => (
-                <div 
-                    className={isSmallDevice ? 'mobile-location-item' : 'location-item'} 
-                    key={storage.id} 
-                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingLeft: '25px'}}>
-                    <div>
-                        {storage.name}
-                    </div>
-                    <DeleteOutlineIcon 
-                        className='icon'
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => {setSelectedStorage(storage.name);handleDeleteStorage()}}
-                    />
-                </div>
-            ))}
         </Box></>  
 }
 

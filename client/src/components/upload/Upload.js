@@ -200,8 +200,6 @@ const Upload = () => {
                 {Object.entries(inputsData).map(([key, value]) => {
                     return (
                         <div key={key}>
-                            <div className="flex items-center justify-between">
-                            </div>
                             <TextField 
                                 label={key}
                                 className="upload-textfield"

@@ -6,12 +6,11 @@ import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { Dialog, DialogContent } from "@mui/material";
 import './ListView.css'
-import { generateBackGroundColor } from "../utils/helpers";
+import { checkBoxHandler, downloadOriginalImage, generateBackGroundColor } from "../utils/helpers";
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import ArtInfoContainer from "../gallery/ArtInfoContainer";
 import EditIcon from '../assets/edit-solid.svg'
 import DownloadIcon from '../assets/download-solid.svg'
-import { saveAs } from "file-saver";
 import { useNavigate } from "react-router-dom";
 import LocationIcon from '../assets/move-solid.svg';
 
@@ -33,14 +32,6 @@ const ListView = ({searchResults,  handleIsLocationChangeDialogOpen}) => {
 
     const navigate = useNavigate()
 
-    const checkBoxHandler = (id) => {
-        if (currentImages.some(image => image.id === id)) {
-            setCurrentImages(currentImages.filter(image => image.id !== id));
-        } else {
-            setCurrentImages([...currentImages, searchResults.find(image => image.id === id)]);
-        }
-    }
-
     const openImageDialog = (art) => {
         setSelectedArt(art);
         setImagePreview(true);
@@ -58,11 +49,6 @@ const ListView = ({searchResults,  handleIsLocationChangeDialogOpen}) => {
         setSelectedRow(art)
         setFullInfoOpened(true)
     }
-
-    const downloadOriginalImage = (downloadUrl, name) => {
-        saveAs(downloadUrl, name);
-        setCurrentImages([])
-    };
 
     const prepareImagesForLocationChange = async() => {
         handleIsLocationChangeDialogOpen(true)
@@ -107,11 +93,10 @@ const ListView = ({searchResults,  handleIsLocationChangeDialogOpen}) => {
                                         )}
                                     </React.Fragment>
                                 ))}
-                              
                                  
                                 <div className="actions">
                                     <Checkbox
-                                        onChange={() => checkBoxHandler(art.id)}
+                                        onChange={() => checkBoxHandler(currentImages, setCurrentImages, searchResults, art.id)}
                                         checked={currentImages.some(image => image.id === art.id)}
                                         sx={{
                                             padding: 0,
@@ -135,7 +120,7 @@ const ListView = ({searchResults,  handleIsLocationChangeDialogOpen}) => {
                                         <img 
                                             src={DownloadIcon} 
                                             className='icon'
-                                            onClick={() => downloadOriginalImage(art.download_url, art.download_key)}/>
+                                            onClick={(currentImages) => downloadOriginalImage(currentImages, setCurrentImages)}/>
                                         :
                                         <></>
                                     }

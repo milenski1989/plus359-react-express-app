@@ -5,6 +5,8 @@ const Account = () => {
     let myStorage = window.localStorage
     let user = JSON.parse(myStorage.getItem('user'))
 
+    if (!user) return <p className="no-data-container">Error retrieving user data!</p>
+
     return (
         <>
             <section className="mainSection" style={{textAlign: "center", marginTop: "40vh"}}>

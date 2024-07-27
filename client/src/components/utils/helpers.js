@@ -1,3 +1,6 @@
+import { saveAs } from "file-saver";
+
+
 export const generateBackGroundColor = (cell) => {
     if (!cell) return
     if (cell === "1-1" || cell === "charta1" || cell === "lozenets1" || cell === "other1" || cell === "collect1" || cell === "South Park1" || cell ==="Office Room") {
@@ -25,4 +28,24 @@ export const generateBackGroundColor = (cell) => {
     } else if (cell === "3-4") {
         return "#8B5FBF"
     }  
+}
+
+export const downloadOriginalImage = (currentImages, setCurrentImages) => {
+    for (let currentImage of currentImages) {
+        saveAs(currentImage.download_url, currentImage.download_key);
+    }
+
+    setCurrentImages([])
+};
+
+export const prepareImagesForLocationChange = async (handleIsLocationChangeDialogOpen) => {
+    handleIsLocationChangeDialogOpen(true)
+}
+
+export const checkBoxHandler = (selectedItems, setSelectedItems, items, id) => {
+    if (selectedItems.some(selectedItem => selectedItem.id === id)) {
+        setSelectedItems(selectedItems.filter(image => image.id !== id));
+    } else {
+        setSelectedItems([...selectedItems, items.find(image => image.id === id)]);
+    }
 }

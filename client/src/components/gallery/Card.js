@@ -2,13 +2,12 @@ import { Checkbox } from "@mui/material";
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import './DetailsView.css';
-import { generateBackGroundColor } from "../utils/helpers";
+import { checkBoxHandler, downloadOriginalImage, generateBackGroundColor, prepareImagesForLocationChange } from "../utils/helpers";
 import { useContext, useState } from "react";
 import { ImageContext } from "../contexts/ImageContext";
 import './Card.css'
 import EditIcon from '../assets/edit-solid.svg'
 import DownloadIcon from '../assets/download-solid.svg'
-import { saveAs } from "file-saver";
 import { useNavigate } from "react-router-dom";
 import LocationIcon from '../assets/move-solid.svg'
 import ArtInfoContainer from "./ArtInfoContainer";
@@ -30,29 +29,11 @@ const Card = ({handleDialogOpen, searchResults, art, handleIsLocationChangeDialo
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
     const [imageLoaded, setImageLoaded] = useState(false);
 
-
-    const checkBoxHandler = (id) => {
-        if (currentImages.some(image => image.id === id)) {
-            setCurrentImages(currentImages.filter(image => image.id !== id));
-        } else {
-            setCurrentImages([...currentImages, searchResults.find(image => image.id === id)]);
-        }
-    };
-
     const handleImageLoad = (e) => {
         const { naturalWidth, naturalHeight } = e.target;
         setDimensions({ width: naturalWidth, height: naturalHeight });
         setImageLoaded(true);
     };
-
-    const downloadOriginalImage = (downloadUrl, name) => {
-        saveAs(downloadUrl, name);
-        setCurrentImages([])
-    };
-
-    const prepareImagesForLocationChange = async() => {
-        handleIsLocationChangeDialogOpen(true)
-    }
 
     return (
         <div className="card" key={art.id}>
@@ -66,7 +47,7 @@ const Card = ({handleDialogOpen, searchResults, art, handleIsLocationChangeDialo
                     </div>
                 ) : null}
                 <Checkbox
-                    onChange={() => checkBoxHandler(art.id)}
+                    onChange={() => checkBoxHandler(currentImages, setCurrentImages, searchResults, art.id)}
                     checked={currentImages.some(image => image.id === art.id)}
                     sx={{
                         "&.Mui-checked": {
@@ -104,24 +85,24 @@ const Card = ({handleDialogOpen, searchResults, art, handleIsLocationChangeDialo
                             localStorage.setItem('currentImage', JSON.stringify(art));
                             navigate('/edit-page')
                         } }/>
-                    {currentImages.length === 1 && currentImages[0].id === art.id &&
-                        <img 
-                            src={DownloadIcon} 
-                            className='icon'
-                            onClick={() => downloadOriginalImage(art.download_url, art.download_key)}/>
-                    }
-                    {currentImages.length === 1 && currentImages[0].id === art.id &&  <img 
-                        src={LocationIcon} 
-                        className='icon' 
-                        onClick={prepareImagesForLocationChange}/>}
                     {currentImages.length === 1 && currentImages[0].id === art.id ?
-                        <DeleteOutlineIcon
-                            className="icon card-delete-icon"
-                            onClick={() => {
-                                handleDialogOpen(true);
-                            }}
-                        />
-                        :
+                        <>
+                            <img 
+                                src={DownloadIcon} 
+                                className='icon'
+                                onClick={(currentImages) => downloadOriginalImage(currentImages, setCurrentImages)}/>
+                            <img 
+                                src={LocationIcon} 
+                                className='icon' 
+                                onClick={() => prepareImagesForLocationChange(handleIsLocationChangeDialogOpen)}/>
+
+                            <DeleteOutlineIcon
+                                className="icon card-delete-icon"
+                                onClick={() => {
+                                    handleDialogOpen(true);
+                                }}
+                            />
+                        </> :
                         null
                     }
                 </div>

@@ -6,6 +6,7 @@ import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import './Thumbnail.css'
 import { useLoadedImages } from '../hooks/useLoadedImages';
+import { checkBoxHandler } from '../utils/helpers';
 
 const Thumbnail = ({artwork, searchResults}) => {
 
@@ -17,19 +18,11 @@ const Thumbnail = ({artwork, searchResults}) => {
         setCurrentImages,
     } = useContext(ImageContext);
 
-    const checkBoxHandler = (id) => {
-        if (currentImages.some(image => image.id === id)) {
-            setCurrentImages(currentImages.filter(image => image.id !== id));
-        } else {
-            setCurrentImages([...currentImages, searchResults.find(image => image.id === id)]);
-        }
-    }
-    
     return <>
         <div
             key={artwork.id}>
             <Checkbox
-                onChange={() => checkBoxHandler(artwork.id)}
+                onChange={() => checkBoxHandler(currentImages, setCurrentImages, searchResults, artwork.id)}
                 checked={currentImages.some(image => image.id === artwork.id)}
                 sx={{
                     position: "absolute",
