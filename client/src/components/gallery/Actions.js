@@ -49,19 +49,19 @@ function Actions({handleDialogOpen, viewMode, searchResults, handleIsLocationCha
                 null
             }
 
-            {currentImages.length && currentImages.length !== 1 ?
+            {currentImages.length && currentImages.length !== 1 || (viewMode === 'thumbnail' && currentImages.length) ?
                 <img 
                     src={LocationIconBig} 
                     className='icon' 
                     onClick={() => prepareImagesForLocationChange(handleIsLocationChangeDialogOpen)}/> :
                 null
             }
-            {currentImages.length > 1 ?
+            {currentImages.length > 1 || (viewMode === 'thumbnail' && currentImages.length) ?
                 <>
                     <img 
                         src={DownloadIconBig} 
                         className='icon download-icon'
-                        onClick={(currentImages) => downloadOriginalImage(currentImages, setCurrentImages)}/>
+                        onClick={() => downloadOriginalImage(currentImages, setCurrentImages)}/>
                     <DeleteOutlineIcon
                         className="icon"
                         style={{ cursor: "pointer", height: '34px', width: '34px'}}

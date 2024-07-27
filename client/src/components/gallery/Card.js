@@ -90,7 +90,7 @@ const Card = ({handleDialogOpen, searchResults, art, handleIsLocationChangeDialo
                             <img 
                                 src={DownloadIcon} 
                                 className='icon'
-                                onClick={(currentImages) => downloadOriginalImage(currentImages, setCurrentImages)}/>
+                                onClick={() => downloadOriginalImage(currentImages, setCurrentImages)}/>
                             <img 
                                 src={LocationIcon} 
                                 className='icon' 

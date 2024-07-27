@@ -1,10 +1,15 @@
-.section-container {
+.add-new-user-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+}
+
+.add-new-user-textfields-container {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    margin: 3rem auto;
-    margin-top: 4rem;
-    width: 60vw;
 }
 
 .loader {

@@ -3,3 +3,10 @@
     align-items: center;
     height: 34px;
 }
+
+.user-container {
+   display: flex;
+   justify-content: space-around;
+   align-items: center;
+   gap: 1rem;
+}

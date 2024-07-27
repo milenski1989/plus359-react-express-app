@@ -1,4 +1,4 @@
-import { Box, Checkbox, CircularProgress, useMediaQuery } from "@mui/material";
+import { Box, Checkbox, CircularProgress } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import Message from "../reusable/Message";
 import CustomDialog from "../reusable/CustomDialog";
@@ -19,8 +19,6 @@ function DeleteUsers() {
     const [selectedUsers, setSelectedUsers] = useState([]);
 
     const user = JSON.parse(localStorage.getItem("user"));
-
-    const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
 
     useEffect(() => {
         getUsers();
@@ -110,44 +108,32 @@ function DeleteUsers() {
 
             <Box
                 component="section"
-                className={
-                    isSmallDevice ? "mobile-locations-container" : "locations-container"
-                }
+                className="locations-container"
             >
-                {!isLoading && !error ?
+                {!isLoading && !error.error ?
                     users.map((user) => (
                         <div
-                            className={isSmallDevice ? "mobile-location-item" : "location-item"}
+                            className="location location-actions-container user-container"
                             key={user.id}
-                            style={{
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "space-between",
-                                paddingLeft: "25px",
-                                position: "relative"
-                            }}
                         >
-                            <div style={{marginLeft: "1rem"}}>{user.email}</div>
                             <Checkbox
                                 onChange={() => checkBoxHandler(selectedUsers, setSelectedUsers, users, user.id)}
                                 checked={selectedUsers.some(
                                     (selectedUser) => selectedUser.id === user.id
                                 )}
-                                sx={{
-                                    position: "absolute",
-                                    top: "50%",
-                                    left: "10%",
-                                    transform: "translate(-50%, -50%)",
+                                sx={{  
                                     color: "white",
                                     "&.Mui-checked": {
                                         color: "white",
-                                    },
-                                }}
+                                    }}}
                                 icon={<RadioButtonUncheckedIcon />}
                                 checkedIcon={<CheckCircleOutlineIcon />}
                             />
+                            {user.email}
+                          
                         </div>
-                    )) :
+                    ))
+                    :
                     <p className="no-data-container">No users found!</p>
                 }
             </Box>

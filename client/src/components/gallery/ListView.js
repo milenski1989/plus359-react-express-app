@@ -13,6 +13,7 @@ import EditIcon from '../assets/edit-solid.svg'
 import DownloadIcon from '../assets/download-solid.svg'
 import { useNavigate } from "react-router-dom";
 import LocationIcon from '../assets/move-solid.svg';
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
 const propsToShow = [
     { key: 'image_url', label: 'Image', align: 'left', isImage: true },
@@ -23,7 +24,7 @@ const propsToShow = [
 ]
 
 
-const ListView = ({searchResults,  handleIsLocationChangeDialogOpen}) => {
+const ListView = ({searchResults,  handleIsLocationChangeDialogOpen, handleDialogOpen}) => {
     const { currentImages, setCurrentImages} = useContext(ImageContext)
     const [imagePreview, setImagePreview] = useState(false)
     const [selectedArt, setSelectedArt] = useState(null);
@@ -120,14 +121,25 @@ const ListView = ({searchResults,  handleIsLocationChangeDialogOpen}) => {
                                         <img 
                                             src={DownloadIcon} 
                                             className='icon'
-                                            onClick={(currentImages) => downloadOriginalImage(currentImages, setCurrentImages)}/>
+                                            onClick={() => downloadOriginalImage(currentImages, setCurrentImages)}/>
                                         :
                                         <></>
                                     }
-                                    {currentImages.length === 1 && currentImages[0].id === art.id &&   <img 
-                                        src={LocationIcon} 
-                                        className='icon' 
-                                        onClick={prepareImagesForLocationChange}/>}
+                                    {currentImages.length === 1 && currentImages[0].id === art.id &&  
+                                    <>
+                                   
+                                        <DeleteOutlineIcon
+                                            className="icon card-delete-icon"
+                                            onClick={() => {
+                                                handleDialogOpen(true);
+                                            }}
+                                        /> 
+                                        <img 
+                                            src={LocationIcon} 
+                                            className='icon' 
+                                            onClick={prepareImagesForLocationChange}/>
+                                    </>
+                                    }
                                     <MoreHorizIcon 
                                         onClick={() => openFullInfoDialog(art)}
                                     />

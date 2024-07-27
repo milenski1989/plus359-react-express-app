@@ -50,7 +50,8 @@ const NewGalleryContent = () => {
         default: 
             return <ListView
                 searchResults={searchResults}
-                handleIsLocationChangeDialogOpen
+                handleIsLocationChangeDialogOpen={setIsLocationChangeDialogOpen}
+                handleDialogOpen={setIsDeleteDialogOpen}
             /> 
         }
     }
@@ -86,7 +87,8 @@ const NewGalleryContent = () => {
             <div className="gallery-content-container">
                 <Actions  
                     handleDialogOpen={setIsDeleteDialogOpen} 
-                    viewMode={viewMode} searchResults={searchResults} 
+                    viewMode={viewMode} 
+                    searchResults={searchResults} 
                     handleIsLocationChangeDialogOpen={setIsLocationChangeDialogOpen} />
                 
                 <SearchAndFiltersBar

@@ -2,7 +2,14 @@ import React, { useState } from 'react';
 import Message from '../reusable/Message';
 import { Box, Button, CircularProgress, TextField, Typography } from '@mui/material';
 import { signupUser } from '../../api/authService';
-import './AddNewUser.css'; // Import the CSS file
+import './AddNewUser.css';
+
+const inputFields = [
+    { label: 'Email', name: 'email', type: 'email', placeholder: 'example@email.com' },
+    { label: 'User Name', name: 'userName', type: 'text' },
+    { label: 'Password', name: 'password', type: 'password' },
+    { label: 'Confirm Password', name: 'confirmedPassword', type: 'password' }
+];
 
 function AddNewUser() {
     const [inputs, setInputs] = useState({
@@ -61,13 +68,6 @@ function AddNewUser() {
         handleSignupUser();
     };
 
-    const inputFields = [
-        { label: 'Email', name: 'email', type: 'email', placeholder: 'example@email.com' },
-        { label: 'User Name', name: 'userName', type: 'text' },
-        { label: 'Password', name: 'password', type: 'password' },
-        { label: 'Confirm Password', name: 'confirmedPassword', type: 'password' }
-    ];
-
     const emailError = inputs.email === '' ? 'Email is required!' : (!isEmailValid(inputs.email) ? 'Invalid email format!' : '');
     const passwordError = !isPasswordMatched(inputs.password, inputs.confirmedPassword) ? 'Passwords do not match!' : '';
 
@@ -82,41 +82,43 @@ function AddNewUser() {
             {loading ? (
                 <CircularProgress variant="determinate" className="loader" color="primary" />
             ) : (
-                <Box component="section" className="section-container">
-                    {inputFields.map((field) => (
-                        <>
-                            <TextField
-                                key={field.name}
-                                label={field.label}
-                                placeholder={field.placeholder}
-                                type={field.type}
-                                name={field.name}
-                                value={inputs[field.name]}
-                                onChange={handleChange}
-                                error={!!(field.name === 'email' && emailError) || !!(field.name === 'confirmedPassword' && passwordError)}
-                            />
-                            {field.name === 'email' && emailError && (
-                                <Typography variant="body2" color="error">
-                                    {emailError}
-                                </Typography>
-                            )}
-                            {field.name === 'confirmedPassword' && passwordError && (
-                                <Typography variant="body2" color="error">
-                                    {passwordError}
-                                </Typography>
-                            )}
-                        </>
-                    ))}
-                    <Button
-                        onClick={handleSubmit}
-                        disabled={!inputs.email || !inputs.password || !inputs.confirmedPassword || !!emailError || !!passwordError}
-                        sx={{ mt: 2 }}
-                        type="submit"
-                        variant="contained"
-                    >
+                <div className="add-new-user-container">
+                    <Box component="form" className="add-new-user-textfields-container" sx={{width: '50vw', padding: 3, backgroundColor: 'white', boxShadow: 3, borderRadius: 2 }}>
+                        {inputFields.map((field) => (
+                            <>
+                                <TextField
+                                    key={field.name}
+                                    label={field.label}
+                                    placeholder={field.placeholder}
+                                    type={field.type}
+                                    name={field.name}
+                                    value={inputs[field.name]}
+                                    onChange={handleChange}
+                                    error={!!(field.name === 'email' && emailError) || !!(field.name === 'confirmedPassword' && passwordError)}
+                                />
+                                {field.name === 'email' && emailError && (
+                                    <Typography variant="body2" color="error">
+                                        {emailError}
+                                    </Typography>
+                                )}
+                                {field.name === 'confirmedPassword' && passwordError && (
+                                    <Typography variant="body2" color="error">
+                                        {passwordError}
+                                    </Typography>
+                                )}
+                            </>
+                        ))}
+                        <Button
+                            onClick={handleSubmit}
+                            disabled={!inputs.email || !inputs.password || !inputs.confirmedPassword || !!emailError || !!passwordError}
+                            sx={{ mt: 2 }}
+                            type="submit"
+                            variant="contained"
+                        >
                         Create
-                    </Button>
-                </Box>
+                        </Button>
+                    </Box>
+                </div>
             )}
         </>
     );

@@ -17,9 +17,11 @@ const HomePage = () => {
     },[])
 
     const getStorages = async () => {
+        setIsLoading(true);
         try {
             const response = await getAllStorages()
             setStorages(response.data);
+            setIsLoading(false);
         } catch (error) {
             setIsLoading(false);
             setError({ error: true, message: error.response.data.message });
@@ -38,7 +40,7 @@ const HomePage = () => {
             handleClose={() => setError({ error: false, message: "" })}
             message={error.message}
             severity="error" />
-        {!isLoading && !error ?
+        {!isLoading && !error.error ?
             <div className="locations-container">
                 <div className='location' onClick={() => handleStorageSelect('All')}>
                  All
