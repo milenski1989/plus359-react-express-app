@@ -3,9 +3,9 @@ import { ImageContext } from "./contexts/ImageContext";
 import { generateBackGroundColor } from "./utils/helpers";
 import { TextField } from "@mui/material";
 import { updateOneArtwork } from "../api/artworksService";
-import CloseIcon from '@mui/icons-material/Close';
-import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
-import SaveIcon from '../components/assets/save-solid.svg'
+import CancelIcon from '@mui/icons-material/Cancel';
+import CameraswitchIcon from '@mui/icons-material/Cameraswitch';
+import SaveIcon from '@mui/icons-material/Save';
 import { useNavigate } from "react-router-dom";
 import CustomDialog from "./reusable/CustomDialog";
 import Message from "./reusable/Message";
@@ -135,9 +135,9 @@ function EditPage() {
                                 value={updatedEntry ? updatedEntry[key.toLowerCase()] : storedImage[key.toLowerCase()]} />
                         ))}
                         <div className="edit-page-actions-container">
-                            <CloseIcon className='icon' onClick={cancelEditing} />
-                            {user.superUser ? <SwapHorizIcon className='icon' onClick={() => setImageReplaceDialogisOpen(true)} /> : <></>}
-                            <img src={SaveIcon} className='icon edit-page-save-icon' onClick={() => saveUpdatedEntry(storedImage.id)} />
+                            <CancelIcon fontSize="large" onClick={cancelEditing} />
+                            {user.superUser ? <CameraswitchIcon fontSize="large" onClick={() => setImageReplaceDialogisOpen(true)} /> : <></>}
+                            <SaveIcon fontSize="large" onClick={() => saveUpdatedEntry(storedImage.id)}/>
                             {imageReplaceDialogisOpen &&
                                 <CustomDialog
                                     openModal={imageReplaceDialogisOpen}

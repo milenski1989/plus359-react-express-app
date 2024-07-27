@@ -19,19 +19,19 @@ function ViewModeIcons({viewMode, handleViewMode}) {
     return (
         <div className='view-mode-icons-container'>
             <img
-                className={viewMode === 'details' ? 'selected icon' : 'icon'}
+                className={viewMode === 'details' ? 'selected' : ''}
                 src={DetailsViewIcon}
                 onClick={() => handleChangeViewMode('details')}
                 alt="Details View"
             />
             <img
-                className={viewMode === 'thumbnail' ? 'selected icon' : 'icon'}
+                className={viewMode === 'thumbnail' ? 'selected' : ''}
                 src={ThumbnailViewIcon}
                 onClick={() => handleChangeViewMode('thumbnail')}
                 alt="Thumbnail View"
             />
             <img
-                className={viewMode === 'list' ? 'selected icon' : 'icon'}
+                className={viewMode === 'list' ? 'selected' : ''}
                 src={ListViewIcon}
                 onClick={() => handleChangeViewMode('list')}
                 alt="List View"

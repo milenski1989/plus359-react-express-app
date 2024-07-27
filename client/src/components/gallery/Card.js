@@ -1,17 +1,19 @@
 import { Checkbox } from "@mui/material";
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import DriveFileMoveIcon from '@mui/icons-material/DriveFileMove';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import EditIcon from '@mui/icons-material/Edit';
+
 import './DetailsView.css';
-import { checkBoxHandler, downloadOriginalImage, generateBackGroundColor, prepareImagesForLocationChange } from "../utils/helpers";
+import { checkBoxHandler, downloadOriginalImage, generateBackGroundColor, handleEdit, prepareImagesForLocationChange } from "../utils/helpers";
 import { useContext, useState } from "react";
 import { ImageContext } from "../contexts/ImageContext";
 import './Card.css'
-import EditIcon from '../assets/edit-solid.svg'
-import DownloadIcon from '../assets/download-solid.svg'
 import { useNavigate } from "react-router-dom";
-import LocationIcon from '../assets/move-solid.svg'
 import ArtInfoContainer from "./ArtInfoContainer";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { useLoadedImages } from "../hooks/useLoadedImages";
 
 
@@ -77,31 +79,15 @@ const Card = ({handleDialogOpen, searchResults, art, handleIsLocationChangeDialo
             }
             <>
                 <div className="card-actions">
-                    <img 
-                        src={EditIcon} 
-                        className='icon'
-                        onClick={() => {
-                            setCurrentImages([art]);
-                            localStorage.setItem('currentImage', JSON.stringify(art));
-                            navigate('/edit-page')
-                        } }/>
+                    <EditIcon 
+                        fontSize="medium"   
+                        onClick={() => handleEdit(art, setCurrentImages, navigate)}/>
                     {currentImages.length === 1 && currentImages[0].id === art.id ?
                         <>
-                            <img 
-                                src={DownloadIcon} 
-                                className='icon'
-                                onClick={() => downloadOriginalImage(currentImages, setCurrentImages)}/>
-                            <img 
-                                src={LocationIcon} 
-                                className='icon' 
-                                onClick={() => prepareImagesForLocationChange(handleIsLocationChangeDialogOpen)}/>
-
-                            <DeleteOutlineIcon
-                                className="icon card-delete-icon"
-                                onClick={() => {
-                                    handleDialogOpen(true);
-                                }}
-                            />
+                            <FileDownloadIcon fontSize="medium" onClick={() => downloadOriginalImage(currentImages, setCurrentImages)} />
+                            <DriveFileMoveIcon fontSize="medium" onClick={() => prepareImagesForLocationChange(handleIsLocationChangeDialogOpen)} />
+                            <DeleteOutlineIcon fontSize="medium" onClick={() => handleDialogOpen(true)}/>
+                            <PictureAsPdfIcon fontSize="medium" onClick={() => navigate('/pdf')} />
                         </> :
                         null
                     }

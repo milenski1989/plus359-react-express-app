@@ -1,13 +1,14 @@
-import LocationIconBig from '../assets/move-solid-big.svg'
-import PdfIconBig from '../assets/pdf-solid-big.svg'
-import SelectAllIcon from '../assets/select-all.svg'
-import UnselectAllIcon from '../assets/unselect-all.svg'
-import DownloadIconBig from '../assets/download-solid-big.svg'
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import LibraryAddCheckIcon from '@mui/icons-material/LibraryAddCheck';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import DriveFileMoveIcon from '@mui/icons-material/DriveFileMove';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+
 import { ImageContext } from '../contexts/ImageContext'
 import { useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './Actions.css'
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { downloadOriginalImage, prepareImagesForLocationChange } from '../utils/helpers'
 
 
@@ -37,38 +38,24 @@ function Actions({handleDialogOpen, viewMode, searchResults, handleIsLocationCha
     return (
         <div className="action-buttons-container">
             {searchResults.length || searchResults.length && viewMode === 'details' ?
-                <img onClick={handleSelectAll} src={currentImages.length ? UnselectAllIcon : SelectAllIcon} className='icon' /> :
+                currentImages.length === searchResults.length ?
+                    <LibraryAddCheckIcon fontSize="large" onClick={handleSelectAll} /> :
+                    <CheckBoxOutlineBlankIcon fontSize="large" onClick={handleSelectAll} /> :
                 null
             }
-            {currentImages.length  ?
-                <img
-                    src={PdfIconBig}
-                    className='icon'
-                    onClick={() => navigate('/pdf')} />
+            {currentImages.length && currentImages.length !== 1 || (viewMode === 'thumbnail' && currentImages.length) ?
+                <PictureAsPdfIcon fontSize="large" onClick={() => navigate('/pdf')} />
                 : 
                 null
             }
-
             {currentImages.length && currentImages.length !== 1 || (viewMode === 'thumbnail' && currentImages.length) ?
-                <img 
-                    src={LocationIconBig} 
-                    className='icon' 
-                    onClick={() => prepareImagesForLocationChange(handleIsLocationChangeDialogOpen)}/> :
+                <DriveFileMoveIcon fontSize="large" onClick={() => prepareImagesForLocationChange(handleIsLocationChangeDialogOpen)} /> :
                 null
             }
             {currentImages.length > 1 || (viewMode === 'thumbnail' && currentImages.length) ?
                 <>
-                    <img 
-                        src={DownloadIconBig} 
-                        className='icon download-icon'
-                        onClick={() => downloadOriginalImage(currentImages, setCurrentImages)}/>
-                    <DeleteOutlineIcon
-                        className="icon"
-                        style={{ cursor: "pointer", height: '34px', width: '34px'}}
-                        onClick={() => {
-                            handleDialogOpen(true);
-                        }}
-                    />
+                    <FileDownloadIcon fontSize="large" onClick={() => downloadOriginalImage(currentImages, setCurrentImages)}/>
+                    <DeleteOutlineIcon fontSize="large" onClick={() => handleDialogOpen(true)}/>
                 </>
                 :
                 null

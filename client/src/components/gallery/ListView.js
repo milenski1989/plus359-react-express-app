@@ -4,16 +4,20 @@ import Checkbox from "@mui/material/Checkbox";
 import { ImageContext } from "../contexts/ImageContext";
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import DriveFileMoveIcon from '@mui/icons-material/DriveFileMove';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import EditIcon from '@mui/icons-material/Edit';
+
 import { Dialog, DialogContent } from "@mui/material";
 import './ListView.css'
-import { checkBoxHandler, downloadOriginalImage, generateBackGroundColor } from "../utils/helpers";
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import { checkBoxHandler, downloadOriginalImage, generateBackGroundColor, handleEdit } from "../utils/helpers";
 import ArtInfoContainer from "../gallery/ArtInfoContainer";
-import EditIcon from '../assets/edit-solid.svg'
-import DownloadIcon from '../assets/download-solid.svg'
 import { useNavigate } from "react-router-dom";
-import LocationIcon from '../assets/move-solid.svg';
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+
+
 
 const ListView = ({ searchResults, handleIsLocationChangeDialogOpen, handleDialogOpen }) => {
     const { currentImages, setCurrentImages } = useContext(ImageContext)
@@ -65,16 +69,16 @@ const ListView = ({ searchResults, handleIsLocationChangeDialogOpen, handleDialo
                                 onClick={() => openImageDialog(art)}
                                 src={art.image_url}
                                 alt="list-item-image" />
-                            <div style={{ textAlign: 'center', flex: '1 1' }}>
+                            <div className="info-text">
                                 <p>{truncateInfoProp(art.artist, 25)}</p>
                             </div>
-                            <div style={{ textAlign: 'center', flex: '1 1' }}>
+                            <div className="info-text">
                                 <p>{truncateInfoProp(art.dimensions, 25)}</p>
                             </div>
-                            <div style={{ textAlign: 'center', flex: '1 1' }}>
+                            <div className="info-text">
                                 <p>{truncateInfoProp(art.technique, 25)}</p>
                             </div>
-                            <div style={{ textAlign: 'center', flex: '1 1' }}>
+                            <div className="info-text">
                                 <p>{truncateInfoProp(art.cell, 25)}</p>
                             </div>
                             <div className="row-actions"> 
@@ -90,31 +94,22 @@ const ListView = ({ searchResults, handleIsLocationChangeDialogOpen, handleDialo
                                     }}
                                     icon={<RadioButtonUncheckedIcon />}
                                     checkedIcon={<CheckCircleOutlineIcon />} />
-                                <img
-                                    src={EditIcon}
-                                    className='icon'
-                                    onClick={() => {
-                                        setCurrentImages([art]);
-                                        localStorage.setItem('currentImage', JSON.stringify(art));
-                                        navigate('/edit-page');
-                                    }} />
+                                <EditIcon 
+                                    fontSize="medium" 
+                                    onClick={() => handleEdit(art, setCurrentImages, navigate)}/>
                                 {currentImages.length === 1 && currentImages[0].id === art.id &&
                                 <>
-                                    <img
-                                        src={DownloadIcon}
-                                        className='icon'
-                                        onClick={() => downloadOriginalImage(currentImages, setCurrentImages)} />
+                                    <FileDownloadIcon fontSize="medium" onClick={() => downloadOriginalImage(currentImages, setCurrentImages)}/>
                                     <DeleteOutlineIcon
                                         className="icon card-delete-icon"
                                         onClick={() => {
                                             handleDialogOpen(true);
                                         }} />
-                                    <img
-                                        src={LocationIcon}
-                                        className='icon'
-                                        onClick={prepareImagesForLocationChange} />
+                                    <DriveFileMoveIcon fontSize="medium" onClick={prepareImagesForLocationChange} />
+                                 
+                                    <PictureAsPdfIcon fontSize="medium" onClick={() => navigate('/pdf')}/>
                                 </>}
-                                <MoreHorizIcon onClick={() => openFullInfoDialog(art)} />
+                                <MoreHorizIcon fontSize="medium" onClick={() => openFullInfoDialog(art)} />
                             </div>
                         </div>
                     );

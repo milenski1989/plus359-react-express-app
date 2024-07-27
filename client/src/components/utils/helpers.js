@@ -49,3 +49,9 @@ export const checkBoxHandler = (selectedItems, setSelectedItems, items, id) => {
         setSelectedItems([...selectedItems, items.find(image => image.id === id)]);
     }
 }
+
+export const handleEdit = (art, setCurrentImages, navigate) => {
+    setCurrentImages([art]);
+    localStorage.setItem('currentImage', JSON.stringify(art));
+    navigate('/edit-page')
+};
