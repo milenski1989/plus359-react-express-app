@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { Alert, Box, Button, CircularProgress, TextField, Typography } from '@mui/material';
+import { useState } from 'react';
 import Message from '../reusable/Message';
-import { Box, Button, CircularProgress, TextField, Typography } from '@mui/material';
 import { signupUser } from '../../api/authService';
 import './AddNewUser.css';
 
@@ -11,7 +11,7 @@ const inputFields = [
     { label: 'Confirm Password', name: 'confirmedPassword', type: 'password' }
 ];
 
-function AddNewUser() {
+const AddNewUser = () => {
     const [inputs, setInputs] = useState({
         email: '',
         password: '',
@@ -80,14 +80,19 @@ function AddNewUser() {
                 severity="error"
             />
             {loading ? (
-                <CircularProgress variant="determinate" className="loader" color="primary" />
+                <CircularProgress className="loader" color="primary" />
             ) : (
                 <div className="add-new-user-container">
-                    <Box component="form" className="add-new-user-textfields-container" sx={{width: '50vw', padding: 3, backgroundColor: 'white', boxShadow: 3, borderRadius: 2 }}>
+                    <Box
+                        component="form"
+                        onSubmit={handleSubmit}
+                        className="add-new-user-textfields-container"
+                        sx={{ padding: 3, backgroundColor: 'white', boxShadow: 3, borderRadius: 2, width: '100%', maxWidth: '400px' }}
+                    >
+                        {signupError.error && <Alert severity="error">{signupError.message}</Alert>}
                         {inputFields.map((field) => (
-                            <>
+                            <div key={field.name}>
                                 <TextField
-                                    key={field.name}
                                     label={field.label}
                                     placeholder={field.placeholder}
                                     type={field.type}
@@ -95,6 +100,8 @@ function AddNewUser() {
                                     value={inputs[field.name]}
                                     onChange={handleChange}
                                     error={!!(field.name === 'email' && emailError) || !!(field.name === 'confirmedPassword' && passwordError)}
+                                    fullWidth
+                                    margin="normal"
                                 />
                                 {field.name === 'email' && emailError && (
                                     <Typography variant="body2" color="error">
@@ -106,16 +113,16 @@ function AddNewUser() {
                                         {passwordError}
                                     </Typography>
                                 )}
-                            </>
+                            </div>
                         ))}
                         <Button
-                            onClick={handleSubmit}
-                            disabled={!inputs.email || !inputs.password || !inputs.confirmedPassword || !!emailError || !!passwordError}
                             sx={{ mt: 2 }}
                             type="submit"
                             variant="contained"
+                            fullWidth
+                            disabled={!inputs.email || !inputs.password || !inputs.confirmedPassword || !!emailError || !!passwordError}
                         >
-                        Create
+                            {loading ? <CircularProgress size={24} /> : 'Create'}
                         </Button>
                     </Box>
                 </div>

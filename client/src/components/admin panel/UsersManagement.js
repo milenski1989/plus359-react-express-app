@@ -10,7 +10,6 @@ function UsersManagement() {
             components={[AddNewUser, DeleteUsers]}
         />
     </>
-    
 }
 
 export default UsersManagement

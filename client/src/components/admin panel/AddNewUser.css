@@ -2,20 +2,17 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 3rem;
-}
-
-.add-new-user-textfields-container {
-    display: flex;
-    flex-direction: column;
+    margin-top: 2rem;
     gap: 1rem;
-}
-
-.loader {
-    margin: 3rem auto;
-}
-
-.error-message {
-    color: red;
-}
+  }
+  
+  .add-new-user-textfields-container {
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .loader {
+    display: block;
+    margin: auto;
+  }
+  
