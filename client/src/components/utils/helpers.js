@@ -30,12 +30,10 @@ export const generateBackGroundColor = (cell) => {
     }  
 }
 
-export const downloadOriginalImage = (currentImages, setCurrentImages) => {
+export const downloadOriginalImage = (currentImages) => {
     for (let currentImage of currentImages) {
         saveAs(currentImage.download_url, currentImage.download_key);
     }
-
-    setCurrentImages([])
 };
 
 export const prepareImagesForLocationChange = async (handleIsLocationChangeDialogOpen) => {

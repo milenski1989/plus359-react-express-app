@@ -21,19 +21,14 @@ import { useNavigate } from "react-router-dom";
 
 const ListView = ({ searchResults, handleIsLocationChangeDialogOpen, handleDialogOpen }) => {
     const { currentImages, setCurrentImages } = useContext(ImageContext)
-    const [imagePreview, setImagePreview] = useState(false)
-    const [selectedArt, setSelectedArt] = useState(null);
+
+    console.log(currentImages)
     const [selectedRow, setSelectedRow] = useState(null)
-    const [fullInfoOpened, setFullInfoOpened] = useState(false)
 
     const navigate = useNavigate()
 
-    const openImageDialog = (art) => {
-        setSelectedArt(art);
-        setImagePreview(true);
-    };
-
     const truncateInfoProp = (propValue, length) => {
+        if (!propValue) return '';
         if (propValue.length > length) {
             return `${propValue.slice(0, length)}...`
         } else {
@@ -41,14 +36,12 @@ const ListView = ({ searchResults, handleIsLocationChangeDialogOpen, handleDialo
         }
     }
 
-    const openFullInfoDialog = (art) => {
-        setSelectedRow(art)
-        setFullInfoOpened(true)
-    }
-
-    const prepareImagesForLocationChange = async () => {
+    const prepareImagesForLocationChange = async (art) => {
+        setCurrentImages([art])
         handleIsLocationChangeDialogOpen(true)
     }
+
+    console.log(selectedRow)
 
     return (
         <>
@@ -66,7 +59,7 @@ const ListView = ({ searchResults, handleIsLocationChangeDialogOpen, handleDialo
                             </div>
                             <img
                                 className="row-image"
-                                onClick={() => openImageDialog(art)}
+                                onClick={() => setSelectedRow(art)}
                                 src={art.image_url}
                                 alt="list-item-image" />
                             <div className="info-text">
@@ -97,35 +90,51 @@ const ListView = ({ searchResults, handleIsLocationChangeDialogOpen, handleDialo
                                 <EditIcon 
                                     fontSize="medium" 
                                     onClick={() => handleEdit(art, setCurrentImages, navigate)}/>
-                                {currentImages.length === 1 && currentImages[0].id === art.id &&
+                                {currentImages && currentImages.length === 1 && currentImages[0].id === art.id &&
                                 <>
-                                    <FileDownloadIcon fontSize="medium" onClick={() => downloadOriginalImage(currentImages, setCurrentImages)}/>
+                                    <FileDownloadIcon fontSize="medium" onClick={() => downloadOriginalImage(currentImages)}/>
                                     <DeleteOutlineIcon
                                         className="icon card-delete-icon"
                                         onClick={() => {
                                             handleDialogOpen(true);
                                         }} />
-                                    <DriveFileMoveIcon fontSize="medium" onClick={prepareImagesForLocationChange} />
+                                    <DriveFileMoveIcon fontSize="medium" onClick={() => prepareImagesForLocationChange(art)} />
                                  
                                     <PictureAsPdfIcon fontSize="medium" onClick={() => navigate('/pdf')}/>
                                 </>}
-                                <MoreHorizIcon fontSize="medium" onClick={() => openFullInfoDialog(art)} />
+                                <MoreHorizIcon fontSize="medium" onClick={() =>  setSelectedRow(art)} />
                             </div>
                         </div>
                     );
                 })}
             </div>
 
-            {selectedArt && (
-                <Dialog open={imagePreview} onClose={() => setImagePreview(false)}>
-                    <img onClick={() => setImagePreview(false)} src={selectedArt.image_url} style={{ width: "100%", height: "auto" }} />
-                </Dialog>
-            )}
-
-            {fullInfoOpened && (
-                <Dialog open={fullInfoOpened} onClose={() => setFullInfoOpened(false)}>
+            {selectedRow && (
+                <Dialog open={selectedRow} onClose={() => setSelectedRow(null)}>
                     <DialogContent>
-                        <ArtInfoContainer art={selectedRow} />
+                        <div className="full-info-dialog">
+                            <img
+                                src={selectedRow.image_url}
+                                alt="list-item-image" />
+                            <ArtInfoContainer art={selectedRow} />
+                            <div className="mobile-row-actions"> 
+                                <EditIcon 
+                                    fontSize="medium" 
+                                    onClick={() => handleEdit(selectedRow, setCurrentImages, navigate)}/>
+                           
+                                <>
+                                    <FileDownloadIcon fontSize="medium" onClick={() => downloadOriginalImage(currentImages)}/>
+                                    <DeleteOutlineIcon
+                                        fontSize="medium"
+                                        onClick={() => {
+                                            handleDialogOpen(true);
+                                        }} />
+                                    <DriveFileMoveIcon fontSize="medium" onClick={() => prepareImagesForLocationChange(selectedRow)} />
+                                 
+                                    <PictureAsPdfIcon fontSize="medium" onClick={() => navigate('/pdf')}/>
+                                </>
+                            </div>
+                        </div>
                     </DialogContent>
                 </Dialog>
             )}

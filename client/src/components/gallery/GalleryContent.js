@@ -10,6 +10,8 @@ import DeleteDialog from "../reusable/DeleteDialog";
 import LocationChangeDialog from "../LocationChangeDialog";
 import PaginationComponent from "../PaginationComponent";
 import Actions from "./Actions";
+import { useMediaQuery } from "@mui/material";
+import MobileListView from "./MobileListView";
 
 
 const NewGalleryContent = () => {
@@ -26,6 +28,8 @@ const NewGalleryContent = () => {
     const [totalCount, setTotalCount] = useState(0);
     const [pagesCount, setPagesCount] = useState(0);
     const [countPerPage, setCountPerPage] = useState(25)
+
+    const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
 
     const [error, setError] = useState({
         error: false,
@@ -48,11 +52,17 @@ const NewGalleryContent = () => {
                 handleIsLocationChangeDialogOpen={setIsLocationChangeDialogOpen}
             />
         default: 
-            return <ListView
-                searchResults={searchResults}
-                handleIsLocationChangeDialogOpen={setIsLocationChangeDialogOpen}
-                handleDialogOpen={setIsDeleteDialogOpen}
-            /> 
+            return !isSmallDevice ?
+                <ListView
+                    searchResults={searchResults}
+                    handleIsLocationChangeDialogOpen={setIsLocationChangeDialogOpen}
+                    handleDialogOpen={setIsDeleteDialogOpen}
+                /> :
+                <MobileListView 
+                    searchResults={searchResults}
+                    handleDialogOpen={setIsDeleteDialogOpen}
+                    handleIsLocationChangeDialogOpen={setIsLocationChangeDialogOpen}
+                />
         }
     }
 

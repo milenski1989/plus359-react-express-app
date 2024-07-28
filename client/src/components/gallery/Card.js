@@ -84,7 +84,7 @@ const Card = ({handleDialogOpen, searchResults, art, handleIsLocationChangeDialo
                         onClick={() => handleEdit(art, setCurrentImages, navigate)}/>
                     {currentImages.length === 1 && currentImages[0].id === art.id ?
                         <>
-                            <FileDownloadIcon fontSize="medium" onClick={() => downloadOriginalImage(currentImages, setCurrentImages)} />
+                            <FileDownloadIcon fontSize="medium" onClick={() => downloadOriginalImage(currentImages)} />
                             <DriveFileMoveIcon fontSize="medium" onClick={() => prepareImagesForLocationChange(handleIsLocationChangeDialogOpen)} />
                             <DeleteOutlineIcon fontSize="medium" onClick={() => handleDialogOpen(true)}/>
                             <PictureAsPdfIcon fontSize="medium" onClick={() => navigate('/pdf')} />

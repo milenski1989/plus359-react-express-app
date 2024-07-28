@@ -54,7 +54,7 @@ function Actions({handleDialogOpen, viewMode, searchResults, handleIsLocationCha
             }
             {currentImages.length > 1 || (viewMode === 'thumbnail' && currentImages.length) ?
                 <>
-                    <FileDownloadIcon fontSize="large" onClick={() => downloadOriginalImage(currentImages, setCurrentImages)}/>
+                    <FileDownloadIcon fontSize="large" onClick={() => downloadOriginalImage(currentImages)}/>
                     <DeleteOutlineIcon fontSize="large" onClick={() => handleDialogOpen(true)}/>
                 </>
                 :
