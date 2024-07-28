@@ -10,10 +10,11 @@ export const useLoadedImages = (searchResults) => {
                 const img = new Image();
                 img.onload = () => resolve();
                 img.src = imageUrl;
+              
             });
         });
 
-        Promise.all(imagePromises).then(() => {
+        Promise.allSettled(imagePromises).then(() => {
             setAllImagesLoaded(true);
         });
     }, [searchResults]);

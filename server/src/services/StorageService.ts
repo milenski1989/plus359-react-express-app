@@ -1,4 +1,4 @@
-import { In, IsNull } from "typeorm";
+import { In } from "typeorm";
 import { dbConnection } from "../database";
 import { Artworks } from "../entities/Artworks";
 import { Storages } from "../entities/Storages";
@@ -97,28 +97,36 @@ export default class StorageService {
     const promises = [];
     try {
       const images = await artsRepository.findBy({
-        id: In([ids]),
+        id: In(ids),
       });
-
-      const foundStorage = await this.getOneByName(
+  
+      const foundStorage: Storages = await this.getOneByName(
         storageLocation
       );
-
-      const foundCell = await cellsRepository.findOne({
-        where: {name: cell, storage_id: foundStorage.id}
-      })
-
-      let foundPosition;
+  
+      const foundCell: Cells = await cellsRepository.findOne({
+        where: { name: cell, storage_id: foundStorage.id }
+      });
+  
+      let foundPosition: Positions;
       if (foundCell) {
         foundPosition = await positionsRepository.findOne({
-          where: {cell_id: foundCell.id, cell: {storage_id: foundStorage.id},  name: position.toString()}
-        })
+          where: { cell_id: foundCell.id, cell: { storage_id: foundStorage.id }, name: position.toString() }
+        });
       }
-
+  
       if (foundStorage) {
         for (let image of images) {
+         
           promises.push(
-            await artsRepository.save({
+            artsRepository.save({
+              id: image.id,
+              position_id: null
+            })
+          );
+  
+          promises.push(
+            artsRepository.save({
               id: image.id,
               storageLocation: storageLocation,
               cell: cell || "",
@@ -129,14 +137,15 @@ export default class StorageService {
             })
           );
         }
-
+  
         const result = await Promise.all(promises);
         return result;
       }
-    } catch {
+    } catch (error) {
       throw new Error("Could not update locations!");
     }
   }
+  
 
   async saveStorage(name: string) {
     try {

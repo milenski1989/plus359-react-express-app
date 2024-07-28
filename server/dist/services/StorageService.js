@@ -98,7 +98,7 @@ class StorageService {
             const promises = [];
             try {
                 const images = yield artsRepository.findBy({
-                    id: (0, typeorm_1.In)([ids]),
+                    id: (0, typeorm_1.In)(ids),
                 });
                 const foundStorage = yield this.getOneByName(storageLocation);
                 const foundCell = yield cellsRepository.findOne({
@@ -112,7 +112,11 @@ class StorageService {
                 }
                 if (foundStorage) {
                     for (let image of images) {
-                        promises.push(yield artsRepository.save({
+                        promises.push(artsRepository.save({
+                            id: image.id,
+                            position_id: null
+                        }));
+                        promises.push(artsRepository.save({
                             id: image.id,
                             storageLocation: storageLocation,
                             cell: cell || "",
@@ -126,7 +130,7 @@ class StorageService {
                     return result;
                 }
             }
-            catch (_a) {
+            catch (error) {
                 throw new Error("Could not update locations!");
             }
         });
